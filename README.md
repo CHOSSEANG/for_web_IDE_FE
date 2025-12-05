@@ -76,19 +76,101 @@ npm install
 
 ---
 
-## 📁 프로젝트 구조
+## 📁 Project Folder Structure (폴더구조만 계획용/수정사항 있을 수 있음 12/5 유리) 
 
+```
 src/
-├─ components/
-│ ├─ Editor/ # Monaco Editor, Tabs, Panels
-│ ├─ Auth/ # Login / Signup UI
-│ ├─ common/ # Buttons, Inputs, shared UI
-│
-├─ context/ # AuthContext, FileContext
-├─ hooks/ # useFileSystem, useTabs, useTheme 등
-├─ pages/ # LoginPage, SignupPage, EditorPage
-├─ styles/ # Tailwind + Theme styles
-└─ main.tsx
+  main.tsx
+  index.css
+  App.tsx
+
+  components/
+    Editor/
+      MonacoEditor.tsx
+      EditorTabs.tsx
+      HeaderBar.tsx
+      FileSidebar.tsx
+      TerminalPanel.tsx
+      SplitLayout.tsx
+
+    Files/
+      FileTree.tsx
+      FileNode.tsx
+      FileContextMenu.tsx
+
+    Auth/
+      LoginForm.tsx
+      SignupForm.tsx
+      RememberMeCheckbox.tsx
+
+    Container/
+      ContainerList.tsx
+      ContainerCard.tsx
+      NewContainerModal.tsx
+      TemplateSelector.tsx
+
+    Chat/
+      ChatPanel.tsx
+      ChatMessage.tsx
+      ChatInput.tsx
+
+    AI/
+      AIPanel.tsx
+      AICodeHelper.tsx
+      AIExplainCode.tsx
+      AIRefactorCode.tsx
+
+    common/
+      Button.tsx
+      Input.tsx
+      Modal.tsx
+      IconButton.tsx
+      SidebarToggle.tsx
+
+  context/
+    AuthContext.tsx
+    FileContext.tsx
+    TabsContext.tsx
+    ThemeContext.tsx
+    AIContext.tsx
+
+  hooks/
+    useTheme.ts
+    useFileSystem.ts
+    useTabs.ts
+    usePanelResize.ts
+    useAIActions.ts
+    useClickOutside.ts
+
+  pages/
+    LoginPage.tsx
+    SignupPage.tsx
+    ContainerSelectPage.tsx
+    EditorPage.tsx
+
+  services/
+    apiClient.ts
+    authService.ts
+    containerService.ts
+    fileService.ts
+    aiService.ts
+
+  utils/
+    fileUtils.ts
+    treeUtils.ts
+    formatDate.ts
+
+  styles/
+    theme.css
+    variables.css
+
+  types/
+    fileTypes.ts
+    aiTypes.ts
+    authTypes.ts
+    containerTypes.ts
+```
+
 
 
 
