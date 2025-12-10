@@ -1,0 +1,42 @@
+/* styles/animations.css  임의작업. 12월10일 이유리 */
+
+/* 패널 페이드 인 */
+.fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 채팅 메시지 새로 들어올 때 */
+.message-pop {
+  animation: messagePop 0.15s ease-out forwards;
+}
+
+@keyframes messagePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 버튼 클릭 느낌 */
+.press {
+  transition: transform 0.1s ease-in-out;
+}
+
+.press:active {
+  transform: scale(0.97);
+}

@@ -1,0 +1,130 @@
+/* ============================================================
+   WebIC x Shadcn UI Theme Override
+   Light Mode + Midnight Dark Mode
+   ============================================================ */
+
+/* --------------------------------------
+   Light Mode (기본)
+---------------------------------------- */
+:root {
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+
+  --card: var(--bg-raised);
+  --card-foreground: var(--text-primary);
+
+  --popover: var(--bg-raised);
+  --popover-foreground: var(--text-primary);
+
+  --primary: var(--blue-600);
+  --primary-foreground: #ffffff;
+
+  --secondary: var(--bg-subtle);
+  --secondary-foreground: var(--text-primary);
+
+  --muted: var(--bg-subtle);
+  --muted-foreground: var(--text-muted);
+
+  --accent: var(--bg-subtle);
+  --accent-foreground: var(--text-primary);
+
+  --destructive: var(--error);
+  --destructive-foreground: #ffffff;
+
+  --border: var(--border-light);
+  --input: var(--border-light);
+  --ring: var(--blue-500);
+
+  --radius: 0.5rem;
+
+   --icon-hover-light: #D64550; /* 빨강 */
+}
+
+/* --------------------------------------
+   Dark Mode (Midnight WebIC)
+---------------------------------------- */
+.dark {
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+
+  --card: var(--bg-raised);
+  --card-foreground: var(--text-primary);
+
+  --popover: var(--bg-raised);
+  --popover-foreground: var(--text-primary);
+
+  --primary: var(--blue-600);
+  --primary-foreground: #0B0F17;
+
+  --secondary: var(--bg-subtle);
+  --secondary-foreground: var(--text-primary);
+
+  --muted: var(--bg-subtle);
+  --muted-foreground: var(--text-muted);
+
+  --accent: var(--bg-subtle);
+  --accent-foreground: var(--text-primary);
+
+  --destructive: var(--error);
+  --destructive-foreground: #0B0F17;
+
+  --border: var(--border-light);
+  --input: var(--border-light);
+  --ring: var(--blue-500);
+
+  --radius: 0.5rem;
+
+  --icon-hover-dark: #EBA834; /* 노랑 */
+}
+
+
+
+/* WebIC Dialog 애니메이션 추가 */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.95);
+  }
+}
+
+[data-state="open"].animate-fadeIn {
+  animation: fadeIn 0.15s ease-out forwards;
+}
+
+[data-state="closed"].animate-fadeOut {
+  animation: fadeOut 0.15s ease-in forwards;
+}
+
+[data-state="open"].animate-scaleIn {
+  animation: scaleIn 0.18s ease-out forwards;
+}
+
+[data-state="closed"].animate-scaleOut {
+  animation: scaleOut 0.12s ease-in forwards;
+}

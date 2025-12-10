@@ -1,0 +1,29 @@
+/* styles/presence.css  임의작업. 12월10일 이유리  */
+
+/* 다른 사람 커서 표시 */
+.lb-cursor {
+  position: absolute;
+  width: 2px;
+  background: var(--cursor-color, #3b82f6);
+  z-index: 50;
+}
+
+/* 커서 이름 배지 */
+.lb-cursor-label {
+  position: absolute;
+  background: var(--cursor-color, #3b82f6);
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: 4px;
+  color: white;
+  white-space: nowrap;
+  transform: translateY(-14px);
+}
+
+/* 텍스트 선택 영역 하이라이트 */
+.lb-selection {
+  position: absolute;
+  background: var(--cursor-color, #3b82f6);
+  opacity: 0.25;
+  z-index: 20;
+}

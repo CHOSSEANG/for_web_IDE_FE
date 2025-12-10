@@ -1,0 +1,26 @@
+/* styles/editor.css  임의작업. 12월10일 이유리 */
+
+/* Monaco 에디터 기본 높이 */
+.monaco-editor {
+  height: 100%;
+}
+
+/* 편집기 전체 테두리 */
+.monaco-editor .monaco-editor-background {
+  background-color: #0a0f1d !important;
+}
+
+/* 현재 줄 하이라이트 */
+.monaco-editor .current-line {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* 미니맵 스타일 */
+.monaco-editor .minimap {
+  background-color: #0c1324 !important;
+}
+
+/* 스크롤바 스타일 */
+.monaco-scrollable-element > .scrollbar > .slider {
+  background: rgba(255, 255, 255, 0.1) !important;
+}

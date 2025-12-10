@@ -1,0 +1,38 @@
+/* styles/ide-layout.css  임의작업. 12월10일 이유리 */
+
+/* IDE 화면 전체 컨테이너 */
+.ide-wrapper {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: #0a0f1d;
+  color: white;
+}
+
+/* 좌측 사이드바 */
+.ide-sidebar {
+  width: 260px;
+  background: #111827;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 상단바 */
+.ide-topbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  background: #0f172a;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 에디터/채팅 영역 리사이즈용 Divider */
+.ide-divider {
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+}
+
+.ide-divider:hover {
+  background: rgba(255, 255, 255, 0.15);
+}

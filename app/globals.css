@@ -1,0 +1,82 @@
+@import "./styles/theme.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   WebIC Color System - Light & Dark Mode
+   ========================================= */
+@layer base {
+
+  /* ----------- Light Mode (default) ----------- */
+  :root {
+    /* Background */
+    --bg-base: #F7F9FC;
+    --bg-subtle: #EDF1F7;
+    --bg-raised: #E4E8EF;
+    --bg-code-block: #F0F4FA;
+
+    /* Text */
+    --text-primary: #1E2A36;
+    --text-secondary: #4A5562;
+    --text-muted: #6E7A88;
+
+    /* Brand Blues */
+    --blue-600: #3A6EA5;
+    --blue-500: #4A89C7;
+    --blue-400: #6DA8E8;
+    --blue-300: #9BC9F7;
+
+    /* Border */
+    --border-light: #D6DEE6;
+    --border-strong: #B9C4D1;
+
+    /* Semantic */
+    --success: #33A27C;
+    --error: #D64550;
+    --warning: #EBA834;
+    --info: #3F8BCD;
+  }
+
+  /* ----------- Dark Mode (Midnight WebIC) ----------- */
+  .dark {
+    --bg-base: #0B0F17;
+    --bg-subtle: #111623;
+    --bg-raised: #161D2C;
+    --bg-code-block: #0A0F1D;
+
+    --text-primary: #E5EAF1;
+    --text-secondary: #A8B2C1;
+    --text-muted: #738093;
+
+    --blue-600: #3E7DCB;
+    --blue-500: #3368A9;
+    --blue-400: #2A5687;
+    --blue-300: #20446B;
+
+    --border-light: #1D2633;
+    --border-strong: #2A3547;
+
+    --success: #22A366;
+    --error: #C2454F;
+    --warning: #C98A32;
+    --info: #3B89D3;
+  }
+}
+
+/* ===== Body 기본 스타일 ===== */
+@layer base {
+  body {
+    @apply bg-bg-base text-text-primary;
+  }
+}
+
+
+/* react-arborist 기본 아이콘(mask) 제거 */
+.arborist-row .arborist-icon {
+  background: none !important;
+  background-image: none !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}

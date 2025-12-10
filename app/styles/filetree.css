@@ -1,0 +1,25 @@
+/* styles/filetree.css  임의작업. 12월10일 이유리 */
+
+.filetree {
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 14px;
+  padding: 8px;
+}
+
+/* 선택된 노드 */
+.filetree .selected {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hover 상태 */
+.filetree .node:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 파일 아이콘 크기 통일 */
+.filetree .icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+}
