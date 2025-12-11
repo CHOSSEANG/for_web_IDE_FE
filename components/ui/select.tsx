@@ -3,12 +3,29 @@
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 
-export function Select({ children, ...props }) {
+type SelectTriggerProps = SelectPrimitive.SelectTriggerProps & {
+  className?: string;
+};
+
+type SelectContentProps = SelectPrimitive.SelectContentProps & {
+  className?: string;
+};
+
+type SelectItemProps = SelectPrimitive.SelectItemProps & {
+  className?: string;
+};
+
+type SelectProps = SelectPrimitive.SelectProps & {
+  children?: ReactNode;
+};
+
+export function Select({ children, ...props }: SelectProps) {
   return <SelectPrimitive.Root {...props}>{children}</SelectPrimitive.Root>;
 }
 
-export const SelectTrigger = ({ className, ...props }) => (
+export const SelectTrigger = ({ className, ...props }: SelectTriggerProps) => (
   <SelectPrimitive.Trigger
     className={cn(
       "flex items-center justify-between px-3 py-2 rounded-md text-sm",
@@ -24,7 +41,7 @@ export const SelectTrigger = ({ className, ...props }) => (
   </SelectPrimitive.Trigger>
 );
 
-export const SelectContent = ({ className, ...props }) => (
+export const SelectContent = ({ className, ...props }: SelectContentProps) => (
   <SelectPrimitive.Content
     className={cn(
       "z-50 rounded-md shadow-md border border-border-light bg-bg-raised",
@@ -34,7 +51,7 @@ export const SelectContent = ({ className, ...props }) => (
   />
 );
 
-export const SelectItem = ({ className, ...props }) => (
+export const SelectItem = ({ className, ...props }: SelectItemProps) => (
   <SelectPrimitive.Item
     className={cn(
       "px-3 py-2 text-sm cursor-pointer",

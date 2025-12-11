@@ -4,7 +4,12 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 
-export function CommandDialog({ open, onOpenChange }) {
+type CommandDialogProps = Pick<
+  Dialog.DialogProps,
+  "open" | "onOpenChange"
+>;
+
+export function CommandDialog({ open, onOpenChange }: CommandDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -63,7 +68,7 @@ export function CommandDialog({ open, onOpenChange }) {
   );
 }
 
-function CommandItem({ label }) {
+function CommandItem({ label }: { label: string }) {
   return (
     <div
       className={cn(

@@ -3,7 +3,11 @@
 import * as Switch from "@radix-ui/react-switch";
 import { cn } from "@/lib/utils";
 
-export function Toggle({ className, ...props }) {
+type ToggleProps = Switch.SwitchProps & {
+  className?: string;
+};
+
+export function Toggle({ className, ...props }: ToggleProps) {
   return (
     <Switch.Root
       className={cn(

@@ -4,7 +4,11 @@ import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-export function Checkbox({ className, ...props }) {
+type CheckboxProps = CheckboxPrimitive.CheckboxProps & {
+  className?: string;
+};
+
+export function Checkbox({ className, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       className={cn(

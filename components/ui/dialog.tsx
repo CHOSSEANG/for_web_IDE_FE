@@ -1,5 +1,6 @@
-"use client";
+ "use client";
 
+import type { ReactNode } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,7 +8,10 @@ import { cn } from "@/lib/utils";
 export const Dialog = DialogPrimitive.Root;
 export const DialogTrigger = DialogPrimitive.Trigger;
 
-export function DialogOverlay({ className, ...props }) {
+export function DialogOverlay({
+  className,
+  ...props
+}: DialogPrimitive.DialogOverlayProps) {
   return (
     <DialogPrimitive.Overlay
       className={cn(
@@ -20,7 +24,7 @@ export function DialogOverlay({ className, ...props }) {
   );
 }
 
-export function DialogPortal({ children }) {
+export function DialogPortal({ children }: { children?: ReactNode }) {
   return (
     <DialogPrimitive.Portal>
       <DialogOverlay />
@@ -29,7 +33,7 @@ export function DialogPortal({ children }) {
   );
 }
 
-export function DialogContent({ className, ...props }) {
+export function DialogContent({ className, ...props }: DialogPrimitive.DialogContentProps) {
   return (
     <DialogPortal>
       <DialogPrimitive.Content
@@ -50,13 +54,16 @@ export function DialogContent({ className, ...props }) {
   );
 }
 
-export function DialogHeader({ className, ...props }) {
+export function DialogHeader({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
   return (
     <div className={cn("mb-4 text-left", className)} {...props} />
   );
 }
 
-export function DialogTitle({ className, ...props }) {
+export function DialogTitle({ className, ...props }: DialogPrimitive.DialogTitleProps) {
   return (
     <h2
       className={cn("text-xl font-semibold text-text-primary", className)}
@@ -65,7 +72,10 @@ export function DialogTitle({ className, ...props }) {
   );
 }
 
-export function DialogDescription({ className, ...props }) {
+export function DialogDescription({
+  className,
+  ...props
+}: DialogPrimitive.DialogDescriptionProps) {
   return (
     <p
       className={cn("text-text-secondary text-sm", className)}

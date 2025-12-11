@@ -1,11 +1,12 @@
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import type { ReactNode } from "react";
 import { ThemeProvider } from "./providers/theme-provider";
 
 // Clerk의 버튼/유저메뉴 기능이 필요하다면 아래 import 사용 가능
 // import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <ClerkProvider>
       <html lang="ko" suppressHydrationWarning>

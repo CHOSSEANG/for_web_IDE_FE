@@ -21,13 +21,9 @@ import { cn } from "@/lib/utils";
 export const DropdownMenu = ShadDropdown;
 export { DropdownMenuTrigger };
 
-export function Dropdown({
-  children,
-  align = "start",
-  ...props
-}: DropdownMenuProps) {
+export function Dropdown({ children, ...props }: DropdownMenuProps) {
   return (
-    <DropdownMenu align={align} {...props}>
+    <DropdownMenu {...props}>
       {children}
     </DropdownMenu>
   );
