@@ -12,7 +12,7 @@ export default function NotFound() {
       <ChristmasTree />
 
       <h1 className="text-4xl font-bold text-white mt-20">404 - Page Not Found</h1>
-      <p className="text-gray-400 mt-2">The page you're looking for doesn't exist.</p>
+      <p className="text-gray-400 mt-2">The page you&apos;re looking for doesn&apos;t exist.</p>
     </div>
       
       

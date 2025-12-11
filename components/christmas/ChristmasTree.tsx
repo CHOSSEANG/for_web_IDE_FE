@@ -12,14 +12,14 @@ export default function ChristmasTree() {
     const container = document.getElementById("tree-container");
     if (!container) return;
 
-    const toggles = container.querySelectorAll(".toggle-switch");
-    const circles = container.querySelectorAll(".circle");
+    const toggles = container.querySelectorAll<HTMLDivElement>(".toggle-switch");
+    const circles = container.querySelectorAll<HTMLDivElement>(".circle");
 
     let counter = 0;
 
-    const circleColors = new Map();
-    const toggleBackgroundColors = new Map();
-    const toggleCircleColors = new Map();
+    const circleColors = new Map<HTMLDivElement, string[]>();
+    const toggleBackgroundColors = new Map<HTMLDivElement, string[]>();
+    const toggleCircleColors = new Map<HTMLElement, string[]>();
 
     const getTwoRandomColors = () => {
       const first = Math.floor(Math.random() * COLORS.length);
@@ -46,7 +46,7 @@ export default function ChristmasTree() {
     toggles.forEach((toggle) => {
       const [bgColors, circleColorsPair] = getUniqueColorPairs();
       toggleBackgroundColors.set(toggle, bgColors);
-      const circleElem = toggle.querySelector(".toggle-circle");
+      const circleElem = toggle.querySelector<HTMLElement>(".toggle-circle");
       if (circleElem) {
         toggleCircleColors.set(circleElem, circleColorsPair);
       }
@@ -54,14 +54,16 @@ export default function ChristmasTree() {
 
     const animateToggles = () => {
       toggles.forEach((toggle) => {
-        const toggleCircle = toggle.querySelector(".toggle-circle") as HTMLElement;
+        const toggleCircle = toggle.querySelector<HTMLElement>(".toggle-circle");
         const size = parseInt(toggle.dataset.size || "70");
         const isLarge = toggle.classList.contains("toggle-switch-l");
         const shouldToggle = isLarge ? counter % 2 === 0 : counter % 2 !== 0;
 
         const translateX = shouldToggle ? size - TOGGLE_CIRCLE_SIZE : 0;
         const bgColors = toggleBackgroundColors.get(toggle);
-        const circleColorsPair = toggleCircleColors.get(toggleCircle);
+        const circleColorsPair = toggleCircle
+          ? toggleCircleColors.get(toggleCircle)
+          : undefined;
         const bgColorIdx = shouldToggle ? 1 : 0;
         const circleColorIdx = counter % 2;
 
