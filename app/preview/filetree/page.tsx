@@ -42,7 +42,11 @@ export default function FileTreePreviewPage() {
           <div className="grid grid-cols-6 gap-4 p-6">
             {icons.map((name) => (
               <div key={name} className="flex flex-col items-center">
-                <img src={`/icons/${name}`} className="w-10 h-10" />
+                <img
+                  src={`/icons/${name}`}
+                  alt={`${name} icon`}
+                  className="w-10 h-10"
+                />
                 <span className="text-xs mt-2">{name}</span>
               </div>
             ))}

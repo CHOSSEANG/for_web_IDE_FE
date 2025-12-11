@@ -1,21 +1,22 @@
 "use client";
 
-import { SignedIn, SignedOut, UserButton, useUser, useClerk } from "@clerk/nextjs";
+import Link from "next/link";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { UserRound, LogIn } from "lucide-react";
 
 export function UserToggle() {
   return (
     <div className="flex items-center gap-4">
       <SignedOut>
-        <a href="/sign-in">
+        <Link href="/sign-in">
           <LogIn className="w-6 h-6 cursor-pointer" />
-        </a>
+        </Link>
       </SignedOut>
 
       <SignedIn>
-        <a href="/user-profile">
+        <Link href="/user-profile">
           <UserRound className="w-6 h-6 cursor-pointer" />
-        </a>
+        </Link>
       </SignedIn>
     </div>
   );

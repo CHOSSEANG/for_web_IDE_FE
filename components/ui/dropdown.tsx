@@ -9,6 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuGroup,
 } from "@radix-ui/react-dropdown-menu";
+import type {
+  DropdownMenuProps,
+  DropdownMenuContentProps,
+  DropdownMenuItemProps,
+  DropdownMenuSeparatorProps,
+  DropdownMenuLabelProps,
+} from "@radix-ui/react-dropdown-menu";
 import { cn } from "@/lib/utils";
 
 export const DropdownMenu = ShadDropdown;
@@ -17,17 +24,16 @@ export { DropdownMenuTrigger };
 export function Dropdown({
   children,
   align = "start",
-  className,
   ...props
-}) {
+}: DropdownMenuProps) {
   return (
-    <DropdownMenu>
+    <DropdownMenu align={align} {...props}>
       {children}
     </DropdownMenu>
   );
 }
 
-export function DropdownContent({ className, ...props }) {
+export function DropdownContent({ className, ...props }: DropdownMenuContentProps) {
   return (
     <DropdownMenuContent
       sideOffset={6}
@@ -42,7 +48,7 @@ export function DropdownContent({ className, ...props }) {
   );
 }
 
-export function DropdownItem({ className, ...props }) {
+export function DropdownItem({ className, ...props }: DropdownMenuItemProps) {
   return (
     <DropdownMenuItem
       className={cn(
@@ -57,7 +63,7 @@ export function DropdownItem({ className, ...props }) {
   );
 }
 
-export function DropdownSeparator({ className, ...props }) {
+export function DropdownSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
   return (
     <DropdownMenuSeparator
       className={cn("my-1 h-[1px] bg-border-light", className)}
@@ -66,7 +72,7 @@ export function DropdownSeparator({ className, ...props }) {
   );
 }
 
-export function DropdownLabel({ className, ...props }) {
+export function DropdownLabel({ className, ...props }: DropdownMenuLabelProps) {
   return (
     <DropdownMenuLabel
       className={cn("px-3 py-1.5 text-text-secondary text-xs", className)}

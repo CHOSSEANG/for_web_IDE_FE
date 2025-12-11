@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "gen:icons": "node scripts/generateIconList.js"
+    "gen:icons": "node scripts/generateIconList.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.36.2",

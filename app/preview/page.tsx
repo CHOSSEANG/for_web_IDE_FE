@@ -1,8 +1,7 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Sun, Moon } from "lucide-react";
-import { DropdownMenu, DropdownMenuTrigger, DropdownContent, DropdownItem, DropdownSeparator, DropdownLabel } from "@/components/ui/dropdown";
-import { Settings, Folder, Code2, LogOut } from "lucide-react";
 import { WebicTabs } from "@/components/ui/tabs";
 import { UserToggle } from "@/components/UserToggle";
 
@@ -73,24 +72,33 @@ export default function ButtonPreviewPage() {
         <p className="p-1 border-red-50 bg-gray-200 mb-5"></p>
 
         <p className="mb-5">
-          <a className="m-10" href="/preview/dropdown">dropdown menu</a>
-          <a className="m-10" href="/preview/tabs">tabs</a>
-          <a className="m-10" href="/preview/command">command</a>
-          <a className="m-10" href="/preview/form">form</a>
-          <a className="m-10" href="/preview/filetree">filetree</a>
+          <Link className="m-10" href="/preview/dropdown">
+            dropdown menu
+          </Link>
+          <Link className="m-10" href="/preview/tabs">
+            tabs
+          </Link>
+          <Link className="m-10" href="/preview/command">
+            command
+          </Link>
+          <Link className="m-10" href="/preview/form">
+            form
+          </Link>
+          <Link className="m-10" href="/preview/filetree">
+            filetree
+          </Link>
         </p>
 
-        <p> 
-          <a className="m-10" href="/preview/user">user page(작업예정)</a>
-          <a className="m-10" href="/preview/filetree"></a>
-          <a className="m-10" href="/preview/filetree"></a>
-          <a className="m-10" href="/preview/filetree"></a>
-          <a className="m-10" href="/preview/filetree"></a>
+        <p>
+          <Link className="m-10" href="/preview/user">
+            user page(작업예정)
+          </Link>
         </p>
         <p className="p-1 border-red-50 bg-gray-200 mt-5 "></p>
       </div>
       <div className="mt-20">
-        <a href="/">↩︎ 메인  바로가기</a></div>
+        <Link href="/">↩︎ 메인 바로가기</Link>
+      </div>
     </main>
   );
 }

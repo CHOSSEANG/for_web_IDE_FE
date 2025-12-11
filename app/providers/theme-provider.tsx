@@ -15,11 +15,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // 1) hydration 전에는 아무것도 렌더하지 않음 → 깜빡임 제거 핵심
   useEffect(() => {
-    setMounted(true);
+    const handle = window.requestAnimationFrame(() => {
+      setMounted(true);
 
-    // 2) no-flash script가 class 적용했으므로 여기서 state만 맞춰줌
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
+      // 2) no-flash script가 class 적용했으므로 여기서 state만 맞춰줌
+      const isDark = document.documentElement.classList.contains("dark");
+      setTheme(isDark ? "dark" : "light");
+    });
+
+    return () => window.cancelAnimationFrame(handle);
   }, []);
 
   const toggleTheme = () => {

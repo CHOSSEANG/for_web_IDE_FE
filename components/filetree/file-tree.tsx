@@ -7,15 +7,19 @@ function MyNodeComponent({ node, style, dragHandle }) {
   console.log("🔥 MyNode 렌더됨:", node.data.name);
 
   return (
-    <div
-      ref={dragHandle}
-      style={style}
-      onClick={node.toggle}
-      className="flex items-center gap-2 px-2 py-[3px]"
-    >
-      <img src="/icons/default_file.svg" className="w-4 h-4" />
-      <span>{node.data.name}</span>
-    </div>
+      <div
+        ref={dragHandle}
+        style={style}
+        onClick={node.toggle}
+        className="flex items-center gap-2 px-2 py-[3px]"
+      >
+        <img
+          src="/icons/default_file.svg"
+          alt="default file icon"
+          className="w-4 h-4"
+        />
+        <span>{node.data.name}</span>
+      </div>
   );
 }
 

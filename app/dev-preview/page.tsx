@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import { UserToggle } from "@/components/UserToggle";
@@ -23,11 +24,21 @@ export default function Page() {
 
       {/* 버튼 프리뷰 */}
       <div>
-        <p className="p-2"><a href="/">메인 바로가기</a></p>
-        <p className="p-2"><a href="/preview">버튼 프리뷰 바로가기</a></p>
-        <p className="p-2"><a href="/dev-preview">개발 프리뷰 바로가기</a></p>
-          <p className="p-2"><a href="/welcome">webic 첫방문자 노출 페이지</a></p>
-          <p className="p-2"><a href="/404">404 페이지</a></p>
+        <p className="p-2">
+          <Link href="/">메인 바로가기</Link>
+        </p>
+        <p className="p-2">
+          <Link href="/preview">버튼 프리뷰 바로가기</Link>
+        </p>
+        <p className="p-2">
+          <Link href="/dev-preview">개발 프리뷰 바로가기</Link>
+        </p>
+        <p className="p-2">
+          <Link href="/welcome">webic 첫방문자 노출 페이지</Link>
+        </p>
+        <p className="p-2">
+          <Link href="/404">404 페이지</Link>
+        </p>
       </div>
 
 
