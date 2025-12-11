@@ -1,0 +1,68 @@
+/* 전체 페이지를 덮지 않도록 (중요!) */
+.tree-widget {
+  width: 400px;
+  padding: 10px;
+  transform: scale(1);
+  transform-origin: top center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 기존 강제 100vw/100vh 제거 */
+html, body, #tree-container {
+  width: auto !important;
+  height: auto !important;
+  overflow: visible;
+}
+
+/* 배경색 제거 (404 디자인 유지) */
+#tree-container {
+  background: none;
+}
+
+/* 스타 크기 줄이기 */
+.star {
+  width: 30px;
+  aspect-ratio: 1;
+  background: #d68910;
+  margin-bottom: 5px;
+  clip-path: polygon(50% 0, 79% 90%, 2% 35%, 98% 35%, 21% 90%);
+}
+
+/* 공 크기 축소 */
+.circle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin: 2px;
+  transition: background-color 0.3s ease;
+}
+
+/* 토글 크기 축소 */
+.toggle-switch {
+  position: relative;
+  height: 20px;
+  border-radius: 20px;
+  margin: 2px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-circle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.toggle-switch-s { width: 40px; }
+.toggle-switch-m { width: 55px; }
+.toggle-switch-l { width: 65px; }
+
+.level {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

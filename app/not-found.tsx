@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import ChristmasTree from "@/components/christmas/ChristmasTree";
 
 export default function NotFound() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center text-center px-6 bg-bg-base text-text-primary">
       
       {/* 아이콘 또는 간단한 ASCII 스타일 */}
-      <div className="text-6xl mb-4 opacity-70">🗂️?</div>
+      <div className="flex flex-col items-center mt-6">
+      <ChristmasTree />
 
-      <h1 className="text-4xl font-bold mb-2">404 — Page Not Found</h1>
+      <h1 className="text-4xl font-bold text-white mt-20">404 - Page Not Found</h1>
+      <p className="text-gray-400 mt-2">The page you're looking for doesn't exist.</p>
+    </div>
+      
       
       <p className="text-text-muted max-w-md mb-8 text-sm">
         찾으려는 페이지가 사라졌거나 이동되었어요.  
