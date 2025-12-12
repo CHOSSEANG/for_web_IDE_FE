@@ -3,19 +3,18 @@
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserToggle } from "@/components/UserToggle";
 
+
+
 export default function WelcomePage() {
   return (
     <main className="min-h-screen w-full flex flex-col">
-
-      {/* ───────────────────────
-          🔹 Top Header
-      ─────────────────────── */}
+     {/* ───────────────────────🔹 Top Header─────────────────────── */}
       <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light">
         {/* 좌측: 회사 정보 */}
         <div className="flex gap-6 text-sm text-text-muted">
-          <a href="#" className="hover:text-text-primary transition">회사소개</a>
-          <a href="#" className="hover:text-text-primary transition">서비스 소개</a>
-          <a href="#" className="hover:text-text-primary transition">문의하기</a>
+          <a href="/about" className="hover:text-text-primary transition">회사소개</a>
+          <a href="/company" className="hover:text-text-primary transition">서비스 소개</a>
+          <a href="/contact" className="hover:text-text-primary transition">문의하기</a>
         </div>
 
         {/* 우측: 테마변경 */}
@@ -25,9 +24,7 @@ export default function WelcomePage() {
               </div>
       </header>
 
-      {/* ───────────────────────
-          🔹 Content (Centered)
-      ─────────────────────── */}
+      {/* ───────────────────────🔹 Content (Centered)─────────────────────── */}
       <div className="flex flex-col flex-1 items-center justify-center px-6 py-20 gap-20">
 <div className="flex items-center gap-2">
           <img src="/logo/webic_logo.svg" className="w-56 h-56" alt="WebIC Logo" />
@@ -83,9 +80,7 @@ export default function WelcomePage() {
 
       </div>
 
-      {/* ───────────────────────
-          🔹 Footer
-      ─────────────────────── */}
+      {/* ───────────────────────🔹 Footer─────────────────────── */}
       <footer className="w-full py-6 px-8 border-t border-border-light flex justify-between items-center text-sm text-text-muted">
         
         {/* 서비스 로고 */}
