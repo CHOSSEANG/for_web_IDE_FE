@@ -1,4 +1,6 @@
 // app/(auth)/sign-in/page.tsx
+import Link from "next/link";
+
 export default function SignInPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
@@ -73,17 +75,17 @@ export default function SignInPage() {
 
         {/* Find account */}
         <p className="mt-4 text-center text-sm">
-          <a href="/find-account" className="text-indigo-400 hover:underline">
+          <Link href="/find-account" className="text-indigo-400 hover:underline">
             아이디 / 비밀번호 찾기
-          </a>
+          </Link>
         </p>
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Don&apos;t have an account?{" "}
-          <a href="/sign-up" className="text-indigo-400 hover:underline">
+          <Link href="/sign-up" className="text-indigo-400 hover:underline">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </main>

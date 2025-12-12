@@ -1,4 +1,6 @@
 // app/(auth)/sign-up/page.tsx
+import Link from "next/link";
+
 export default function SignUpPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
@@ -93,9 +95,9 @@ export default function SignUpPage() {
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
           Already have an account?{" "}
-          <a href="/sign-in" className="text-indigo-400 hover:underline">
+          <Link href="/sign-in" className="text-indigo-400 hover:underline">
             Log in
-          </a>
+          </Link>
         </p>
       </div>
     </main>

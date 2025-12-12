@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export default function FindAccountPage() {
@@ -78,12 +79,12 @@ export default function FindAccountPage() {
 
         {/* Back */}
         <p className="mt-6 text-center text-sm">
-          <a
+          <Link
             href="/sign-in"
             className="text-indigo-400 hover:underline"
           >
             ← 로그인 페이지로 돌아가기
-          </a>
+          </Link>
         </p>
       </div>
     </main>

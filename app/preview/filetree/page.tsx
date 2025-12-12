@@ -1,5 +1,6 @@
-"use client";
+ "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { FileTree } from "@/components/filetree/file-tree";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -42,9 +43,11 @@ export default function FileTreePreviewPage() {
           <div className="grid grid-cols-6 gap-4 p-6">
             {icons.map((name) => (
               <div key={name} className="flex flex-col items-center">
-                <img
+                <Image
                   src={`/icons/${name}`}
                   alt={`${name} icon`}
+                  width={40}
+                  height={40}
                   className="w-10 h-10"
                 />
                 <span className="text-xs mt-2">{name}</span>

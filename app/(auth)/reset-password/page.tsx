@@ -1,4 +1,6 @@
 // app/(auth)/reset-password/page.tsx
+import Link from "next/link";
+
 export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
@@ -59,12 +61,9 @@ export default function ResetPasswordPage() {
 
         {/* Back */}
         <p className="mt-6 text-sm">
-          <a
-            href="/sign-in"
-            className="text-indigo-400 hover:underline"
-          >
+          <Link href="/sign-in" className="text-indigo-400 hover:underline">
             ← 로그인 페이지로 돌아가기
-          </a>
+          </Link>
         </p>
       </div>
     </main>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Tree } from "react-arborist";
 import type { NodeRendererProps } from "react-arborist/dist/module/types/renderers";
 
@@ -25,9 +26,11 @@ function MyNodeComponent({
       onClick={node.toggle}
       className="flex items-center gap-2 px-2 py-[3px]"
     >
-      <img
+      <Image
         src="/icons/default_file.svg"
         alt="default file icon"
+        width={16}
+        height={16}
         className="w-4 h-4"
       />
       <span>{node.data.name}</span>
