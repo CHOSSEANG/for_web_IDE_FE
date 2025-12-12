@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserToggle } from "@/components/UserToggle";
 
+export const metadata = { title: "WEBIC - mian" }; 
+
 export default function MainPage() {
   return (
     <main className="min-h-screen bg-bg-base text-text-primary p-8 flex flex-col gap-10">

@@ -1,21 +1,26 @@
 "use client";
 
+import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { UserToggle } from "@/components/UserToggle";
+import Logo from "@/components/brand/Logo";
 
 export default function WelcomePage() {
   return (
     <main className="min-h-screen w-full flex flex-col">
-
-      {/* ───────────────────────
-          🔹 Top Header
-      ─────────────────────── */}
+     {/* ───────────────────────🔹 Top Header─────────────────────── */}
       <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light">
         {/* 좌측: 회사 정보 */}
         <div className="flex gap-6 text-sm text-text-muted">
-          <a href="#" className="hover:text-text-primary transition">회사소개</a>
-          <a href="#" className="hover:text-text-primary transition">서비스 소개</a>
-          <a href="#" className="hover:text-text-primary transition">문의하기</a>
+          <Link href="/about" className="hover:text-text-primary transition">
+            회사소개
+          </Link>
+          <Link href="/company" className="hover:text-text-primary transition">
+            서비스 소개
+          </Link>
+          <Link href="/contact" className="hover:text-text-primary transition">
+            문의하기
+          </Link>
         </div>
 
         {/* 우측: 테마변경 */}
@@ -25,12 +30,14 @@ export default function WelcomePage() {
               </div>
       </header>
 
-      {/* ───────────────────────
-          🔹 Content (Centered)
-      ─────────────────────── */}
+      {/* ───────────────────────🔹 Content (Centered)─────────────────────── */}
       <div className="flex flex-col flex-1 items-center justify-center px-6 py-20 gap-20">
-<div className="flex items-center gap-2">
-          <img src="/logo/webic_logo.svg" className="w-56 h-56" alt="WebIC Logo" />
+        <div className="flex items-center gap-2">
+          <Logo
+            variant="webic"
+            theme="light"
+            className="w-56 h-56"
+          />
         </div>
         {/* Hero Section */}
         <section className="text-center max-w-2xl">
@@ -66,33 +73,35 @@ export default function WelcomePage() {
 
         {/* CTA */}
         <section className="flex gap-4">
-          <a
+          <Link
             href="/sign-in"
             className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium"
           >
             로그인
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/sign-up"
             className="px-6 py-3 rounded-lg border border-border-light font-medium"
           >
             회원가입
-          </a>
+          </Link>
         </section>
 
       </div>
 
-      {/* ───────────────────────
-          🔹 Footer
-      ─────────────────────── */}
+      {/* ───────────────────────🔹 Footer─────────────────────── */}
       <footer className="w-full py-6 px-8 border-t border-border-light flex justify-between items-center text-sm text-text-muted">
         
         {/* 서비스 로고 */}
-        <div className="flex items-center gap-2">
-          <img src="/logo/webic_logo.svg" className="w-6 h-6" alt="WebIC Logo" />
-          <span>WebIC</span>
-        </div>
+          <div className="flex items-center gap-2">
+            <Logo
+              variant="icon"
+              theme="dark"
+              className="w-6 h-6"
+            />
+            <span>WebIC</span>
+          </div>
 
         {/* 회사 정보 */}
         <div className="text-xs">

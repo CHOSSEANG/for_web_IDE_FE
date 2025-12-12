@@ -1,11 +1,20 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
 
- export default clerkMiddleware();
+
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+
+const isProtectedRoute = createRouteMatcher([
+  "/main(.*)",
+  "/dashboard(.*)",
+]);
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+});
 
 export const config = {
   matcher: [
-    // 인증을 검사할 경로만 지정
     "/((?!_next|static|favicon.ico|logo|icons|sign-in|sign-up|welcome|user-profile).*)",
   ],
 };
-
