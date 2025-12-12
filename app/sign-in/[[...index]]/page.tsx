@@ -2,6 +2,7 @@
 import { SignUp } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
+
 export default function SignUpPage() {
   return (
     <main className="flex min-h-screen items-center justify-center">

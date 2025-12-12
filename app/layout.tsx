@@ -3,33 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "./providers/theme-provider";
 
-const ROUTE_TITLE: Record<string, string> = {
-  "/": "welcome",
-  "/sign-in": "sign in",
-  "/sign-up": "sign up",
-  "/welcome": "welcome",
-  "/dev-preview": "dev preview",
-  "/preview": "preview",
-  "/404": "404",
-  "/ide": "ide",
-  "/settings": "settings",
-  "/profile": "profile",
-};
-
-export async function generateMetadata({
-  pathname,
-}: {
-  pathname: string;
-}) {
-  const normalized = pathname.replace(/\/$/, "") || "/";
-  const label =
-    ROUTE_TITLE[normalized] ??
-    normalized.split("/").filter(Boolean).slice(-1)[0] ??
-    "home";
-  return {
-    title: `WEBIC - ${label}`,
-  };
-}
+export const metadata = { title: "WEBIC" }; 
 
 // Clerk의 버튼/유저메뉴 기능이 필요하다면 아래 import 사용 가능
 // import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";

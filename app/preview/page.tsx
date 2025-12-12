@@ -5,7 +5,7 @@ import { Sun, Moon } from "lucide-react";
 import { WebicTabs } from "@/components/ui/tabs";
 import { UserToggle } from "@/components/UserToggle";
 
-
+export const metadata = { title: "WEBIC - preview" };
 
 export default function ButtonPreviewPage() {
   return (
