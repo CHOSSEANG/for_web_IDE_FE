@@ -34,7 +34,7 @@ export default function Logo({
     light: {
       default: "/logo/logo-light.svg",
       bar: "/logo/logo-light-bar.svg",
-      icon: "/logo/logo.svg",
+      icon: "/logo/logo-w.svg",
       webic: "/logo/logo-light-webic.svg",
     },
   };
