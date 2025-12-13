@@ -20,7 +20,7 @@ export default function ProfileTab() {
           <p className="text-sm text-gray-400">user@example.com</p>
         </div>
 
-        <button className="rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600">
+        <button className="rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 whitespace-normal break-keep">
           프로필 수정
         </button>
       </div>

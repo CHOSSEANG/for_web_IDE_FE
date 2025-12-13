@@ -1,9 +1,12 @@
 // app/(auth)/sign-in/page.tsx
 import Link from "next/link";
+import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
+      <div className="flex w-full mt-10 mb-10 flex-col items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
+        <div className="flex flex-col items-center gap-6">
       <div className="w-full max-w-md bg-[#2A3142] rounded-2xl p-8 shadow-lg">
 
         {/* Title */}
@@ -88,6 +91,14 @@ export default function SignInPage() {
           </Link>
         </p>
       </div>
+
+      
+          {/* Clerk 로그인 박스 */}
+          <SignIn />
+
+        </div>
+      </div>
+
     </main>
   );
 }

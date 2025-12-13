@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
-//import { UserToggle } from "@/components/UserToggle";
+import { UserToggle } from "@/components/UserToggle";
 
 export default function Page() {
   return (
@@ -8,7 +8,7 @@ export default function Page() {
 
       {/* 오른쪽 상단에 고정 임시작업 */}
       <div className="fixed top-4 right-4">
-        {/* <UserToggle /> */}<ThemeToggle /> 
+        <UserToggle /><ThemeToggle /> 
       </div>
 
       {/* WebIC 컬러 시스템 확인용 박스 */}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import ProfileTab from "./ProfileTab";
 import SecurityTab from "./SecurityTab";
 
+
 export default function AccountContent() {
   const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
 
