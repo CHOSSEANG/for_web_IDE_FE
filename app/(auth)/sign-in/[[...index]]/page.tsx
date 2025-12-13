@@ -78,7 +78,7 @@ export default function SignInPage() {
 
         {/* Find account */}
         <p className="mt-4 text-center text-sm">
-          <Link href="/find-account" className="text-indigo-400 hover:underline">
+          <Link href="/find-password" className="text-indigo-400 hover:underline">
             아이디 / 비밀번호 찾기
           </Link>
         </p>
