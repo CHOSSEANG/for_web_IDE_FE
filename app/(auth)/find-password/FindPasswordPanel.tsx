@@ -1,35 +1,52 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
-export default function FindPasswordPanel() {
+type FindPasswordPanelProps = {
+  onClose: () => void;
+};
+
+export default function FindPasswordPanel({
+  onClose,
+}: FindPasswordPanelProps) {
   const [mode, setMode] = useState<"id" | "password">("id");
 
   return (
-    <div className="w-full max-w-md bg-[#2A3142] rounded-2xl p-8 shadow-lg">
+    <div className="relative w-full max-w-md rounded-2xl bg-[#191e28] p-8 shadow-lg">
+      {/* Close */}
+      <button
+        onClick={onClose}
+        className="absolute right-4 top-4 text-gray-400 hover:text-white"
+        aria-label="닫기"
+      >
+        ✕
+      </button>
+
       {/* Title */}
-      <h1 className="text-center text-2xl font-semibold text-white mb-6">
+      <h1 className="mb-6 text-center text-2xl font-semibold text-white">
         계정 찾기
       </h1>
 
       {/* Tabs */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-3">
         <button
+          type="button"
           onClick={() => setMode("id")}
           className={`rounded-lg py-3 text-sm font-medium transition ${
             mode === "id"
-              ? "bg-indigo-500 text-white"
+              ? "bg-indigo-600 text-white"
               : "bg-[#3A4152] text-gray-300"
           }`}
         >
           아이디 찾기
         </button>
+
         <button
+          type="button"
           onClick={() => setMode("password")}
           className={`rounded-lg py-3 text-sm font-medium transition ${
             mode === "password"
-              ? "bg-indigo-500 text-white"
+              ? "bg-indigo-600 text-white"
               : "bg-[#3A4152] text-gray-300"
           }`}
         >
@@ -38,14 +55,14 @@ export default function FindPasswordPanel() {
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-400 mb-6 text-center">
+      <p className="mb-6 text-center text-sm text-gray-400">
         이름과 전화번호를 입력해 주세요.
       </p>
 
       {/* Form */}
       <form className="space-y-4">
         <div>
-          <label className="block text-sm text-gray-300 mb-1">이름</label>
+          <label className="mb-1 block text-sm text-gray-300">이름</label>
           <input
             type="text"
             placeholder="홍길동"
@@ -54,7 +71,9 @@ export default function FindPasswordPanel() {
         </div>
 
         <div>
-          <label className="block text-sm text-gray-300 mb-1">전화번호</label>
+          <label className="mb-1 block text-sm text-gray-300">
+            전화번호
+          </label>
           <input
             type="tel"
             placeholder="010-1234-5678"
@@ -65,7 +84,7 @@ export default function FindPasswordPanel() {
         {/* Submit */}
         <button
           type="button"
-          className="w-full mt-4 rounded-lg bg-indigo-500 py-3 text-white font-medium hover:bg-indigo-600 transition"
+          className="mt-4 w-full rounded-lg bg-indigo-600 py-3 font-medium text-white transition hover:bg-indigo-900"
         >
           메시지 보내기
         </button>
@@ -73,9 +92,13 @@ export default function FindPasswordPanel() {
 
       {/* Back */}
       <p className="mt-6 text-center text-sm">
-        <Link href="/sign-in" className="text-indigo-400 hover:underline">
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-indigo-400 hover:underline"
+        >
           ← 로그인 페이지로 돌아가기
-        </Link>
+        </button>
       </p>
     </div>
   );

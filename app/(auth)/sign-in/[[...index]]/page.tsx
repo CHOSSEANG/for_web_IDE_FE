@@ -2,16 +2,20 @@
 import Link from "next/link";
 import { SignIn } from "@clerk/nextjs";
 
+export const metadata = {
+  title: "WEBIC - Sign In",
+};
+
 export default function SignInPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
-      <div className="flex w-full mt-10 mb-10 flex-col items-center justify-center bg-gradient-to-br from-[#0B1020] via-[#0E1325] to-[#0A0F1D]">
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="flex w-full mt-10 mb-10 flex-col items-center">
         <div className="flex flex-col items-center gap-6">
-      <div className="w-full max-w-md bg-[#2A3142] rounded-2xl p-8 shadow-lg">
+      <div className="w-full max-w-md bg-[#191e28] rounded-2xl p-8 shadow-lg">
 
         {/* Title */}
         <h1 className="text-center text-2xl font-semibold text-white mb-6">
-          Welcome back
+          Welcome to WebIC
         </h1>
 
         {/* Social Login */}
@@ -52,7 +56,8 @@ export default function SignInPage() {
               Password
             </label>
             <input
-              type="password"
+                  type="password"
+                  placeholder="********"
               className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
@@ -67,10 +72,11 @@ export default function SignInPage() {
             <label htmlFor="remember">Remember me</label>
           </div>
 
-          {/* Submit */}
+              {/* Submit */}
+
           <button
             type="button"
-            className="w-full mt-4 rounded-lg bg-indigo-500 py-3 text-white font-medium hover:bg-indigo-600 transition"
+            className="w-full mt-4 rounded-lg bg-indigo-700 py-3 text-white font-medium hover:bg-indigo-900 transition"
           >
             Log In
           </button>
@@ -85,7 +91,7 @@ export default function SignInPage() {
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
-          Don&apos;t have an account?{" "}
+          아직 회원이 아니신가요?{" "}
           <Link href="/sign-up" className="text-indigo-400 hover:underline">
             Sign up
           </Link>
