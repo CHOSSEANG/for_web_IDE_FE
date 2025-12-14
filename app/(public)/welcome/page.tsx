@@ -1,12 +1,9 @@
 "use client";
 import Logo from "@/components/brand/Logo";
-
 export default function WelcomePage() {
   return (
-    <main className="min-h-screen w-full flex flex-col">
-      
-      {/* ───────────────────────🔹 Content (Centered)─────────────────────── */}
-      <div className="flex flex-col flex-1 items-center justify-center px-6 py-20 gap-20">
+    <main className="w-full flex flex-col">
+      <div className="flex flex-col items-center justify-center px-6 py-20 gap-20">
         <div className="flex items-center gap-2">
           <Logo variant="icon" className="w-56 h-56" />
         </div>
@@ -14,7 +11,7 @@ export default function WelcomePage() {
         <section className="text-center max-w-2xl">
           <h1 className="text-4xl font-bold mb-4">Welcome to WebIC</h1>
           <p className="text-text-muted text-lg">
-            브라우저에서 바로 개발하고 AI와 함께 더 빠르게 협업하는 Web IDE
+            브라우저에서 채팅과 시간을 체크하며 함께 더 빠르게 협업하는 Web IDE
           </p>
         </section>
 

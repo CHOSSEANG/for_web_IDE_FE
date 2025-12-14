@@ -1,7 +1,6 @@
-import InfoPageShell from "@/components/info-page-shell";
-import SiteShell from "@/components/site-shell";
-
-export const metadata = { title: "WEBIC - contact" };
+export const metadata = {
+  title: "WEBIC - Contact",
+};
 
 export default function ContactPage() {
   const sections = [
@@ -26,14 +25,46 @@ export default function ContactPage() {
   ];
 
   return (
-    <SiteShell>
-      <InfoPageShell
-        highlight="always available"
-        pageTitle="문의하기"
-        pageSubtitle="WebIC 팀과 직접 대화하고 협업의 문을 여세요."
-        sections={sections}
-        cta={{ label: "이메일 보내기", href: "mailto:hello@webic.dev" }}
-      />
-    </SiteShell>
+    <main className="w-full flex flex-col items-center px-6 py-20 gap-20">
+      {/* Hero 영역 – 기존 페이지들과 동일 */}
+      <section className="text-center max-w-2xl">
+        <h1 className="text-4xl font-bold mb-4">문의하기</h1>
+        <p className="text-text-muted text-lg">
+          WebIC 팀과 직접 대화하고 협업의 문을 여세요.
+        </p>
+      </section>
+
+      {/* Contact Cards – 동일한 카드 레이아웃 */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
+        {sections.map((section) => (
+          <div
+            key={section.title}
+            className="p-6 rounded-lg bg-bg-raised border border-border-light flex flex-col gap-3"
+          >
+            <h3 className="font-semibold text-lg">{section.title}</h3>
+
+            <p className="text-sm text-text-muted">
+              {section.description}
+            </p>
+
+            <ul className="text-xs text-text-muted list-disc pl-4">
+              {section.details.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      {/* CTA 영역 – 웰컴 톤에 맞춘 단일 액션 */}
+      <div className="mt-4">
+        <a
+          href="mailto:hello@webic.dev"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition"
+        >
+          이메일 보내기
+        </a>
+      </div>
+    </main>
   );
 }

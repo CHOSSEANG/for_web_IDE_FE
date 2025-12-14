@@ -1,6 +1,3 @@
-import InfoPageShell from "@/components/info-page-shell";
-import SiteShell from "@/components/site-shell";
-
 export const metadata = { title: "WEBIC - company" };
 
 export default function CompanyPage() {
@@ -26,14 +23,36 @@ export default function CompanyPage() {
   ];
 
   return (
-    <SiteShell>
-      <InfoPageShell
-        highlight="webic team"
-        pageTitle="회사 소개"
-        pageSubtitle="WebIC 팀이 어떤 비전과 방식으로 제품을 만드는지 보여줍니다."
-        sections={sections}
-        cta={{ label: "팀에 연락하기", href: "/contact" }}
-      />
-    </SiteShell>
+    <main className="w-full flex flex-col items-center px-6 py-20 gap-20">
+      {/* Hero 영역 – 웰컴/서비스와 동일 */}
+      <section className="text-center max-w-2xl">
+        <h1 className="text-4xl font-bold mb-4">회사 소개</h1>
+        <p className="text-text-muted text-lg">
+          WebIC 팀이 어떤 비전과 방식으로 제품을 만드는지 보여줍니다.
+        </p>
+      </section>
+
+      {/* Info Cards – 웰컴 스타일 카드 */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl w-full">
+        {sections.map((section) => (
+          <div
+            key={section.title}
+            className="p-6 rounded-lg bg-bg-raised border border-border-light flex flex-col gap-3"
+          >
+            <h3 className="font-semibold text-lg">{section.title}</h3>
+
+            <p className="text-sm text-text-muted">
+              {section.description}
+            </p>
+
+            <ul className="text-xs text-text-muted list-disc pl-4">
+              {section.details.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+    </main>
   );
 }
