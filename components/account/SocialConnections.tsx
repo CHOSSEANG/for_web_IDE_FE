@@ -9,22 +9,30 @@ export default function SocialConnections() {
   ];
 
   return (
-    <div className="bg-[#2A3142] rounded-2xl p-6">
-      <h2 className="text-lg font-semibold mb-4">소셜 로그인 연결</h2>
+    <div className="bg-[#2A3142] rounded-2xl p-4">
+      <h2 className="text-base font-semibold mb-3">소셜 로그인 연결</h2>
 
-      <ul className="space-y-4">
+      <ul
+        className="
+          grid
+          grid-cols-2
+          sm:grid-cols-2
+          lg:grid-cols-3
+          gap-2
+        "
+      >
         {providers.map((provider, idx) => (
           <li
             key={idx}
-            className="flex justify-between border-b border-white/5 pb-4 last:border-none"
+            className="flex items-center justify-between rounded-lg bg-[#3A4152] px-3 py-2"
           >
-            <span>{provider.name}</span>
+            <span className="text-sm">{provider.name}</span>
 
             {provider.connected ? (
-              <span className="text-sm text-green-400">연결됨</span>
+              <span className="text-xs text-green-400">연결됨</span>
             ) : (
-              <button className="text-sm rounded-lg bg-indigo-500 px-3 py-1 hover:bg-indigo-600">
-                연결하기
+              <button className="text-xs rounded-md bg-indigo-500 px-2 py-1 hover:bg-indigo-600">
+                연결
               </button>
             )}
           </li>

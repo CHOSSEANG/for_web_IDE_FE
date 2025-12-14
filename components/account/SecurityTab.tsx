@@ -1,8 +1,15 @@
 import { useState } from "react";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
+import ChangePasswordModal from "@/components/modals/ChangePasswordModal";
+import TwoFactorModal from "@/components/modals/TwoFactorModal";
+
+
 
 export default function SecurityTab() {
   const [open, setOpen] = useState(false);
+  const [pwOpen, setPwOpen] = useState(false);
+  const [twoFaOpen, setTwoFaOpen] = useState(false);
+  
 
   const devices = [
     {
@@ -32,7 +39,8 @@ export default function SecurityTab() {
                 계정 보안을 위해 주기적으로 비밀번호를 변경하세요.
               </p>
             </div>
-            <button className="shrink-0 rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 whitespace-normal break-keep">
+            <button onClick={() => setPwOpen(true)}
+              className="shrink-0 rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 whitespace-normal break-keep">
               비밀번호 변경
             </button>
           </div>
@@ -68,7 +76,8 @@ export default function SecurityTab() {
                 로그인 시 추가 인증을 통해 계정 보안을 강화합니다.
               </p>
             </div>
-            <button className="shrink-0 rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 whitespace-normal break-keep">
+            <button onClick={() => setTwoFaOpen(true)}
+              className="shrink-0 rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 whitespace-normal break-keep">
               2단계 인증 설정
             </button>
           </div>
@@ -95,9 +104,10 @@ export default function SecurityTab() {
 
       </section>
 
-      {/* 🔴 모달은 section 밖 */}
-      <DeleteAccountModal open={open} onClose={() => setOpen(false)}
-      />
+      {/*모달은 section 밖 */}
+      <DeleteAccountModal open={open} onClose={() => setOpen(false)} />
+      <ChangePasswordModal open={pwOpen} onClose={() => setPwOpen(false)} />
+      <TwoFactorModal open={twoFaOpen} onClose={() => setTwoFaOpen(false)} />
     </>
   );
 }

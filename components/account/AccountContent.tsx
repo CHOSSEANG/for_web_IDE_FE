@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import ProfileTab from "./ProfileTab";
-import SecurityTab from "./SecurityTab";
+import ProfileTab from "@/components/account/ProfileTab";
+import SecurityTab from "@/components/account/SecurityTab";
+import { SignOutButton } from "@clerk/nextjs";
+
 
 
 export default function AccountContent() {
@@ -14,9 +16,11 @@ export default function AccountContent() {
       {/* Header */}
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">계정 관리</h1>
-        <button className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]">
-          로그아웃
-        </button>
+        <SignOutButton redirectUrl="/welcome">
+          <button className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]">
+            로그아웃
+          </button>
+        </SignOutButton>
       </header>
 
       {/* Tabs */}

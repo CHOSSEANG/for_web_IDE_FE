@@ -12,6 +12,11 @@ export default function WelcomePage() {
       <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light">
         {/* 좌측: 회사 정보 */}
         <div className="flex gap-6 text-sm text-text-muted">
+          <div className="flex items-center gap-2">
+          <Logo variant="bar" className="w-15 h-5"/>
+          </div>
+          
+
           <Link href="/about" className="hover:text-text-primary transition">
             회사소개
           </Link>
@@ -33,11 +38,7 @@ export default function WelcomePage() {
       {/* ───────────────────────🔹 Content (Centered)─────────────────────── */}
       <div className="flex flex-col flex-1 items-center justify-center px-6 py-20 gap-20">
         <div className="flex items-center gap-2">
-          <Logo
-            variant="webic"
-            theme="light"
-            className="w-56 h-56"
-          />
+          <Logo variant="default" />
         </div>
         {/* Hero Section */}
         <section className="text-center max-w-2xl">
@@ -76,30 +77,19 @@ export default function WelcomePage() {
           <Link
             href="/sign-in"
             className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium"
-          >
-            로그인
-          </Link>
+          >로그인</Link>
 
-          <Link
-            href="/sign-up"
+          <Link href="/sign-up"
             className="px-6 py-3 rounded-lg border border-border-light font-medium"
-          >
-            회원가입
-          </Link>
+          >회원가입</Link>
         </section>
-
       </div>
 
       {/* ───────────────────────🔹 Footer─────────────────────── */}
       <footer className="w-full py-6 px-8 border-t border-border-light flex justify-between items-center text-sm text-text-muted">
-        
         {/* 서비스 로고 */}
           <div className="flex items-center gap-2">
-            <Logo
-              variant="icon"
-              theme="dark"
-              className="w-6 h-6"
-            />
+            <Logo variant="icon" className="w-6 h-6"/>
             <span>WebIC</span>
           </div>
 

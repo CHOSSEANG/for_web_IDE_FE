@@ -1,15 +1,16 @@
 // app/(auth)/layout.tsx
+import type { ReactNode } from "react";
+
 export const metadata = {
   title: "WebIC · 인증",
 };
 
-export default function AuthLayout({
-  children,
-  modal,
-}: {
-  children: React.ReactNode;
-  modal?: React.ReactNode;
-}) {
+type AuthLayoutProps = {
+  children: ReactNode;
+  modal: ReactNode;
+};
+
+export default function AuthLayout({ children, modal }: AuthLayoutProps) {
   return (
     <>
       {children}

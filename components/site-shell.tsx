@@ -62,7 +62,6 @@ export default function SiteShell({ children }: SiteShellProps) {
           <div className="flex items-center gap-2">
             <Logo
               variant="icon"
-              theme="dark"
               className="w-5 h-5"
             />
             <span>© 2025 WebIC Inc. All rights reserved.</span>
