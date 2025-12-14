@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Toggle } from "@/components/ui/toggle";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function FormPreview() {
   return (

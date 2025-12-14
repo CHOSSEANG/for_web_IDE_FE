@@ -1,7 +1,7 @@
 "use client";
 
 import { WebicTabs } from "@/components/ui/tabs";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 
 export default function WebicTabsPreview() {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CommandDialog } from "@/components/ui/command-dialog";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function CommandPreview() {
   const [open, setOpen] = useState(false);

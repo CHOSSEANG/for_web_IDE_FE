@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { FileTree } from "@/components/filetree/file-tree";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function FileTreePreviewPage() {
   const [icons, setIcons] = useState<string[]>([]);

@@ -3,7 +3,7 @@ import SiteShell from "@/components/site-shell";
 
 export const metadata = { title: "WEBIC - services" };
 
-export default function AboutPage() {
+export default function ServicePage() {
   const sections = [
     {
       title: "AI 도움 개발",
