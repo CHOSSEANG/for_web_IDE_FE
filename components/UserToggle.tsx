@@ -9,6 +9,12 @@ import { Button } from "@/components/ui/button";
 export function UserToggle() {
   const { openModal } = useAccountModal(); // 훅은 최상위에서만 호출
 
+  const handleOpen = () => {    // 임시로그 추가
+    console.log("🔥 user icon clicked");
+    openModal();
+  };   
+  
+
   return (
     <div className="flex items-center gap-4">
       <SignedOut>
@@ -19,7 +25,7 @@ export function UserToggle() {
 
       <SignedIn>
         {/* 버튼이 눌리면 스토어 open 상태가 true로 설정되어 모달이 켜짐 */}
-        <Button type="button" onClick={openModal} aria-label="내 정보 열기">
+        <Button type="button" onClick={handleOpen} aria-label="내 정보 열기">
           <UserRound className="w-6 h-6 cursor-pointer" />
         </Button>
       </SignedIn>

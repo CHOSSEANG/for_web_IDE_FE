@@ -42,7 +42,7 @@ export default function WelcomePage() {
 
         <Link
           href="/preview"
-          className="px-5 py-3 bg-success rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover transition"
+          className="px-5 py-3 rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover transition"
         >
           버튼 프리뷰 바로가기
         </Link>

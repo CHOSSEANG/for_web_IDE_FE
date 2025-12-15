@@ -7,6 +7,8 @@ import { useAccountModal } from "@/components/account/useAccountModal";
 export default function RootLayout({ children }: { children: ReactNode }) {
   const { open, closeModal } = useAccountModal();
 
+  console.log("🟢 modal open =", open);
+
   return (
     <>
       {children}

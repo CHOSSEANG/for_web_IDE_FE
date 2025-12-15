@@ -6,8 +6,11 @@ type AccountModalState = {
   closeModal: () => void;
 };
 
-export const useAccountModal = create<AccountModalState>((set) => ({
-  open: false,
-  openModal: () => set({ open: true }),
-  closeModal: () => set({ open: false }),
-}));
+export const useAccountModal = create<AccountModalState>((set) => {
+  console.log("zustand store initialized");
+  return {
+    open: false,
+    openModal: () => set({ open: true }),
+    closeModal: () => set({ open: false }),
+  };
+});

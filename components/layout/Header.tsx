@@ -46,7 +46,7 @@ export default function Header() {
           <Button asChild>
             <Link
               href="/sign-up"
-              className="text-xs  rounded-md px-2 py-2  hover:bg-bg-raised transition"
+              className="text-xs rounded-md px-2 py-2  hover:bg-bg-raised transition"
             >
               회원가입
             </Link>

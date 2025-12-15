@@ -2,6 +2,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "./providers/theme-provider";
+import AccountModalRoot from "@/components/account/AccountModalRoot";
 
 export const metadata = { title: "WEBIC" };
 
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ClerkProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <AccountModalRoot />
           </ThemeProvider>
         </ClerkProvider>
       </body>
