@@ -1,3 +1,4 @@
+"use client"; // useState 사용중인 클라이언트 컴포넌트인지 명시
 import { useState } from "react";
 import SocialConnections from "@/components/account/SocialConnections";
 import EditProfileModal from "@/components/modals/EditProfileModal";

@@ -1,3 +1,4 @@
+"use client"; // useState 사용하는 클라이언트 컴포넌트 표시
 import { useState } from "react";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal";

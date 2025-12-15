@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react"; // ReactNode 명시로 props 오류 제거
 
 interface ThemeContextValue {
   theme: "light" | "dark";
@@ -8,7 +9,7 @@ interface ThemeContextValue {
 }
 
 interface ThemeProviderProps {
-  children: React.ReactNode;
+  children: ReactNode; // ReactNode 타입으로 ThemeProviderProps 오류 제거
   attribute?: string;
   defaultTheme?: string;
   enableSystem?: boolean;

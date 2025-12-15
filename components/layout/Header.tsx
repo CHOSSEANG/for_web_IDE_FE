@@ -35,18 +35,22 @@ export default function Header() {
         {/* 로그인 전 */}
         {!isSignedIn && (
           <>
-            <Button asChild size="sm">
-              <Link href="/sign-in"
-                className="text-xs px-2 py-2 rounded-md hover:text-text-primary transition">
-                로그인
-              </Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/sign-up"
-                className="text-xs  rounded-md px-2 py-2  hover:bg-bg-raised transition">
-                회원가입
-              </Link>
-            </Button>
+          <Button asChild>
+            <Link
+              href="/sign-in"
+              className="text-xs px-2 py-2 rounded-md hover:text-text-primary transition"
+            >
+              로그인
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link
+              href="/sign-up"
+              className="text-xs  rounded-md px-2 py-2  hover:bg-bg-raised transition"
+            >
+              회원가입
+            </Link>
+          </Button>
           </>
         )}
 
