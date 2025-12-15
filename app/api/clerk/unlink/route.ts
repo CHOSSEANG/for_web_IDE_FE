@@ -6,7 +6,7 @@ type UnlinkBody = {
 };
 
 export async function POST(req: Request) {
-  const userId = auth().userId;
+  const { userId } = await auth();
   if (!userId) {
     return NextResponse.json(
       { message: "로그인한 사용자만 외부 연결을 해제할 수 있습니다." },
@@ -32,7 +32,8 @@ export async function POST(req: Request) {
     );
   }
 
-  const user = await clerkClient.users.getUser(userId);
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
   const externalAccount = user.externalAccounts?.find(
     (account) => account.provider === provider
   );
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    await clerkClient.users.deleteUserExternalAccount({
+    await client.users.deleteUserExternalAccount({
       userId,
       externalAccountId: externalAccount.id,
     });
