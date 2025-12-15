@@ -1,29 +1,68 @@
-import Link from "next/link";
+"use client";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function IdeRoomPage(props: any) {
-  const { params } = props as { params: { id: string } };
+import { useState } from "react";
+import { MessageSquare, FolderTree } from "lucide-react";
+
+import ChatPanel from "@/app/ide/components/chat/ChatPanel";
+import FileTree from "@/app/ide/components/filetree/FileTree";
+import Editor from "@/app/ide/components/editor/Editor";
+
+type LeftPanelTab = "chat" | "filetree";
+
+interface IdePageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function IdePage({ params }: IdePageProps) {
+  const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
+
   return (
-    <div className="min-h-screen bg-bg-base text-text-primary p-8">
-      <header className="flex justify-between mb-6">
-        <div>
-          <p className="text-xs text-text-secondary">IDE Room ID</p>
-          <p className="text-2xl font-semibold">{params.id}</p>
-        </div>
-        <Link
-          href="/"
-          className="inline-flex items-center px-4 py-2 rounded-lg border border-border-light bg-bg-raised"
-        >
-          메인으로 돌아가기
-        </Link>
-      </header>
+    <main className="h-screen w-screen bg-[#0B1020] text-white">
+      <div className="flex h-full">
+        {/* Left Sidebar */}
+        <aside className="flex h-full">
+          {/* 1️⃣ Icon Toggle Bar */}
+          <div className="w-12 bg-[#0E1325] border-r border-white/10 flex flex-col items-center py-3 gap-4">
+            <button
+              onClick={() => setActiveTab("chat")}
+              className={`p-2 rounded transition
+                ${
+                  activeTab === "chat"
+                    ? "text-indigo-400 bg-white/10"
+                    : "text-gray-400 hover:text-white"
+                }`}
+            >
+              <MessageSquare size={20} />
+            </button>
 
-      <section className="rounded-2xl border border-border-light bg-white/60 p-6 shadow-sm">
-        <p className="text-text-secondary">
-          여기에 실제 IDE 뷰를 연결하면 됩니다. Liveblocks나 Monaco 에디터를 렌더하도록
-          고도화하면 공유 실시간 편집도 가능해집니다.
-        </p>
-      </section>
-    </div>
+            <button
+              onClick={() => setActiveTab("filetree")}
+              className={`p-2 rounded transition
+                ${
+                  activeTab === "filetree"
+                    ? "text-indigo-400 bg-white/10"
+                    : "text-gray-400 hover:text-white"
+                }`}
+            >
+              <FolderTree size={20} />
+            </button>
+          </div>
+
+          {/* 2️⃣ Dynamic Left Panel */}
+          <div className="w-[300px] border-r border-white/10 bg-[#12182B]">
+            {activeTab === "chat" && <ChatPanel containerId={params.id} />}
+
+            {activeTab === "filetree" && <FileTree />}
+          </div>
+        </aside>
+
+        {/* Right: Editor */}
+        <section className="flex-1 bg-[#0E1325]">
+          <Editor />
+        </section>
+      </div>
+    </main>
   );
 }
