@@ -1,6 +1,7 @@
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import AccountContent from "./AccountContent";
 
 type AccountModalProps = {
@@ -15,6 +16,10 @@ export default function AccountModal({
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl bg-[#0A0F1D] text-white">
+        <VisuallyHidden>
+          <DialogTitle>내 정보</DialogTitle>
+        </VisuallyHidden>
+
         <AccountContent />
       </DialogContent>
     </Dialog>

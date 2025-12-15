@@ -42,14 +42,14 @@ export default function WelcomePage() {
 
         <Link
           href="/preview"
-          className="px-5 py-3 rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover transition"
+          className="px-5 py-3 rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover/100 transition"
         >
           버튼 프리뷰 바로가기
         </Link>
 
         <Link
           href="/404"
-          className="px-5 py-3 rounded-lg bg-red-500/80 text-white text-center hover:bg-red-500 transition font-medium"
+          className="px-5 py-3 rounded-lg bg-red-500/80 text-white text-center hover:bg-red-600 transition font-medium"
         >
           404 페이지
         </Link>
