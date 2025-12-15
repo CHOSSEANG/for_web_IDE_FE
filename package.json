@@ -35,7 +35,8 @@
     "vscode-icons-js": "^11.6.1",
     "y-monaco": "^0.1.6",
     "y-protocols": "^1.0.6",
-    "yjs": "^13.6.27"
+    "yjs": "^13.6.27",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@types/node": "^20.19.26",

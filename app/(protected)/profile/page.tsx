@@ -1,7 +1,5 @@
-"use client";
-
-import ProfileTab from "@/components/account/ProfileTab";
+import { redirect } from "next/navigation";
 
 export default function ProfilePage() {
-  return <ProfileTab />;
+  redirect("/");
 }

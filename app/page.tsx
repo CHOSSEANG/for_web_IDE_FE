@@ -6,8 +6,6 @@ export default function WelcomePage() {
   return (
     <>
     <main className="min-h-screen bg-bg-base text-text-primary flex items-center justify-center flex-col gap-6">
-
-      오른쪽 상단에 고정 임시작업
       <div className="fixed top-4 right-4">
         <UserToggle /><ThemeToggle /> 
       </div>
