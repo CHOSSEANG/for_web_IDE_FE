@@ -4,7 +4,7 @@ import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export default clerkMiddleware((auth, req) => {
-  const userId = auth.userId;  //clerk v6.x 에서 호출금지 오류가 있음. 
+  const userId = auth().userId;  //clerk v6.x 에서 호출금지 오류가 있음. 
   const { pathname } = req.nextUrl;
 
   // 루트 접속 분기
