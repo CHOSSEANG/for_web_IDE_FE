@@ -16,6 +16,12 @@ export default function MessageInput({
       <input
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onSend();
+          }
+        }}
         placeholder="메시지 입력"
         className="flex-1 bg-white text-black px-1 -y-2 placeholder:text-gray-400"
       />
