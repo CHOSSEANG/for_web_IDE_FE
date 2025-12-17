@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import type { ClerkAPIError } from "@clerk/types";
 
 type SocialProvider = "github" | "google" | "discord";
 // Define the social login union once so the handler stays strongly typed without redefinition.
@@ -15,6 +16,7 @@ export default function SignInPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [lastProvider, setLastProvider] = useState<string | null>(() => {
     // eslint requires avoiding immediate setState in effects, so we read localStorage lazily here.
     if (typeof window === "undefined") return null;
@@ -73,9 +75,9 @@ export default function SignInPage() {
                 >
                   {p}
                   {lastProvider === p && (
-                    <span className="absolute -top-3 -right-1 text-[9px] font-semibold px-1 rounded bg-slate-300 text-gray-600">
-                      계속하기
-                    </span>
+                    <span className="absolute -top-2 -right-2 rounded-full bg-indigo-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                계속하기
+              </span>
                   )}
                 </button>
               ))}
@@ -93,7 +95,8 @@ export default function SignInPage() {
               <div>
                 <label className="block text-sm text-gray-300 mb-1">Email</label>
                 <input
-                  type="email"
+                type="email"
+                name="email"
                   placeholder="Email"
                   autoComplete="email"
                   value={email}
@@ -106,6 +109,7 @@ export default function SignInPage() {
                 <label className="block text-sm text-gray-300 mb-1">Password</label>
                 <input
                   type="password"
+                  name="password"
                   placeholder="Password"
                   autoComplete="current-password"
                   value={password}
