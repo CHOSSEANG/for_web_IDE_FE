@@ -2,29 +2,26 @@
 
 import Image from "next/image";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
 
-type LogoVariant =
-  | "default"
-  | "bar"
-  | "icon"
-  | "webic";
-
-type Theme = "light" | "dark";
+type LogoVariant = "default" | "bar" | "icon" | "webic";
 
 interface LogoProps {
   variant?: LogoVariant;
-  theme?: Theme;
   className?: string;
   priority?: boolean;
 }
 
 export default function Logo({
   variant = "default",
-  theme = "dark",
   className,
   priority = false,
 }: LogoProps) {
-  const srcMap: Record<Theme, Record<LogoVariant, string>> = {
+  const { resolvedTheme } = useTheme();
+
+  const theme = resolvedTheme === "dark" ? "dark" : "light";
+
+  const srcMap: Record<"light" | "dark", Record<LogoVariant, string>> = {
     dark: {
       default: "/logo/logo-dark.svg",
       bar: "/logo/logo-dark-bar.svg",
@@ -34,7 +31,7 @@ export default function Logo({
     light: {
       default: "/logo/logo-light.svg",
       bar: "/logo/logo-light-bar.svg",
-      icon: "/logo/logo.svg",
+      icon: "/logo/logo-light.svg",
       webic: "/logo/logo-light-webic.svg",
     },
   };

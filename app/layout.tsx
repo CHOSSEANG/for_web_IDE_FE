@@ -2,41 +2,41 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { ReactNode } from "react";
 import { ThemeProvider } from "./providers/theme-provider";
+import AccountModalRoot from "@/components/account/AccountModalRoot";
 
-export const metadata = { title: "WEBIC" }; 
+export const metadata = { title: "WEBIC" };
 
-// Clerk의 버튼/유저메뉴 기능이 필요하다면 아래 import 사용 가능
-// import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="ko" suppressHydrationWarning>
-        <head>
-          {/* 유리 커스텀 테마 초기화 스크립트 그대로 유지 */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function() {
-                  try {
-                    const theme = localStorage.getItem("theme");
-                    if (theme === "dark") {
-                      document.documentElement.classList.add("dark");
-                    } else if (theme === "light") {
-                      document.documentElement.classList.remove("dark");
-                    }
-                  } catch (e) {}
-                })();
-              `,
-            }}
-          />
-        </head>
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        {/* 초기 테마 깜빡임 방지용 스크립트 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  const theme = localStorage.getItem("theme");
+                  if (theme === "dark") {
+                    document.documentElement.classList.add("dark");
+                  } else if (theme === "light") {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
 
-        <body>
-          <ThemeProvider>
+      <body>
+        <ClerkProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <AccountModalRoot />
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

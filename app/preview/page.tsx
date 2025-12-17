@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Sun, Moon } from "lucide-react";
 import { WebicTabs } from "@/components/ui/tabs";
 import { UserToggle } from "@/components/UserToggle";

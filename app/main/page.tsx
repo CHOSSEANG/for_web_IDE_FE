@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserToggle } from "@/components/UserToggle";
 
 export const metadata = { title: "WEBIC - mian" }; 
