@@ -2,7 +2,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { SignUp } from "@clerk/nextjs";
+import { SignUp, useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -15,6 +16,19 @@ import {
 export default function SignUpPage() {
   const [agreed, setAgreed] = useState(false);
   const [open, setOpen] = useState(false);
+
+  const { signIn, isLoaded } = useSignUp();
+  const router = useRouter();
+
+  if (!isLoaded) return null;
+
+  const socialLogin = (provider: "github" | "google" | "discord") => {
+    signIn.authenticateWithRedirect({
+      strategy: `oauth_${provider}`,
+      redirectUrl: "/(auth)/callback",
+      redirectUrlComplete: "/main",
+    });
+  }
 
   return (
     <main className="min-h-screen flex items-center justify-center">
@@ -29,15 +43,17 @@ export default function SignUpPage() {
 
           {/* Social Login */}
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-              GitHub
-            </button>
-            <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-              Naver
-            </button>
-            <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-              Kakao
-            </button>
+            <button onClick={() => socialLogin("github")}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
+              GitHub</button>
+
+            <button onClick={() => socialLogin("google")}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
+              Google</button>
+
+            <button onClick={() => socialLogin("discord")}
+                    className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
+              Discord</button>
           </div>
 
           {/* Divider */}
@@ -49,16 +65,19 @@ export default function SignUpPage() {
 
           {/* Form */}
           <form className="space-y-4">
-            <div>
+             <div className="flex gap-4">
+              <div className="flex-1">
               <label className="block text-sm text-gray-300 mb-1">
-                Full Name
+                User Name
               </label>
               <input
                 type="text"
-                placeholder="John Doe"
+                placeholder="John"
                 className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
-            </div>
+              </div>
+               
+              </div>
 
             <div>
               <label className="block text-sm text-gray-300 mb-1">
@@ -79,41 +98,15 @@ export default function SignUpPage() {
                   type="password"
                   placeholder=""
                 className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-300 mb-1">
-                Confirm Password
-              </label>
-              <input
-                  type="password"
-                  placeholder=""
-                className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-
-            {/* Terms 약관동의 */}
-            <div className="mt-4 text-sm text-text-muted">
-              <label className="flex items-start gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-1 accent-primary"
                 />
-                <span>
-                  동의 하시겠습니까?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setOpen(true)}
-                    className="text-primary  text-indigo-600 hover:underline"
-                  >
-                    약관보기
-                  </button>
-                </span>
-              </label>
+                <p className="mt-1 text-sm text-gray-400">
+                  경고나 안내문구 노출 
+                </p>
             </div>
+
+            
+
+            
 
             {/* Submit */}
             <button

@@ -1,12 +1,51 @@
 // app/(auth)/sign-in/page.tsx
-import Link from "next/link";
-import { SignIn } from "@clerk/nextjs";
+"use client";
 
-export const metadata = {
-  title: "WEBIC - Sign In",
-};
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const { signIn, isLoaded } = useSignIn();
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [lastProvider, setLastProvider] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("lastAuthProvider");
+    setLastProvider(stored);
+  }, []);
+
+  if (!isLoaded) return null;
+
+  const socialLogin = (provider: "github" | "google" | "discord") => {
+    localStorage.setItem("LastAuthProvider", Provider);
+    setLastProvider(provider);
+
+    signIn.authenticateWithRedirect({
+      strategy: `oauth_${provider}`,
+      redirectUrl: "/auth/callback",
+      redirectUrlComplete: "/main",
+    });
+  };
+
+  const handleEmailLogin = async () => {
+  try {
+    await signIn.create({
+      identifier: email,
+      password,
+    });
+
+    router.push("/main");
+  } catch (err) {
+    console.error(err);
+  }
+  };
+  
+  
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="flex w-full mt-10 mb-10 flex-col items-center">
@@ -20,16 +59,22 @@ export default function SignInPage() {
 
         {/* Social Login */}
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            GitHub
-          </button>
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            Naver
-          </button>
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            Kakao
-          </button>
+          {["github", "google", "discord"].map((p) => (
+            <button
+              key={p}
+              onClick={() => socialLogin(p as any)}
+              className="relative flex items-center justify-center rounded-lg bg-[#3A4152] py-2 text-sm text-white"
+            >
+              {p}
+              {lastProvider === p && (
+                <span className="absolute top-1 right-1 text-[10px] px-1.5 py-0.5 rounded bg-indigo-600">
+                  최근 사용
+                </span>
+              )}
+            </button>
+          ))}
         </div>
+
 
         {/* Divider */}
         <div className="flex items-center gap-4 text-sm text-gray-400 mb-6">
@@ -46,48 +91,40 @@ export default function SignInPage() {
             </label>
             <input
               type="email"
-              placeholder="you@example.com"
+                  placeholder="you@example.com"
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
               className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
-          </div>
-
-          <div>
+              </div>
+              
+              <div>
             <label className="block text-sm text-gray-300 mb-1">
               Password
             </label>
             <input
-                  type="password"
-                  placeholder="********"
+              type="password"
+                  placeholder="you@example.com"
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
               className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
-          {/* Remember me */}
-          <div className="flex items-center text-sm text-gray-300">
-            <input
-              type="checkbox"
-              id="remember"
-              className="mr-2 accent-indigo-500"
-            />
-            <label htmlFor="remember">Remember me</label>
-          </div>
+        
 
               {/* Submit */}
 
           <button
-            type="button"
+                type="button"
+                onClick={handleEmailLogin} 
             className="w-full mt-4 rounded-lg bg-indigo-700 py-3 text-white font-medium hover:bg-indigo-900 transition"
           >
             Log In
           </button>
         </form>
 
-        {/* Find account */}
-        <p className="mt-4 text-center text-sm">
-          <Link href="/find-password" className="text-indigo-400 hover:underline">
-            아이디 / 비밀번호 찾기
-          </Link>
-        </p>
+
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-400">
@@ -97,10 +134,6 @@ export default function SignInPage() {
           </Link>
         </p>
       </div>
-
-      
-          {/* Clerk 로그인 박스 */}
-          <SignIn />
 
         </div>
       </div>
