@@ -139,11 +139,12 @@ const WebICEditor = () => {
 
     const executeCode = (code: string) => {
         const logs: string[] = []
+        // Use built-in Console parameter types so we stop introducing explicit anys.
         const mockConsole = {
-            log: (...args: any[]) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
-            warn: (...args: any[]) => logs.push(`[WARN] ${args.join(' ')}`),
-            error: (...args: any[]) => logs.push(`[ERROR] ${args.join(' ')}`),
-            info: (...args: any[]) => logs.push(`[INFO] ${args.join(' ')}`),
+            log: (...args: Parameters<Console["log"]>) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
+            warn: (...args: Parameters<Console["warn"]>) => logs.push(`[WARN] ${args.join(' ')}`),
+            error: (...args: Parameters<Console["error"]>) => logs.push(`[ERROR] ${args.join(' ')}`),
+            info: (...args: Parameters<Console["info"]>) => logs.push(`[INFO] ${args.join(' ')}`),
         }
         try {
             const run = new Function('console', code)

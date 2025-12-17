@@ -2,8 +2,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { SignUp, useSignUp } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+
+import { useSignIn } from "@clerk/nextjs";
 
 import {
   Dialog,
@@ -17,12 +17,13 @@ export default function SignUpPage() {
   const [agreed, setAgreed] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const { signIn, isLoaded } = useSignUp();
-  const router = useRouter();
+  const { signIn, isLoaded } = useSignIn();
+  // Clerk's sign-in client powers the OAuth redirects, so keep it ready before user interaction.
 
   if (!isLoaded) return null;
 
   const socialLogin = (provider: "github" | "google" | "discord") => {
+    if (!signIn) return; // guard against the hook being unresolved during initial render
     signIn.authenticateWithRedirect({
       strategy: `oauth_${provider}`,
       redirectUrl: "/(auth)/callback",
@@ -32,6 +33,8 @@ export default function SignUpPage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center">
+      
+      {/* Form */}
       <div className="flex w-full mt-10 mb-10 flex-col items-center">
         <div className="flex flex-col items-center gap-6">
         <div className="w-full max-w-md bg-[#191e28] rounded-2xl p-8 shadow-lg">
@@ -104,6 +107,27 @@ export default function SignUpPage() {
                 </p>
             </div>
 
+            {/* Consent checkbox tied to agreed flag so the button unlocks after user action */}
+            <div className="flex items-start gap-2">
+              <input
+                id="termsConsent"
+                type="checkbox"
+                checked={agreed}
+                onChange={(event) => setAgreed(event.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-gray-600 bg-[#3A4152] focus:ring-indigo-500"
+              />
+              <label htmlFor="termsConsent" className="text-xs text-gray-300">
+                서비스 이용약관에 동의합니다.
+                <button
+                  type="button"
+                  className="ml-2 text-indigo-400 underline"
+                  onClick={() => setOpen(true)}
+                >
+                  약관 보기
+                </button>
+              </label>
+            </div>
+
             
 
             
@@ -129,7 +153,7 @@ export default function SignUpPage() {
         </div>
         
         {/* Clerk 로그인 박스 */}
-        <SignUp />
+        {/* <SignUp /> */}
         </div>
       </div>
 

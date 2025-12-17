@@ -196,15 +196,16 @@ public class Main {
   // === 1. JavaScript 실행 로직 (브라우저 내 실제 실행) ===
   const executeJS = (code: string) => {
     const capturedLogs: string[] = []
+    // Use built-in Console parameter tuples so we avoid eslint's no-explicit-any rule.
     const mockConsole = {
-      log: (...args: any[]) => {
+      log: (...args: Parameters<Console["log"]>) => {
         capturedLogs.push(args.map(a =>
           typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)
         ).join(' '))
       },
-      error: (...args: any[]) => capturedLogs.push(`[ERROR] ${args.join(' ')}`),
-      warn: (...args: any[]) => capturedLogs.push(`[WARN] ${args.join(' ')}`),
-      info: (...args: any[]) => capturedLogs.push(`[INFO] ${args.join(' ')}`),
+      error: (...args: Parameters<Console["error"]>) => capturedLogs.push(`[ERROR] ${args.join(' ')}`),
+      warn: (...args: Parameters<Console["warn"]>) => capturedLogs.push(`[WARN] ${args.join(' ')}`),
+      info: (...args: Parameters<Console["info"]>) => capturedLogs.push(`[INFO] ${args.join(' ')}`),
     }
 
     try {
@@ -253,7 +254,15 @@ public class Main {
   const handleDebug = (content: string) => {
     setActiveTerminalTab('DEBUG CONSOLE')
     const fileName = activeItem?.name || ''
-    setDebugLogs([`> Starting Debugger for ${fileName}...`, '> Breakpoint hit at line 1', '> Variable state: { i: 0 }', '> Debugging session ended.'])
+    const snippet = content ? `${content.slice(0, 120)}${content.length > 120 ? "..." : ""}` : "<empty>"
+    // Include the passed content so the handler output reflects the actual code being debugged.
+    setDebugLogs([
+      `> Starting Debugger for ${fileName}...`,
+      `> Snapshot: ${snippet}`,
+      '> Breakpoint hit at line 1',
+      '> Variable state: { i: 0 }',
+      '> Debugging session ended.',
+    ])
   }
 
   const activeFileForEditor = activeItem && activeItem.type === 'file' ? {

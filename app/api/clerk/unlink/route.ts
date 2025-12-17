@@ -19,6 +19,8 @@ export async function POST(req: Request) {
     const body = (await req.json()) as UnlinkBody;
     provider = body.provider;
   } catch (error) {
+    // Keep the caught error visible for debugging while satisfying ESLint.
+    console.error("Failed to parse unlink request", error);
     return NextResponse.json(
       { message: "요청 데이터를 읽을 수 없습니다." },
       { status: 400 }
