@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import Header from "@/components/layout/Header";
+import Header from "@/components/layout/Header/AuthMenu";
 import Footer from "@/components/layout/Footer";
 
 export const metadata = {
@@ -14,10 +14,10 @@ type AuthLayoutProps = {
 };
 
 export default function AuthLayout({ children, modal }: AuthLayoutProps) {
-  // ✅ 1. 서버에서 로그인 상태 확인
+  // 1. 서버에서 로그인 상태 확인
   const { userId } = auth();
 
-  // ✅ 2. 이미 로그인 상태면 로그인 페이지 접근 차단
+  // 2. 이미 로그인 상태면 로그인 페이지 접근 차단
   if (userId) {
     redirect("/app/main"); // ← Web IDE 메인 경로
   }

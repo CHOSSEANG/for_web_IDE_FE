@@ -7,10 +7,6 @@ export const metadata = { title: "WEBIC - mian" };
 export default function MainPage() {
   return (
     <main className="min-h-screen bg-bg-base text-text-primary p-8 flex flex-col gap-10">
-      <div className="flex justify-end gap-4">
-        <UserToggle />
-        <ThemeToggle />
-      </div>
 
       <section className="space-y-4">
         <p className="text-lg font-semibold">WebIC Main Playground</p>
