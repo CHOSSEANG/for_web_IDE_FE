@@ -64,9 +64,11 @@ export default function ProfileTab() {
 
         {/* 기본 정보 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 space-y-3">
-          <InfoRow label="이름" value="김철수" />
-          <InfoRow label="이메일" value="user@example.com" />
-          <InfoRow label="전화번호" value="010-1234-5678" />
+          <InfoRow label="이름" value={isLoaded ? displayName : ""} />
+          <InfoRow
+            label="이메일"
+            value={isLoaded ? email : ""}
+          />
         </div>
 
         {/* 소셜 연결 */}

@@ -15,7 +15,6 @@ export default function EditProfileModal({
 }: EditProfileModalProps) {
   const { isLoaded, user } = useUser();
   const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export default function EditProfileModal({
         user.lastName?.trim(),
       ].filter(Boolean);
       setFullName(nameParts.join(" "));
-      setPhone(user.phoneNumbers?.[0]?.phoneNumber ?? "");
     }
   }, [open, isLoaded, user]);
 
@@ -44,15 +42,6 @@ export default function EditProfileModal({
         firstName,
         lastName,
       };
-
-      if (phone !== "") {
-        payload.phoneNumbers = [
-          {
-            id: user.phoneNumbers?.[0]?.id,
-            phoneNumber: phone,
-          },
-        ];
-      }
 
       await user.update(payload);
       await user.reload();
@@ -106,19 +95,6 @@ export default function EditProfileModal({
             />
           </div>
 
-          {/* 전화번호 */}
-          <div>
-            <label className="mb-1 block text-xs text-gray-400">
-              전화번호
-            </label>
-            <input
-              type="tel"
-              placeholder="010-1234-5678"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              className="w-full rounded-lg bg-[#2A3142] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
         </div>
 
         {/* Footer */}
