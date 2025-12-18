@@ -102,10 +102,11 @@ export default function SocialConnections() {
                   </button>
 
                   {openMenu === provider.key && (
-                    <div className="absolute right-0 top-6 z-10 w-32 rounded-2xl border border-border-strong bg-bg-subtle text-xs">
+                    <div className="absolute left-2 top-5 z-10 w-20 rounded-2xl  bg-bg-subtle text-xs ">
                       <button
                         type="button"
-                        className="w-full px-3 py-2 text-left text-red-400 transition hover:bg-bg-raised disabled:cursor-not-allowed disabled:text-text-muted"
+                        className="w-full px-2 py-1 text-center text-white transition rounded-2xl 
+                         bg-red-600 hover:bg-red-800 hover:text-white disabled:cursor-not-allowed disabled:text-text-muted"
                         disabled={isUnlinking}
                         onClick={() => handleUnlink(provider.key)}
                       >
