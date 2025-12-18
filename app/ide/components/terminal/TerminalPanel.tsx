@@ -4,6 +4,13 @@ import { useState, useRef, useEffect } from 'react'
 
 const TABS = ['PROBLEMS', 'OUTPUT', 'DEBUG CONSOLE', 'TERMINAL']
 
+export interface Problem {
+    message: string;
+    source?: string;
+    line?: number;
+    severity?: 'error' | 'warning';
+}
+
 interface TerminalPanelProps {
     onCommand?: (command: string) => Promise<string> | string
     initialLogs?: string[]
@@ -12,6 +19,7 @@ interface TerminalPanelProps {
     onTabChange?: (tab: string) => void
     outputLogs?: string[]
     debugLogs?: string[]
+    problemLogs?: Problem[]
 }
 
 const TerminalPanel = ({
@@ -21,7 +29,8 @@ const TerminalPanel = ({
     activeTab: controlledActiveTab,
     onTabChange,
     outputLogs = [],
-    debugLogs = []
+    debugLogs = [],
+    problemLogs = []
 }: TerminalPanelProps) => {
     const [localActiveTab, setLocalActiveTab] = useState('TERMINAL')
     const activeTab = controlledActiveTab || localActiveTab
@@ -140,9 +149,40 @@ const TerminalPanel = ({
                     </>
                 )}
 
-                {/* 2. PROBLEMS TAB */}
+                {/* // 2. PROBLEMS TAB */}
                 {activeTab === 'PROBLEMS' && (
-                    <div className="p-5 text-[#8b949e]">No problems detected in workspace.</div>
+                    <div className="flex-1 p-0 overflow-y-auto">
+                        {problemLogs.length > 0 ? (
+                            <div className="flex flex-col">
+                                {problemLogs.map((problem, idx) => (
+                                    <div key={idx} className="flex gap-2 px-3 py-2 border-b border-[#2d333b] hover:bg-[#161b22] group">
+                                        <div className="pt-0.5">
+                                            {problem.severity === 'warning' ? (
+                                                <svg className="w-4 h-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                </svg>
+                                            ) : (
+                                                <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                            )}
+                                        </div>
+                                        <div className="flex-1 flex flex-col min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[#e6edf3] text-sm truncate">{problem.message}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs text-[#8b949e]">
+                                                <span>{problem.source || 'Error'}</span>
+                                                {problem.line && <span>Ln {problem.line}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-5 text-[#8b949e]">No problems detected in workspace.</div>
+                        )}
+                    </div>
                 )}
 
                 {/* 3. OUTPUT TAB */}

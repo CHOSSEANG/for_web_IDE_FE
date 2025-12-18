@@ -30,6 +30,8 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
         if (filename.endsWith('.html')) return 'html'
         if (filename.endsWith('.js') || filename.endsWith('.jsx')) return 'javascript'
         if (filename.endsWith('.ts') || filename.endsWith('.tsx')) return 'typescript'
+        if (filename.endsWith('.java')) return 'java'
+        if (filename.endsWith('.py')) return 'python'
         return 'plaintext'
     }
 
