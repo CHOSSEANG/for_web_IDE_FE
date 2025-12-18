@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useSignIn } from "@clerk/nextjs";
 
 type ProviderKey = "google" | "github" | "discord";
 
@@ -16,6 +16,7 @@ const providerKeySet = new Set<ProviderKey>(providers.map((item) => item.key));
 
 export default function SocialConnections() {
   const { isLoaded, isSignedIn, user } = useUser();
+  const { signIn, isLoaded: signInLoaded } = useSignIn();
   const [openMenu, setOpenMenu] = useState<ProviderKey | null>(null);
   const [unlinkingProvider, setUnlinkingProvider] = useState<ProviderKey | null>(
     null
@@ -114,12 +115,25 @@ export default function SocialConnections() {
                   )}
                 </div>
               ) : (
-                <Link
-                  href={`/sign-in?strategy=${provider.key}`}
-                  className="rounded-2xl bg-blue-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+                <button
+                  type="button"
+                  disabled={!signInLoaded}
+                  onClick={async () => {
+                    if (!signInLoaded) return;
+                    try {
+                      await signIn.authenticateWithRedirect({
+                        strategy: `oauth_${provider.key}`,
+                        redirectUrl: "/auth/callback",
+                        redirectUrlComplete: "/main",
+                      });
+                    } catch (error) {
+                      console.error("OAuth redirect failed", error);
+                    }
+                  }}
+                  className="rounded-2xl bg-blue-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 disabled:opacity-50 disabled:pointer-events-none"
                 >
                   연결하기
-                </Link>
+                </button>
               )}
             </li>
           );
