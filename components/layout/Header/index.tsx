@@ -37,27 +37,34 @@ export default function Header() {
 
   {/* 오른쪽 영역: auth & theme */}
   <div className="ml-auto flex items-center gap-6 [&>header]:border-b-0">
-    {!isSignedIn && (
-      <>
-        <Button asChild>
-          <Link
-            href="/sign-in"
-            className="text-xs px-2 py-2 rounded-md hover:text-text-primary transition">
-            로그인
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link
-            href="/sign-up"
-            className="text-xs rounded-md px-2 py-2 hover:bg-bg-raised transition">
-            회원가입
-          </Link>
-        </Button>
-      </>
-    )}
-
+    {/* 오른쪽 영역: auth & theme */}
+<div className="ml-auto flex items-center gap-6 [&>header]:border-b-0">
+  {!isSignedIn ? (
+    <>
+      <Button asChild>
+        <Link
+          href="/sign-in"
+          className="text-xs px-2 py-2 rounded-md hover:text-text-primary transition"
+        >
+          로그인
+        </Link>
+      </Button>
+      <Button asChild>
+        <Link
+          href="/sign-up"
+          className="text-xs rounded-md px-2 py-2 hover:bg-bg-raised transition"
+        >
+          회원가입
+        </Link>
+      </Button>
+    </>
+  ) : (
     <UserToggle />
-    <ThemeToggle />
+  )}
+
+  <ThemeToggle />
+</div>
+
   </div>
 </header>
   );
