@@ -1,3 +1,6 @@
+// @/componenets/account/AccountContent.tsx 
+// 회원 프로필 모달창 > 컨덴츠 부분 
+
 "use client";
 
 import { useState } from "react";
