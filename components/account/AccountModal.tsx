@@ -15,7 +15,7 @@ export default function AccountModal({
 }: AccountModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl bg-[#0A0F1D] text-white">
+      <DialogContent className="max-w-5xl">
         <VisuallyHidden>
           <DialogTitle>내 정보</DialogTitle>
         </VisuallyHidden>

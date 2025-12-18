@@ -102,7 +102,7 @@ export default function SocialConnections() {
                   </button>
 
                   {openMenu === provider.key && (
-                    <div className="absolute right-0 top-6 z-10 w-32 rounded-2xl border border-border-strong bg-bg-subtle text-xs shadow-lg">
+                    <div className="absolute right-0 top-6 z-10 w-32 rounded-2xl border border-border-strong bg-bg-subtle text-xs">
                       <button
                         type="button"
                         className="w-full px-3 py-2 text-left text-red-400 transition hover:bg-bg-raised disabled:cursor-not-allowed disabled:text-text-muted"

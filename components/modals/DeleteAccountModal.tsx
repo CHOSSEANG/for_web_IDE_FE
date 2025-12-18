@@ -19,7 +19,7 @@ export default function DeleteAccountModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
-      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised/90 p-6 shadow-[0_25px_45px_rgba(2,6,27,0.6)]">
+      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised/90 p-6">
 
         {/* Title */}
         <h2 className="text-lg font-semibold text-red-300 mb-2">
@@ -64,7 +64,7 @@ export default function DeleteAccountModal({
             disabled={!canDelete}
             className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
               canDelete
-                ? "bg-red-500 text-white shadow-lg shadow-red-500/40 hover:bg-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+                ? "bg-red-500 text-white hover:bg-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
                 : "bg-red-500/40 text-white/80 cursor-not-allowed"
             }`}
           >

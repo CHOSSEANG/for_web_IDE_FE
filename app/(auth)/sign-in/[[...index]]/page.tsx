@@ -57,7 +57,7 @@ export default function SignInPage() {
   
   return (
     <div className="w-full max-w-[420px] px-4">
-      <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 shadow-[0_30px_60px_rgba(4,6,12,0.75)] backdrop-blur">
+      <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 backdrop-blur">
 
         {/* Title */}
         <h1 className="text-center text-2xl font-semibold text-text-primary">

@@ -12,7 +12,7 @@ export default function FindPasswordPanel({
   const [mode, setMode] = useState<"id" | "password">("id");
 
   return (
-    <div className="relative w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-8 shadow-[0_25px_55px_rgba(1,3,10,0.65)] backdrop-blur">
+    <div className="relative w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-8 backdrop-blur">
       {/* Close */}
       <button
         onClick={onClose}

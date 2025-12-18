@@ -12,7 +12,7 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-6 shadow-[0_20px_40px_rgba(2,6,27,0.65)]">
+      <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-6">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">비밀번호 변경</h2>

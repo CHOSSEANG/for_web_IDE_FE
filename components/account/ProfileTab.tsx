@@ -13,7 +13,7 @@ export default function ProfileTab() {
       <section className="space-y-5">
 
         {/* 프로필 요약 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 shadow-[0_15px_40px_rgba(2,6,27,0.6)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <div className="flex items-center justify-between gap-4">
 
             <div className="flex items-center gap-3">
@@ -45,14 +45,14 @@ export default function ProfileTab() {
         </div>
 
         {/* 기본 정보 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 space-y-3 shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 space-y-3">
           <InfoRow label="이름" value="김철수" />
           <InfoRow label="이메일" value="user@example.com" />
           <InfoRow label="전화번호" value="010-1234-5678" />
         </div>
 
         {/* 소셜 연결 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <SocialConnections />
         </div>
 

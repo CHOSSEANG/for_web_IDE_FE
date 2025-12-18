@@ -39,7 +39,7 @@ export function DialogContent({ className, ...props }: DialogPrimitive.DialogCon
       <DialogPrimitive.Content
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-full max-w-md",
-          "bg-bg-raised border border-border-light shadow-xl",
+          "bg-bg-raised border border-border-light",
           "rounded-xl p-6",
           "transform -translate-x-1/2 -translate-y-1/2",
           "data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut",

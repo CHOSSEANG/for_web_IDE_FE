@@ -32,7 +32,7 @@ export default function SecurityTab() {
       <section className="space-y-5">
 
         {/* 비밀번호 변경 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 shadow-[0_15px_40px_rgba(2,6,27,0.6)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-base font-semibold text-text-primary mb-1">
@@ -52,7 +52,7 @@ export default function SecurityTab() {
         </div>
 
         {/* 로그인된 기기 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 shadow-[0_15px_40px_rgba(2,6,27,0.6)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <h2 className="text-base font-semibold text-text-primary mb-2">
             로그인된 기기
           </h2>
@@ -80,7 +80,7 @@ export default function SecurityTab() {
         </div>
 
         {/* 2단계 인증 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 shadow-[0_15px_40px_rgba(2,6,27,0.6)]">
+        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="text-base font-semibold text-text-primary mb-1">

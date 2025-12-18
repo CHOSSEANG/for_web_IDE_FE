@@ -5,7 +5,7 @@ import { useUser } from "@clerk/nextjs";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserToggle } from "@/components/UserToggle";
-import Logo from "@/components/brand/Logo";
+
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
@@ -15,10 +15,6 @@ export default function Header() {
     <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light">
       {/* 좌측: 네비게이션 */}
       <div className="flex items-center gap-6 text-sm text-text-muted">
-        <Link href="/welcome" className="hover:text-text-primary transition">
-          <Logo variant="bar" className="w-15 h-5" />
-        </Link>
-
         <Link href="/company" className="hover:text-text-primary transition">
           회사소개
         </Link>
@@ -28,6 +24,10 @@ export default function Header() {
         <Link href="/contact" className="hover:text-text-primary transition">
           문의하기
         </Link>
+      </div>
+
+      <div>
+        가운데 컨테이너 버튼 영영
       </div>
 
       {/* 우측: 인증 / 토글 영역 */}
