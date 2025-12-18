@@ -12,11 +12,14 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md rounded-2xl bg-[#1E2433] p-6">
+      <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-6 shadow-[0_20px_40px_rgba(2,6,27,0.65)]">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">비밀번호 변경</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button
+            onClick={onClose}
+            className="text-text-muted hover:text-text-primary transition"
+          >
             <X size={18} />
           </button>
         </div>
@@ -26,20 +29,20 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
           <input
             type="password"
             placeholder="현재 비밀번호"
-            className="w-full rounded-lg bg-[#2F3547] px-3 py-2 text-sm outline-none"
+            className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-colors"
           />
           <input
             type="password"
             placeholder="새 비밀번호"
-            className="w-full rounded-lg bg-[#2F3547] px-3 py-2 text-sm outline-none"
+            className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-colors"
           />
           <input
             type="password"
             placeholder="새 비밀번호 확인"
-            className="w-full rounded-lg bg-[#2F3547] px-3 py-2 text-sm outline-none"
+            className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-colors"
           />
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-text-muted">
             비밀번호는 8자 이상이며, 영문/숫자를 포함해야 합니다.
           </p>
         </div>
@@ -48,11 +51,11 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
         <div className="mt-5 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]"
+            className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
           >
             취소
           </button>
-          <button className="rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600">
+          <button className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60">
             변경하기
           </button>
         </div>

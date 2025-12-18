@@ -99,93 +99,100 @@ export default function SignUpPage() {
 
   /** ───────────── UI ───────────── */
   return (
-    <div className="w-full max-w-[360px] rounded-2xl bg-[#191e28] p-8 shadow-lg">
-      <h1 className="mb-6 text-center text-2xl font-semibold text-white">
-        Create your WebIC
-      </h1>
+    <div className="w-full max-w-[420px] px-4">
+      <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 shadow-[0_30px_60px_rgba(4,6,12,0.75)] backdrop-blur">
+        <h1 className="text-center text-2xl font-semibold text-text-primary">
+          Create your WebIC
+        </h1>
 
-      {/* OAuth */}
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        {(["github", "google", "discord"] as const).map((provider) => (
-          <button
-            key={provider}
-            onClick={() => socialLogin(provider)}
-            className="relative flex items-center justify-center rounded-lg bg-[#3A4152] py-2 text-sm text-white hover:bg-[#4A5164] transition"
-          >
-            {PROVIDER_LABEL[provider]}
+        {/* OAuth */}
+        <div className="grid grid-cols-3 gap-3">
+          {(["github", "google", "discord"] as const).map((provider) => (
+            <button
+              key={provider}
+              onClick={() => socialLogin(provider)}
+              className="relative flex items-center justify-center rounded-2xl border border-border-strong bg-bg-subtle/60 px-3 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+            >
+              {PROVIDER_LABEL[provider]}
 
-            {lastProvider === provider && (
-              <span className="absolute -top-2 -right-2 rounded-full bg-indigo-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                계속하기
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Divider */}
-      <div className="mb-6 flex items-center gap-4 text-sm text-gray-400">
-        <div className="h-px flex-1 bg-gray-600/40" />
-        <span>or create with email</span>
-        <div className="h-px flex-1 bg-gray-600/40" />
-      </div>
-
-      {/* Email / Password */}
-      <form className="space-y-4">
-        <div>
-          <label className="mb-1 block text-sm text-gray-300">Email</label>
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white"
-          />
-          {errorMessage && (
-            <p className="mt-2 text-sm text-red-400">{errorMessage}</p>
-          )}
+              {lastProvider === provider && (
+                <span className="absolute -top-2 -right-2 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                  계속하기
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
-        <div>
-          <label className="mb-1 block text-sm text-gray-300">
-            Password
-          </label>
-          <div className="relative">
+        {/* Divider */}
+        <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.25em] text-text-muted">
+          <div className="flex-1 h-px bg-border-light" />
+          <span>or create with email</span>
+          <div className="flex-1 h-px bg-border-light" />
+        </div>
+
+        {/* Email / Password */}
+        <form className="space-y-4">
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Email
+            </label>
             <input
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg bg-[#3A4152] px-4 py-3 pr-10 text-sm text-white"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             />
-            <PasswordVisibilityToggle
-              visible={showPassword}
-              onToggle={() => setShowPassword((v) => !v)}
-            />
+            {errorMessage && (
+              <p className="text-sm font-medium text-error">{errorMessage}</p>
+            )}
           </div>
-          <p className="mt-1 text-[10px] text-gray-400">
-            * 최소 8자 이상, 영문(대문자 1개 이상)/숫자/특수문자 포함
-          </p>
-        </div>
 
-        <button
-          type="button"
-          onClick={handleSignUp}
-          className="mt-4 w-full rounded-lg bg-indigo-600 py-3 font-medium text-white hover:bg-indigo-900 transition"
-        >
-          회원가입
-        </button>
-      </form>
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 pr-12 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+              />
+              <PasswordVisibilityToggle
+                visible={showPassword}
+                onToggle={() => setShowPassword((v) => !v)}
+              />
+            </div>
+            <p className="text-xs text-text-muted">
+              * 최소 8자 이상, 영문(대문자 1개 이상)/숫자/특수문자 포함
+            </p>
+          </div>
 
-      {/* Clerk CAPTCHA mount */}
-      <div id="clerk-captcha" className="mt-4" />
+          <button
+            type="button"
+            onClick={handleSignUp}
+            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+          >
+            회원가입
+          </button>
+        </form>
 
-      <p className="mt-6 text-center text-sm text-gray-400">
-        이미 회원이신가요?{" "}
-        <Link href="/sign-in" className="text-indigo-400 hover:underline">
-          Log in
-        </Link>
-      </p>
+        {/* Clerk CAPTCHA mount */}
+        <div id="clerk-captcha" className="mt-1" />
+
+        <p className="text-center text-sm text-text-muted">
+          이미 회원이신가요?{" "}
+          <Link
+            href="/sign-in"
+            className="font-semibold text-blue-500 transition hover:text-blue-400"
+          >
+            Log in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -19,15 +19,7 @@ export default function Header() {
           <Logo variant="bar" className="w-15 h-5" />
         </Link>
 
-        <Link href="/company" className="hover:text-text-primary transition">
-          회사소개
-        </Link>
-        <Link href="/serviceinfo" className="hover:text-text-primary transition">
-          서비스 소개
-        </Link>
-        <Link href="/contact" className="hover:text-text-primary transition">
-          문의하기
-        </Link>
+        
       </div>
 
       {/* 우측: 인증 / 토글 영역 */}

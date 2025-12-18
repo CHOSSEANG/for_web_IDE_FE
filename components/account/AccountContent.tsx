@@ -12,20 +12,20 @@ export default function AccountContent() {
   const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="space-y-8 px-0 py-2">
 
       {/* Header */}
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">계정 관리</h1>
+        <h1 className="text-2xl font-semibold text-text-primary">계정 관리</h1>
         <SignOutButton redirectUrl="/welcome">
-          <button className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]">
+          <button className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60">
             로그아웃
           </button>
         </SignOutButton>
       </header>
 
       {/* Tabs */}
-      <nav className="flex gap-6 border-b border-white/10 pb-2 text-sm">
+      <nav className="flex gap-6 border-b border-border-strong pb-2 text-sm">
         <TabButton
           active={activeTab === "profile"}
           onClick={() => setActiveTab("profile")}
@@ -59,10 +59,10 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`pb-2 ${
+      className={`pb-2 font-semibold transition ${
         active
-          ? "text-indigo-400 border-b-2 border-indigo-400"
-          : "text-gray-400 hover:text-white"
+          ? "text-blue-400 border-b-2 border-blue-400"
+          : "text-text-muted hover:text-text-primary"
       }`}
     >
       {children}

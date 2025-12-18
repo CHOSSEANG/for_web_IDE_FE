@@ -66,10 +66,12 @@ export default function SocialConnections() {
   };
 
   return (
-    <div className="rounded-2xl bg-[#2A3142] p-4">
-      <h2 className="mb-3 text-base font-semibold">소셜 로그인 연결</h2>
+    <div className="space-y-4">
+      <h2 className="text-base font-semibold text-text-primary">
+        소셜 로그인 연결
+      </h2>
 
-      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-2 gap-3">
         {providers.map((provider) => {
           const isConnected = connectedProviders.has(provider.key);
           const isUnlinking = unlinkingProvider === provider.key;
@@ -77,13 +79,15 @@ export default function SocialConnections() {
           return (
             <li
               key={provider.key}
-              className="relative flex items-center justify-between rounded-lg bg-[#3A4152] px-3 py-2"
+              className="relative flex items-center justify-between rounded-2xl border border-border-strong bg-bg-raised px-3 py-2 text-sm text-text-primary transition hover:border-blue-500"
             >
-              <span className="text-sm">{provider.name}</span>
+              <span className="text-sm font-semibold">{provider.name}</span>
 
               {isConnected ? (
-                <div className="relative flex items-center gap-1">
-                  <span className="text-xs text-green-400">연결됨</span>
+                <div className="relative flex items-center gap-2 text-xs text-success">
+                  <span className="text-xs font-semibold text-success">
+                    연결됨
+                  </span>
 
                   <button
                     type="button"
@@ -92,16 +96,16 @@ export default function SocialConnections() {
                         openMenu === provider.key ? null : provider.key
                       )
                     }
-                    className="px-1 text-gray-400 hover:text-white"
+                    className="px-1 text-text-muted transition hover:text-text-primary"
                   >
                     …
                   </button>
 
                   {openMenu === provider.key && (
-                    <div className="absolute right-0 top-6 z-10 w-24 rounded-md bg-[#1F2533] shadow-lg">
+                    <div className="absolute right-0 top-6 z-10 w-32 rounded-2xl border border-border-strong bg-bg-subtle text-xs shadow-lg">
                       <button
                         type="button"
-                        className="w-full px-3 py-2 text-xs text-red-400 hover:bg-[#2A3142] disabled:cursor-not-allowed disabled:text-gray-500"
+                        className="w-full px-3 py-2 text-left text-red-400 transition hover:bg-bg-raised disabled:cursor-not-allowed disabled:text-text-muted"
                         disabled={isUnlinking}
                         onClick={() => handleUnlink(provider.key)}
                       >
@@ -113,7 +117,7 @@ export default function SocialConnections() {
               ) : (
                 <Link
                   href={`/sign-in?strategy=${provider.key}`}
-                  className="rounded-md bg-indigo-600 px-2 py-1 text-xs hover:bg-indigo-900"
+                  className="rounded-2xl bg-blue-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
                 >
                   연결하기
                 </Link>

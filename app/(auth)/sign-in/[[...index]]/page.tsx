@@ -56,85 +56,91 @@ export default function SignInPage() {
   
   
   return (
-    
-        <div className="w-full max-w-[360px] px-4">
-          <div className="rounded-2xl bg-[#191e28] p-8 shadow-lg">
+    <div className="w-full max-w-[420px] px-4">
+      <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 shadow-[0_30px_60px_rgba(4,6,12,0.75)] backdrop-blur">
 
-            {/* Title */}
-            <h1 className="text-center text-2xl font-semibold text-white mb-6">
-              Welcome to WebIC
-            </h1>
+        {/* Title */}
+        <h1 className="text-center text-2xl font-semibold text-text-primary">
+          Welcome to WebIC
+        </h1>
 
-            {/* Social Login */}
-            <div className="grid grid-cols-3 gap-3 mb-6">
-              {(["github", "google", "discord"] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => socialLogin(p)}
-                  className="relative flex items-center justify-center rounded-lg bg-[#3A4152] py-2 text-sm text-white"
-                >
-                  {p}
-                  {lastProvider === p && (
-                    <span className="absolute -top-2 -right-2 rounded-full bg-indigo-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
-                계속하기
-              </span>
-                  )}
-                </button>
-              ))}
-            </div>
+        {/* Social Login */}
+        <div className="grid grid-cols-3 gap-3">
+          {(["github", "google", "discord"] as const).map((provider) => (
+            <button
+              key={provider}
+              onClick={() => socialLogin(provider)}
+              className="relative flex items-center justify-center rounded-2xl border border-border-strong bg-bg-subtle/60 px-3 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+            >
+              {provider}
 
-            {/* Divider */}
-            <div className="flex items-center gap-4 text-sm text-gray-400 mb-6">
-              <div className="flex-1 h-px bg-gray-600/40" />
-              <span>or login with email</span>
-              <div className="flex-1 h-px bg-gray-600/40" />
-            </div>
-
-            {/* Form */}
-            <form className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Email</label>
-                <input
-                type="email"
-                name="email"
-                  placeholder="Email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-gray-300 mb-1">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white"
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={handleEmailLogin}
-                className="w-full mt-4 rounded-lg bg-indigo-700 py-3 text-white font-medium"
-              >
-                Log In
-              </button>
-            </form>
-
-            <p className="mt-6 text-center text-sm text-gray-400">
-              아직 회원이 아니신가요?{" "}
-              <Link href="/sign-up" className="text-indigo-400 hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </div>
+              {lastProvider === provider && (
+                <span className="absolute -top-2 -right-2 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                  계속하기
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
+        {/* Divider */}
+        <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+          <div className="flex-1 h-px bg-border-light" />
+          <span>or login with email</span>
+          <div className="flex-1 h-px bg-border-light" />
+        </div>
+
+        {/* Form */}
+        <form className="space-y-4">
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleEmailLogin}
+            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+          >
+            Log In
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-text-muted">
+          아직 회원이 아니신가요?{" "}
+          <Link
+            href="/sign-up"
+            className="font-semibold text-blue-500 transition hover:text-blue-400"
+          >
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
