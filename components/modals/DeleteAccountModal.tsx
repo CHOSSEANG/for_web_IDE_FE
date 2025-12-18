@@ -19,7 +19,7 @@ export default function DeleteAccountModal({
   const canDelete = password.length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-8">
       <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised p-6">
         <VisuallyHidden>
           <h2>계정 탈퇴</h2>

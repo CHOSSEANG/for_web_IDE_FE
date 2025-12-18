@@ -54,14 +54,14 @@ export default function EditProfileModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-md rounded-2xl bg-[#1F2433] p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <div className="w-full max-w-md rounded-2xl  bg-bg-raised p-6 text-text-primary">
         <VisuallyHidden>
           <h2>프로필 수정</h2>
         </VisuallyHidden>
-        {/* Header */}
+        {/* Header */} 
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">프로필 수정</h2>
+          <h2 className="text-lg font-semibold text-text-primary">프로필 수정</h2>
           <button
             onClick={onClose}
             className="text-sm text-gray-400 hover:text-white"
@@ -74,24 +74,24 @@ export default function EditProfileModal({
         <div className="space-y-4">
           {/* 이름 */}
           <div>
-            <label className="mb-1 block text-xs text-gray-400">이름</label>
+            <label className="mb-1 block text-xs text-text-muted">이름</label>
             <input
               type="text"
               placeholder="김철수"
               value={fullName}
               onChange={(event) => setFullName(event.target.value)}
-              className="w-full rounded-lg bg-[#2A3142] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full rounded-lg border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-colors"
             />
           </div>
 
           {/* 이메일 */}
           <div>
-            <label className="mb-1 block text-xs text-gray-400">이메일</label>
+            <label className="mb-1 block text-xs text-text-muted">이메일</label>
             <input
               type="email"
               disabled
               value={user.primaryEmailAddress?.emailAddress ?? ""}
-              className="w-full cursor-not-allowed rounded-lg bg-[#2A3142] px-3 py-2 text-sm text-gray-400"
+              className="w-full cursor-not-allowed rounded-lg border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-muted"
             />
           </div>
 
@@ -101,17 +101,15 @@ export default function EditProfileModal({
         <div className="mt-6 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]"
-            disabled={isSaving}
+            className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
           >
             취소
           </button>
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="rounded-lg bg-indigo-500 px-4 py-2 text-sm hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            저장
+            className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60">
+            저장하기
           </button>
         </div>
       </div>
