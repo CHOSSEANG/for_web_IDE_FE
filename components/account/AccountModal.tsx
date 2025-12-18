@@ -15,7 +15,7 @@ export default function AccountModal({
 }: AccountModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl">
+      <DialogContent className="max-w-[min(960px,65vw)]">
         <VisuallyHidden>
           <DialogTitle>내 정보</DialogTitle>
         </VisuallyHidden>

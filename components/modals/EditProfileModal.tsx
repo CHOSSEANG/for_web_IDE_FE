@@ -13,7 +13,7 @@ export default function EditProfileModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
-      <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised/90 p-6">
+      <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised p-6">
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text-primary">프로필 수정</h2>

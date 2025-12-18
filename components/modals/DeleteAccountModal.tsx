@@ -19,7 +19,7 @@ export default function DeleteAccountModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
-      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised/90 p-6">
+      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised p-6">
 
         {/* Title */}
         <h2 className="text-lg font-semibold text-red-300 mb-2">

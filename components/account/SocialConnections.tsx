@@ -4,13 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
-type ProviderKey = "google" | "github" | "discord" | "notion";
+type ProviderKey = "google" | "github" | "discord";
 
 const providers: { key: ProviderKey; name: string }[] = [
   { key: "google", name: "Google" },
   { key: "github", name: "GitHub" },
   { key: "discord", name: "Discord" },
-  { key: "notion", name: "Notion" },
 ];
 
 const providerKeySet = new Set<ProviderKey>(providers.map((item) => item.key));

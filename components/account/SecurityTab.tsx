@@ -2,15 +2,12 @@
 import { useState } from "react";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal";
-import TwoFactorModal from "@/components/modals/TwoFactorModal";
 
 
 
 export default function SecurityTab() {
   const [open, setOpen] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
-  const [twoFaOpen, setTwoFaOpen] = useState(false);
-  
 
   const devices = [
     {
@@ -18,12 +15,18 @@ export default function SecurityTab() {
       name: "MacBook · Chrome",
       lastActive: "2025.12.12",
       current: true,
+      os: "macOS",
+      environment: "Chrome 127",
+      deviceType: "노트북",
     },
     {
       type: "mobile",
       name: "iPhone · Safari",
       lastActive: "2025.12.10",
       current: false,
+      os: "iOS",
+      environment: "Safari",
+      deviceType: "모바일",
     },
   ];
 
@@ -51,52 +54,47 @@ export default function SecurityTab() {
           </div>
         </div>
 
-        {/* 로그인된 기기 */}
+        {/* 접속 기기 / 환경 정보 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
-          <h2 className="text-base font-semibold text-text-primary mb-2">
-            로그인된 기기
+          <h2 className="text-base font-semibold text-text-primary mb-3">
+            접속 기기 / 환경 정보
           </h2>
           <ul className="space-y-3">
             {devices.map((device, idx) => (
               <li
                 key={idx}
-                className="flex gap-3 rounded-2xl border border-border-strong bg-bg-raised px-3 py-2"
+                className="rounded-2xl border border-border-strong bg-bg-raised px-4 py-3 text-sm text-text-primary"
               >
-                <span className="text-xl leading-none">
-                  {device.type === "desktop" ? "🖥" : "📱"}
-                </span>
-                <div className="leading-snug">
-                  <p className="text-sm font-semibold text-text-primary">
-                    {device.name}
-                  </p>
-                  <p className="text-xs text-text-muted">
-                    마지막 로그인: {device.lastActive}
-                    {device.current && " · 현재 기기"}
-                  </p>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">{device.name}</span>
+                  <span className="text-xs text-text-muted">
+                    {device.lastActive}
+                    {device.current && " · 현재 세션"}
+                  </span>
+                </div>
+                <div className="mt-2 grid gap-1 text-xs text-text-muted sm:grid-cols-3">
+                  <div>
+                    <p className="font-semibold text-text-primary text-[11px] uppercase tracking-wider">
+                      OS
+                    </p>
+                    <p className="text-[11px]">{device.os}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text-primary text-[11px] uppercase tracking-wider">
+                      환경
+                    </p>
+                    <p className="text-[11px]">{device.environment}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-text-primary text-[11px] uppercase tracking-wider">
+                      유형
+                    </p>
+                    <p className="text-[11px]">{device.deviceType}</p>
+                  </div>
                 </div>
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* 2단계 인증 */}
-        <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-text-primary mb-1">
-                2단계 인증
-              </h2>
-              <p className="text-xs text-text-muted leading-snug">
-                로그인 시 추가 인증을 통해 계정 보안을 강화합니다.
-              </p>
-            </div>
-            <button
-              onClick={() => setTwoFaOpen(true)}
-              className="shrink-0 rounded-2xl border border-border-strong bg-bg-raised px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
-            >
-              2단계 인증 설정
-            </button>
-          </div>
         </div>
 
         {/* 탈퇴하기 */}
@@ -124,7 +122,6 @@ export default function SecurityTab() {
       {/*모달은 section 밖 */}
       <DeleteAccountModal open={open} onClose={() => setOpen(false)} />
       <ChangePasswordModal open={pwOpen} onClose={() => setPwOpen(false)} />
-      <TwoFactorModal open={twoFaOpen} onClose={() => setTwoFaOpen(false)} />
     </>
   );
 }

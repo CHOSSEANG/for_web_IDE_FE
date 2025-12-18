@@ -8,7 +8,7 @@ export default function EditProfileImageModal({ open, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
-      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised/90 p-6">
+      <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised p-6">
         <h2 className="text-base font-semibold text-text-primary mb-4">
           프로필 사진 변경
         </h2>
