@@ -1,10 +1,10 @@
+// @/component/layout/Header/PublicMenu.tsx
+// 로그인전 사용자에게 노출되는 메뉴
+ 
 "use client";
 
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
-
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { UserToggle } from "@/components/UserToggle";
 
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +12,7 @@ export default function Header() {
   const { isSignedIn } = useUser();
 
   return (
-    <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light dark:border-border-light/60">
+    <div className="w-full flex justify-between items-center py-6 px-8 border-border-light dark:border-border-light/60">
       {/* 좌측: 네비게이션 */}
       <div className="flex items-center gap-6 text-sm text-text-muted">
         <Link href="/company" className="hover:text-text-primary transition">
@@ -25,41 +25,6 @@ export default function Header() {
           문의하기
         </Link>
       </div>
-
-      <div>
-        가운데 컨테이너 버튼 영영
-      </div>
-
-      {/* 우측: 인증 / 토글 영역 */}
-      <div className="flex items-center gap-3">
-        {/* 로그인 전 */}
-        {!isSignedIn && (
-          <>
-          <Button asChild>
-            <Link
-              href="/sign-in"
-              className="text-xs px-2 py-2 rounded-md hover:text-text-primary transition"
-            >
-              로그인
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link
-              href="/sign-up"
-              className="text-xs rounded-md px-2 py-2  hover:bg-bg-raised transition"
-            >
-              회원가입
-            </Link>
-          </Button>
-          </>
-        )}
-
-        {/* 로그인 후 */}
-        {isSignedIn && <UserToggle />}
-
-        {/* 항상 노출 */}
-        <ThemeToggle />
-      </div>
-    </header>
+    </div>
   );
 }

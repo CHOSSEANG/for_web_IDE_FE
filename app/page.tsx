@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { UserToggle } from "@/components/UserToggle";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+
 
 export default function WelcomePage() {
   return (
     <>
+     <div className="min-h-screen bg-bg flex flex-col">
+        <Header />
+        
     <main className="min-h-screen bg-bg-base text-text-primary flex items-center justify-center flex-col gap-6">
-      <div className="fixed top-4 right-4">
-        <UserToggle /><ThemeToggle /> 
-      </div>
+      
 
       {/* WebIC 컬러 시스템 확인용 박스 */}
       <div className="p-10 rounded-xl bg-bg-raised border border-border-light shadow-lg">
@@ -54,7 +56,10 @@ export default function WelcomePage() {
           404 페이지
         </Link>
       </div>
-      </main>
+        </main>
+        
+        <Footer />
+      </div>  
     </>
   );
 }
