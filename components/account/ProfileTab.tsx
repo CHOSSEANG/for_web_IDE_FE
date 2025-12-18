@@ -42,7 +42,10 @@ export default function ProfileTab() {
                     className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
                   >
                     📷
-                  </button>
+                </button>
+                {/* TODO(BE): 
+                    실제 이미지 업로드 API 연동 필요, 
+                    현재는 프론트 미리보기 상태만 반영 */}
                 </div>
 
                 <div className="leading-snug">
