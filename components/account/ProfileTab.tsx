@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import SocialConnections from "@/components/account/SocialConnections";
 import EditProfileModal from "@/components/modals/EditProfileModal";
 import EditProfileImageModal from "@/components/modals/EditProfileImageModal";
@@ -7,6 +8,13 @@ import EditProfileImageModal from "@/components/modals/EditProfileImageModal";
 export default function ProfileTab() {
   const [editOpen, setEditOpen] = useState(false);
   const [imageOpen, setImageOpen] = useState(false);
+  const { isLoaded, user } = useUser();
+
+  const displayName =
+    user?.fullName ||
+    [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+    "사용자";
+  const email = user?.primaryEmailAddress?.emailAddress ?? "이메일 정보 없음";
 
   return (
     <>
@@ -16,24 +24,34 @@ export default function ProfileTab() {
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <div className="flex items-center justify-between gap-4">
 
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-strong bg-bg-raised text-2xl">
-                  👤
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-strong bg-bg-raised text-2xl">
+                    {user?.imageUrl ? (
+                      <img
+                        src={user.imageUrl}
+                        alt="프로필"
+                        className="h-14 w-14 rounded-full object-cover"
+                      />
+                    ) : (
+                      "👤"
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setImageOpen(true)}
+                    className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+                  >
+                    📷
+                  </button>
                 </div>
-                <button
-                  onClick={() => setImageOpen(true)}
-                  className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
-                >
-                  📷
-                </button>
-              </div>
 
-              <div className="leading-snug">
-                <p className="text-sm font-semibold text-text-primary">김철수</p>
-                <p className="text-xs text-text-muted">user@example.com</p>
+                <div className="leading-snug">
+                  <p className="text-sm font-semibold text-text-primary">
+                    {isLoaded ? displayName : "로딩 중..."}
+                  </p>
+                  <p className="text-xs text-text-muted">{isLoaded ? email : ""}</p>
+                </div>
               </div>
-            </div>
 
             <button
               onClick={() => setEditOpen(true)}
