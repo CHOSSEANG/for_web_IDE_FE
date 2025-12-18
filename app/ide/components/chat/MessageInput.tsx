@@ -12,13 +12,25 @@ export default function MessageInput({
   onSend,
 }: MessageInputProps) {
   return (
-    <div className="flex">
+    <form
+      className="flex gap-2 p-2 w-full"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSend();
+      }}
+    >
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1"
+        placeholder="메시지 입력"
+        className="flex-1 bg-white text-black px-2 py-1 rounded placeholder:text-gray-400"
       />
-      <button onClick={onSend}>전송</button>
-    </div>
+      <button
+        type="submit"
+        className="px-3 py-2 rounded-md border border-white/20"
+      >
+        전송
+      </button>
+    </form>
   );
 }
