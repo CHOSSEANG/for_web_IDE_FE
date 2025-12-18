@@ -15,7 +15,7 @@ export default function Header() {
   const isIdePage = pathname.startsWith("/app");
 
   return (
-    <header className="h-14 flex items-center px-6 border-b">
+    <header className="h-14 flex items-center px-6 border-b border-border-light dark:border-border-light/60">
       {/* 로고 */}
       <div className="font-bold">
         <Link href="/welcome" className="hover:text-text-primary transition">

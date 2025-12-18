@@ -12,7 +12,7 @@ export default function Header() {
   const { isSignedIn } = useUser();
 
   return (
-    <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light">
+    <header className="w-full flex justify-between items-center py-6 px-8 border-b border-border-light dark:border-border-light/60">
       {/* 좌측: 네비게이션 */}
       <div className="flex items-center gap-6 text-sm text-text-muted">
         <Link href="/welcome" className="hover:text-text-primary transition">
