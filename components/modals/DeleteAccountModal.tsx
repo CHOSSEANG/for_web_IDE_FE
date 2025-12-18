@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type DeleteAccountModalProps = {
   open: boolean;
@@ -20,6 +21,9 @@ export default function DeleteAccountModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
       <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised p-6">
+        <VisuallyHidden>
+          <h2>계정 탈퇴</h2>
+        </VisuallyHidden>
 
         {/* Title */}
         <h2 className="text-lg font-semibold text-red-300 mb-2">

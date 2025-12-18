@@ -17,7 +17,7 @@ export default function AccountModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-[min(960px,65vw)]">
         <VisuallyHidden>
-          <DialogTitle>내 정보</DialogTitle>
+          <DialogTitle>계정 관리</DialogTitle>
         </VisuallyHidden>
 
         <AccountContent />

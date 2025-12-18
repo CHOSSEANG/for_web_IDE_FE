@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Props {
   open: boolean;
@@ -13,6 +14,9 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
       <div className="w-full max-w-md rounded-3xl border border-border-strong bg-bg-raised p-6">
+        <VisuallyHidden>
+          <h2>비밀번호 변경</h2>
+        </VisuallyHidden>
         {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">비밀번호 변경</h2>

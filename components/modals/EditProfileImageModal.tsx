@@ -1,3 +1,5 @@
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -9,9 +11,9 @@ export default function EditProfileImageModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8">
       <div className="w-full max-w-sm rounded-3xl border border-border-strong bg-bg-raised p-6">
-        <h2 className="text-base font-semibold text-text-primary mb-4">
-          프로필 사진 변경
-        </h2>
+        <VisuallyHidden>
+          <h2>프로필 사진 변경</h2>
+        </VisuallyHidden>
 
         {/* 미리보기 */}
         <div className="flex justify-center mb-4">
