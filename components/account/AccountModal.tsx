@@ -29,7 +29,6 @@ export default function AccountModal({
           <VisuallyHidden>계정 관리</VisuallyHidden>
         </DialogTitle>
 
-        {/* ✅ 핵심 수정 */}
         <AccountContent onClose={onClose} />
       </DialogContent>
     </Dialog>

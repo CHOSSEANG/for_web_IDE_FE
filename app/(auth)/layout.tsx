@@ -1,12 +1,17 @@
+// app/(auth)/layout.tsx
+// 배포문제로 소스코드 바꿈. middleware.off.ts 사용시 소스자체 바꿔야함. 12/19 lilylee
+
+"use client";
+
 import type { ReactNode } from "react";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import Header from "@/components/layout/Header/AuthMenu";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-export const metadata = {
-  title: "WebIC · 인증",
-};
+
 
 type AuthLayoutProps = {
   children: ReactNode;
@@ -14,15 +19,23 @@ type AuthLayoutProps = {
 };
 
 export default function AuthLayout({ children, modal }: AuthLayoutProps) {
-  // 1. 서버에서 로그인 상태 확인
-  const { userId } = auth();
+  const { isLoaded, user } = useUser();
+  const router = useRouter();
 
-  // 2. 이미 로그인 상태면 로그인 페이지 접근 차단
-  if (userId) {
-    redirect("/app/main"); // ← Web IDE 메인 경로
+  // 로그인 사용자는 인증 페이지 접근 차단
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (user) {
+      router.replace("/app/main");
+    }
+  }, [isLoaded, user, router]);
+
+  // 로딩 중이거나 리다이렉트 직전에는 아무것도 렌더하지 않음
+  if (!isLoaded || user) {
+    return null;
   }
 
-  // ⬇️ 여기까지 내려왔다는 건 "비로그인 사용자"라는 뜻
   return (
     <div className="min-h-screen bg-bg flex flex-col">
       <Header />

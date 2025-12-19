@@ -1,65 +1,27 @@
-import Link from "next/link";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+// @/app/page.tsx
+// 홈에서 로그인 / 비로그인 분기
+// 배포이슈로 루트(/)에서 로그인 / 비로그인 분기 (middleware 없이) 
+// 현재 파일명 middleware.off.ts 로 변경된 상태로 자동배포중
+"use client";
 
+// 홈에서 로그인 / 비로그인에 따라 이동
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export default function WelcomePage() {
-  return (
-    <>
-     <div className="min-h-screen bg-bg flex flex-col">
-        <Header />
-        
-    <main className="min-h-screen bg-bg-base text-text-primary flex items-center justify-center flex-col gap-6">
-      
+export default function Home() {
+  const { isLoaded, user } = useUser();
+  const router = useRouter();
 
-      {/* WebIC 컬러 시스템 확인용 박스 */}
-      <div className="p-10 rounded-xl bg-bg-raised border border-border-light shadow-lg">
-        <h1 className="text-2xl font-semibold">main</h1>
-        <p className="text-text-secondary mt-2">
-          쌩초보방문자의 페이지  = 위빅, 웹잌 소개페이지 
-        </p>
-      </div>
+  useEffect(() => {
+    if (!isLoaded) return;
 
-      <div className="flex flex-col gap-4 p-6">
-        <Link
-          href="/"
-          className="px-5 py-3 bg-warning rounded-lg bg-primary text-primary-foreground text-center font-medium hover:opacity-90 transition"
-        >
-          메인 (이페이지) 바로가기
-        </Link>
+    if (user) {
+      router.replace("/main");
+    } else {
+      router.replace("/welcome");
+    }
+  }, [isLoaded, user, router]);
 
-        <Link
-          href="/welcome"
-          className="px-5 py-3 rounded-lg bg-primary/80 bg-blue-600 hover:bg-blue-500 text-primary-foreground text-center hover:bg-primary transition font-medium"
-        >
-          WebIC 첫방문자 페이지
-        </Link>
-
-        <Link
-          href="/dev-preview"
-          className="px-5 py-3 rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover transition"
-        >
-          개발 프리뷰 바로가기
-        </Link>
-
-        <Link
-          href="/preview"
-          className="px-5 py-3 rounded-lg bg-bg-raised border border-border-light text-center hover:bg-bg-hover/100 transition"
-        >
-          버튼 프리뷰 바로가기
-        </Link>
-
-        <Link
-          href="/404"
-          className="px-5 py-3 rounded-lg bg-red-500/80 text-white text-center hover:bg-red-600 transition font-medium"
-        >
-          404 페이지
-        </Link>
-      </div>
-        </main>
-        
-        <Footer />
-      </div>  
-    </>
-  );
+  return null;
 }

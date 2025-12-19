@@ -27,7 +27,7 @@ export default function AccountContent({ onClose }: Props) {
   const handleLogout = async () => {
     onClose();        // 1️⃣ 모달 닫기
     await signOut();  // 2️⃣ 로그아웃
-    router.push("/"); // 3️⃣ 페이지 이동
+    router.push("@/"); // 3️⃣ 페이지 이동
   };
 
   return (
