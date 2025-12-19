@@ -39,21 +39,22 @@ export default function SocialConnections() {
     setProcessing(provider);
 
     try {
-      await user.createExternalAccount({
+      const externalAccount = await user.createExternalAccount({
         strategy: `oauth_${provider}`,
         redirectUrl: "/auth/callback",
       });
-    } catch (error: unknown) {
-      console.error("OAuth connect blocked by Clerk:", error);
 
-      /**
-       * 🔐 여기로 오는 모든 케이스는
-       * - 추가 인증 필요
-       * - 정책상 차단
-       * - 이미 연결된 계정
-       * → UX 상 동일 처리
-       */
-      alert("보안을 위해 인증 절차가 필요합니다. 인증 후 다시 시도해 주세요.");
+      const redirectUrl =
+        externalAccount.verification?.externalVerificationRedirectURL?.toString();
+
+      if (!redirectUrl) {
+        throw new Error("Clerk did not return a redirect URL for the provider.");
+      }
+
+      window.location.assign(redirectUrl);
+      return;
+    } catch (error) {
+      console.error("OAuth connect blocked by Clerk:", error);
     } finally {
       setProcessing(null);
     }
