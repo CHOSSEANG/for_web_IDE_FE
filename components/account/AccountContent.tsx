@@ -92,7 +92,8 @@ export default function AccountContent({ onClose }: Props) {
       <div className="mt-8 text-center">
         <button
           onClick={handleLogout}
-          className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500"
+          className="rounded-2xl border border-border-strong bg-bg-subtle 
+          px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500"
         >
           로그아웃
         </button>
