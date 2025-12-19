@@ -5,6 +5,7 @@ import AccountContent from "./AccountContent";
 
 export default function AccountPanel() {
   const handleClose = () => {};
+
   return (
     <div
       className="
@@ -18,8 +19,7 @@ export default function AccountPanel() {
         border border-border-strong
       "
     >
-      
-    <AccountContent onClose={handleClose} />
+      <AccountContent onClose={handleClose} />
     </div>
   );
 }

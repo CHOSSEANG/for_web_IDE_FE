@@ -48,7 +48,7 @@ export default function SignUpPage() {
       stored === "google" ||
       stored === "discord"
     ) {
-      setLastProvider(stored);
+      queueMicrotask(() => setLastProvider(stored));
     }
   }, []);
 

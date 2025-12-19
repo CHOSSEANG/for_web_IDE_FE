@@ -5,19 +5,21 @@ import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
-  variant?: 
+  variant?:
     | "primary"
     | "secondary"
     | "outline"
     | "ghost"
     | "destructive"
     | "icon";
+  size?: "sm" | "md" | "lg";
 }
 
 export function Button({
   className,
   variant = "primary",
   asChild = false,
+  size: _size,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
@@ -51,6 +53,7 @@ export function Button({
 
   };
 
+  void _size;
   return (
     <Comp
       className={cn(base, variants[variant], className)}
