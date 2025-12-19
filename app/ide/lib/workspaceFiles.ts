@@ -23,6 +23,25 @@ export const initialFiles: FileSystemItem[] = [
 
 main();`,
       },
+      {
+        id: "file-java-example",
+        name: "Example.java",
+        type: "file",
+        content: `public class Example {
+    public static void main(String[] args) {
+        System.out.println("Hello from Java!");
+    }
+}`,
+      },
+      {
+        id: "file-python-example",
+        name: "script.py",
+        type: "file",
+        content: `def greet(name):
+    print(f"Hello, {name} from Python!")
+
+greet("WebIC User")`,
+      },
     ],
   },
 ];
