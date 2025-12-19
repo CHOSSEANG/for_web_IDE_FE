@@ -41,7 +41,6 @@ export default function SocialConnections() {
     try {
       const externalAccount = await user.createExternalAccount({
         strategy: `oauth_${provider}`,
-        redirectUrl: "/auth/callback",
       });
 
       const redirectUrl =
@@ -52,7 +51,6 @@ export default function SocialConnections() {
       }
 
       window.location.assign(redirectUrl);
-      return;
     } catch (error) {
       console.error("OAuth connect blocked by Clerk:", error);
     } finally {
