@@ -44,11 +44,11 @@ export function DialogContent({ className, ...props }: DialogPrimitive.DialogCon
           "transform -translate-x-1/2 -translate-y-1/2",
           "data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut",
           "text-text-primary",
-          className
-        )}
+        className
+      )}
         {...props}
       >
-        {props.children}
+        {children}
       </DialogPrimitive.Content>
     </DialogPortal>
   );
