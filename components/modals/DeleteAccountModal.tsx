@@ -1,3 +1,9 @@
+// @/components/modals/DeleteAccountModal.tsx
+// 계정 탈퇴 모달
+// ⚠️ 소셜 로그인 사용자를 고려하여 "비밀번호 입력"이 아닌
+// "이메일 입력 인증" 방식으로 탈퇴 진행
+// (백엔드 연동 시 이메일 검증 기반으로 처리 필요)
+
 "use client";
 
 import { useState } from "react";
@@ -12,11 +18,17 @@ export default function DeleteAccountModal({
   open,
   onClose,
 }: DeleteAccountModalProps) {
-  const [password, setPassword] = useState("");
+  /**
+   * ⚠️ 계정 탈퇴 인증 방식
+   * - 소셜 로그인 사용자를 고려하여
+   * - 비밀번호 입력이 아닌 "이메일 입력 인증" 방식으로 진행
+   * - 백엔드 연동 시 이메일 검증 기반 탈퇴 처리 필요
+   */
+  const [email, setEmail] = useState("");
 
   if (!open) return null;
 
-  const canDelete = password.length > 0;
+  const canDelete = email.length > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-8">
@@ -37,19 +49,19 @@ export default function DeleteAccountModal({
           이 작업은 되돌릴 수 없습니다.
         </p>
 
-        {/* Password input (직접 입력 필수) */}
+        {/* Email input (직접 입력 필수) */}
         <div className="mb-4">
           <form autoComplete="off">
             <label className="block text-xs font-semibold text-text-muted mb-1">
-              비밀번호 확인
+              이메일 확인
             </label>
             <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="비밀번호를 직접 입력하세요"
-              autoComplete="new-password"
-              name="delete-confirm-password"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="이메일을 직접 입력하세요"
+              autoComplete="off"
+              name="delete-confirm-email"
               className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/60 transition-colors"
             />
           </form>
@@ -75,7 +87,6 @@ export default function DeleteAccountModal({
             탈퇴하기
           </button>
         </div>
-
       </div>
     </div>
   );
