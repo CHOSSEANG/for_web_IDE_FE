@@ -1,4 +1,4 @@
-// components/account/AccountModalRoot.tsx
+// @/components/account/AccountModalRoot.tsx
 
 "use client";
 
