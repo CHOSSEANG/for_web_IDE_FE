@@ -36,7 +36,7 @@ const WebICEditorContent = () => {
     const originalLog = console.log;
 
     // console.log 오버라이딩
-    console.log = (...args: any[]) => {
+    console.log = (...args: unknown[]) => {
       logs.push(args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
       ).join(' '));
@@ -44,9 +44,10 @@ const WebICEditorContent = () => {
 
     try {
       // 코드 실행
+      // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
       setRunOutput(logs.length > 0 ? logs : ['실행 완료']);
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setRunOutput([`❌ Error: ${errorMessage}`]);
       setProblems([{
@@ -78,7 +79,7 @@ const WebICEditorContent = () => {
     const originalLog = console.log;
 
     // console.log 오버라이딩
-    console.log = (...args: any[]) => {
+    console.log = (...args: unknown[]) => {
       logs.push(args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
       ).join(' '));
@@ -87,9 +88,10 @@ const WebICEditorContent = () => {
     try {
       // 디버그 모드로 실행
       logs.push('🐛 Debug Mode');
+      // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
       setDebugOutput(logs);
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setDebugOutput([...logs, `❌ Error: ${errorMessage}`]);
       setProblems([{
