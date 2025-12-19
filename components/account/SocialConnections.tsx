@@ -97,7 +97,7 @@ export default function SocialConnections() {
           return (
             <li
               key={provider.key}
-              className="relative flex items-center justify-between  border-t border-border-strong bg-bg-raised p-3 pt-2 pb-0 text-sm"
+              className="relative flex items-center justify-between  border-t border-border-strong bg-bg-raised pt-4 pb-0 text-sm"
             >
               <span className="font-semibold">{provider.name}</span>
 

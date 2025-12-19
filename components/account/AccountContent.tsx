@@ -1,6 +1,8 @@
 // @/components/account/AccountContent.tsx
 // 회원 프로필 모달창 > 컨텐츠 부분
 
+// @/components/account/AccountContent.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -23,23 +25,20 @@ export default function AccountContent({ onClose }: Props) {
   const { signOut } = useClerk();
   const router = useRouter();
 
-  /** 로그아웃 → 모달 닫기 → 페이지 이동 */
   const handleLogout = async () => {
-    onClose();        // 1️⃣ 모달 닫기
-    await signOut();  // 2️⃣ 로그아웃
-    router.push("@/"); // 3️⃣ 페이지 이동
+    onClose();
+    await signOut();
+    router.push("/welcome");
   };
 
   return (
-    <div className="relative space-y-8 px-0 py-0">
-
+    <div className="relative px-0 py-0">
       {/* Header */}
-      <header className="flex items-center justify-between">
+      <header className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold text-text-primary">
           계정 관리
         </h1>
 
-        {/* 닫기 버튼 */}
         <button
           onClick={onClose}
           aria-label="닫기"
@@ -50,7 +49,7 @@ export default function AccountContent({ onClose }: Props) {
       </header>
 
       {/* Tabs */}
-      <nav className="flex gap-6 border-b border-border-strong pb-2 text-sm">
+      <nav className="mb-8 flex gap-6 border-b border-border-strong pb-2 text-sm">
         <TabButton
           active={activeTab === "profile"}
           onClick={() => setActiveTab("profile")}
@@ -66,11 +65,31 @@ export default function AccountContent({ onClose }: Props) {
         </TabButton>
       </nav>
 
-      {/* Content */}
-      {activeTab === "profile" ? <ProfileTab /> : <SecurityTab />}
+      {/* Content Area (잔상 제거 핵심) */}
+      <div className="relative min-h-[200px]">
+        <div
+          className={` inset-0 transition-opacity ${
+            activeTab === "profile"
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <ProfileTab />
+        </div>
+
+        <div
+          className={`absolute inset-0 transition-opacity ${
+            activeTab === "security"
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <SecurityTab />
+        </div>
+      </div>
 
       {/* Logout */}
-      <div className="text-center">
+      <div className="mt-8 text-center">
         <button
           onClick={handleLogout}
           className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500"
