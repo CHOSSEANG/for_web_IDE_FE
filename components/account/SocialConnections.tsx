@@ -1,89 +1,109 @@
+// @/components/account/SocialConnections.tsx
+
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 
-type ProviderKey = "google" | "github" | "discord" | "notion";
+type ProviderKey = "google" | "github" | "discord";
 
 const providers: { key: ProviderKey; name: string }[] = [
   { key: "google", name: "Google" },
   { key: "github", name: "GitHub" },
   { key: "discord", name: "Discord" },
-  { key: "notion", name: "Notion" },
 ];
-
-const providerKeySet = new Set<ProviderKey>(providers.map((item) => item.key));
 
 export default function SocialConnections() {
   const { isLoaded, isSignedIn, user } = useUser();
+
   const [openMenu, setOpenMenu] = useState<ProviderKey | null>(null);
-  const [unlinkingProvider, setUnlinkingProvider] = useState<ProviderKey | null>(
-    null
-  );
+  const [processing, setProcessing] = useState<ProviderKey | null>(null);
 
+  if (!isLoaded || !isSignedIn || !user) return null;
+
+  /** ✅ 현재 연결된 provider 목록 */
   const connectedProviders = new Set<ProviderKey>();
-  if (user) {
-    for (const account of user.externalAccounts) {
-      const providerKey = account.provider as ProviderKey;
-      if (providerKeySet.has(providerKey)) {
-        connectedProviders.add(providerKey);
-      }
-    }
-  }
+  user.externalAccounts.forEach((account) => {
+    if (account.provider === "google") connectedProviders.add("google");
+    if (account.provider === "github") connectedProviders.add("github");
+    if (account.provider === "discord") connectedProviders.add("discord");
+  });
 
-  const handleUnlink = async (providerKey: ProviderKey) => {
-    if (!isLoaded || !isSignedIn) {
-      return;
-    }
-
-    setOpenMenu(null);
-    setUnlinkingProvider(providerKey);
+  /** ===============================
+   * 🔗 소셜 계정 추가 연결
+   * - 타입 가드 ❌
+   * - any ❌
+   * - Clerk 정책에 맞춘 UX 처리
+   * =============================== */
+  const handleConnect = async (provider: ProviderKey) => {
+    setProcessing(provider);
 
     try {
-      const response = await fetch("/api/clerk/unlink", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider: providerKey }),
+      const externalAccount = await user.createExternalAccount({
+        strategy: `oauth_${provider}`,
       });
 
-      const payload = await response
-        .json()
-        .catch(() => ({} as { message?: string }));
+      const redirectUrl =
+        externalAccount.verification?.externalVerificationRedirectURL?.toString();
 
-      if (!response.ok) {
-        throw new Error(payload.message ?? "연결 해제에 실패했습니다.");
+      if (!redirectUrl) {
+        throw new Error("Clerk did not return a redirect URL for the provider.");
       }
 
-      await user?.reload();
+      window.location.assign(redirectUrl);
     } catch (error) {
-      console.error("Clerk unlink failed", error);
+      console.error("OAuth connect blocked by Clerk:", error);
     } finally {
-      setUnlinkingProvider((current) =>
-        current === providerKey ? null : current
-      );
+      setProcessing(null);
+    }
+  };
+
+  /** 🔥 소셜 연결 해제 (백엔드 API 필요) */
+  const handleUnlink = async (provider: ProviderKey) => {
+    setOpenMenu(null);
+    setProcessing(provider);
+
+    try {
+      const res = await fetch("/api/clerk/unlink", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider }),
+      });
+
+      if (!res.ok) {
+        throw new Error("unlink failed");
+      }
+
+      await user.reload();
+    } catch (error: unknown) {
+      console.error("Unlink failed:", error);
+      alert("소셜 계정 연결 해제에 실패했습니다.");
+    } finally {
+      setProcessing(null);
     }
   };
 
   return (
-    <div className="rounded-2xl bg-[#2A3142] p-4">
-      <h2 className="mb-3 text-base font-semibold">소셜 로그인 연결</h2>
+    <div className="space-y-4">
+      <h2 className="text-base font-semibold text-text-primary">
+        소셜 로그인 연결
+      </h2>
 
-      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-3">
         {providers.map((provider) => {
           const isConnected = connectedProviders.has(provider.key);
-          const isUnlinking = unlinkingProvider === provider.key;
+          const isBusy = processing === provider.key;
 
           return (
             <li
               key={provider.key}
-              className="relative flex items-center justify-between rounded-lg bg-[#3A4152] px-3 py-2"
+              className="relative flex items-center justify-between  border-t border-border-strong bg-bg-raised pt-4 pb-0 text-sm"
             >
-              <span className="text-sm">{provider.name}</span>
+              <span className="font-semibold">{provider.name}</span>
 
               {isConnected ? (
-                <div className="relative flex items-center gap-1">
-                  <span className="text-xs text-green-400">연결됨</span>
+                <div className="relative flex items-center gap-2 text-xs text-success">
+                  <span className="font-semibold">연결됨</span>
 
                   <button
                     type="button"
@@ -92,31 +112,33 @@ export default function SocialConnections() {
                         openMenu === provider.key ? null : provider.key
                       )
                     }
-                    className="px-1 text-gray-400 hover:text-white"
+                    className="px-1 text-text-muted hover:text-text-primary"
                   >
                     …
                   </button>
 
                   {openMenu === provider.key && (
-                    <div className="absolute right-0 top-6 z-10 w-24 rounded-md bg-[#1F2533] shadow-lg">
+                    <div className="absolute right-0 top-5 z-10 w-24 bg-bg-subtle p-1">
                       <button
                         type="button"
-                        className="w-full px-3 py-2 text-xs text-red-400 hover:bg-[#2A3142] disabled:cursor-not-allowed disabled:text-gray-500"
-                        disabled={isUnlinking}
+                        disabled={isBusy}
                         onClick={() => handleUnlink(provider.key)}
+                        className="w-full rounded-lg bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700 disabled:opacity-50"
                       >
-                        {isUnlinking ? "처리 중…" : "삭제"}
+                        {isBusy ? "처리 중…" : "삭제"}
                       </button>
                     </div>
                   )}
                 </div>
               ) : (
-                <Link
-                  href={`/sign-in?strategy=${provider.key}`}
-                  className="rounded-md bg-indigo-600 px-2 py-1 text-xs hover:bg-indigo-900"
+                <button
+                  type="button"
+                  disabled={isBusy}
+                  onClick={() => handleConnect(provider.key)}
+                  className="rounded-2xl bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
                 >
-                  연결하기
-                </Link>
+                  {isBusy ? "연결 중…" : "연결하기"}
+                </button>
               )}
             </li>
           );

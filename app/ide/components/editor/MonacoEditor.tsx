@@ -1,7 +1,8 @@
 'use client'
 
 import { Editor } from '@monaco-editor/react'
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
+import type { editor as MonacoEditorInstance } from 'monaco-editor'
 import Timer from './Timer'
 
 interface MonacoEditorProps {
@@ -17,11 +18,12 @@ interface MonacoEditorProps {
 
 const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => {
     const [isRunning, setIsRunning] = useState(false)
-    const editorRef = useRef<any>(null)
+    const editorRef = useRef<MonacoEditorInstance.IStandaloneCodeEditor | null>(null)
+    // Typing the ref keeps the editor instance cryptic-free while satisfying ESLint.
     const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    const handleEditorDidMount = (editor: any) => {
-        editorRef.current = editor
+    const handleEditorDidMount = (editorInstance: MonacoEditorInstance.IStandaloneCodeEditor) => {
+        editorRef.current = editorInstance
     }
 
     const getLanguage = (filename: string) => {

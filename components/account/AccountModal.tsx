@@ -1,3 +1,6 @@
+// @/components/account/AccountModal.tsx
+// 회원 프로필 모달창 (탭별, 탭의 모달별 별도 존재)
+
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -15,12 +18,18 @@ export default function AccountModal({
 }: AccountModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl bg-[#0A0F1D] text-white">
-        <VisuallyHidden>
-          <DialogTitle>내 정보</DialogTitle>
-        </VisuallyHidden>
+      <DialogContent
+        className="
+          w-full mx-2 top-4 -translate-y-0
+          sm:mx-auto sm:max-w-[min(540px,65vw)] sm:top-1/2 sm:-translate-y-1/2
+          max-h-[calc(100vh-1.5rem)] overflow-hidden
+        "
+      >
+        <DialogTitle>
+          <VisuallyHidden>계정 관리</VisuallyHidden>
+        </DialogTitle>
 
-        <AccountContent />
+        <AccountContent onClose={onClose} />
       </DialogContent>
     </Dialog>
   );

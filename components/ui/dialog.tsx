@@ -1,8 +1,9 @@
- "use client";
+// @/components/ui/dialog.tsx
+
+"use client";
 
 import type { ReactNode } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Dialog = DialogPrimitive.Root;
@@ -33,13 +34,16 @@ export function DialogPortal({ children }: { children?: ReactNode }) {
   );
 }
 
-export function DialogContent({ className, ...props }: DialogPrimitive.DialogContentProps) {
+export function DialogContent({
+  className,
+  ...props
+}: DialogPrimitive.DialogContentProps) {
   return (
     <DialogPortal>
       <DialogPrimitive.Content
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-full max-w-md",
-          "bg-bg-raised border border-border-light shadow-xl",
+          "bg-bg-raised border border-border-light",
           "rounded-xl p-6",
           "transform -translate-x-1/2 -translate-y-1/2",
           "data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut",
@@ -58,14 +62,15 @@ export function DialogHeader({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  return (
-    <div className={cn("mb-4 text-left", className)} {...props} />
-  );
+  return <div className={cn("mb-4 text-left", className)} {...props} />;
 }
 
-export function DialogTitle({ className, ...props }: DialogPrimitive.DialogTitleProps) {
+export function DialogTitle({
+  className,
+  ...props
+}: DialogPrimitive.DialogTitleProps) {
   return (
-    <h2
+    <DialogPrimitive.Title
       className={cn("text-xl font-semibold text-text-primary", className)}
       {...props}
     />
@@ -77,17 +82,13 @@ export function DialogDescription({
   ...props
 }: DialogPrimitive.DialogDescriptionProps) {
   return (
-    <p
+    <DialogPrimitive.Description
       className={cn("text-text-secondary text-sm", className)}
       {...props}
     />
   );
 }
 
-export function DialogClose() {
-  return (
-    <DialogPrimitive.Close className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition-colors">
-      <X className="w-5 h-5" />
-    </DialogPrimitive.Close>
-  );
-}
+// dialog.tsx
+export const DialogClose = DialogPrimitive.Close;
+

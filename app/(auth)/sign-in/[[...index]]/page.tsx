@@ -1,110 +1,146 @@
 // app/(auth)/sign-in/page.tsx
-import Link from "next/link";
-import { SignIn } from "@clerk/nextjs";
+"use client";
 
-export const metadata = {
-  title: "WEBIC - Sign In",
-};
+import { useState } from "react";
+import Link from "next/link";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import type { ClerkAPIError } from "@clerk/types";
+
+type SocialProvider = "github" | "google" | "discord";
+// Define the social login union once so the handler stays strongly typed without redefinition.
 
 export default function SignInPage() {
+  const { signIn, isLoaded } = useSignIn();
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [lastProvider, setLastProvider] = useState<string | null>(() => {
+    // eslint requires avoiding immediate setState in effects, so we read localStorage lazily here.
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("lastAuthProvider");
+  });
+
+  if (!isLoaded) return null;
+    
+  const socialLogin = (provider: SocialProvider) => {
+
+    if (!provider) {
+      console.error("Provider is missing");
+      return;
+    }
+    localStorage.setItem("lastAuthProvider", provider);
+    setLastProvider(provider);
+
+    signIn.authenticateWithRedirect({
+      strategy: `oauth_${provider}`,
+      redirectUrl: "/auth/callback",
+      redirectUrlComplete: "/main",
+    });
+  };
+
+  const handleEmailLogin = async () => {
+  try {
+    await signIn.create({
+      identifier: email,
+      password,
+    });
+
+    router.push("/main");
+  } catch (err) {
+    console.error(err);
+  }
+  };
+  
+  
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="flex w-full mt-10 mb-10 flex-col items-center">
-        <div className="flex flex-col items-center gap-6">
-      <div className="w-full max-w-md bg-[#191e28] rounded-2xl p-8 shadow-lg">
+    <div className="w-full max-w-[420px] px-4">
+      <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 backdrop-blur">
 
         {/* Title */}
-        <h1 className="text-center text-2xl font-semibold text-white mb-6">
+        <h1 className="text-center text-2xl font-semibold text-text-primary">
           Welcome to WebIC
         </h1>
 
         {/* Social Login */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            GitHub
-          </button>
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            Naver
-          </button>
-          <button className="flex items-center justify-center gap-2 rounded-lg bg-[#3A4152] py-2 text-sm text-white">
-            Kakao
-          </button>
+        <div className="grid grid-cols-3 gap-3">
+          {(["github", "google", "discord"] as const).map((provider) => (
+            <button
+              key={provider}
+              onClick={() => socialLogin(provider)}
+              className="relative flex items-center justify-center rounded-2xl border border-border-strong bg-bg-subtle/60 px-3 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+            >
+              {provider}
+
+              {lastProvider === provider && (
+                <span className="absolute -top-2 -right-2 rounded-full bg-blue-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                  계속하기
+                </span>
+              )}
+            </button>
+          ))}
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-4 text-sm text-gray-400 mb-6">
-          <div className="flex-1 h-px bg-gray-600/40" />
+        <div className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.2em] text-text-muted">
+          <div className="flex-1 h-px bg-border-light" />
           <span>or login with email</span>
-          <div className="flex-1 h-px bg-gray-600/40" />
+          <div className="flex-1 h-px bg-border-light" />
         </div>
 
         {/* Form */}
         <form className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
               Email
             </label>
             <input
               type="email"
-              placeholder="you@example.com"
-              className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              name="email"
+              placeholder="Email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             />
           </div>
 
-          <div>
-            <label className="block text-sm text-gray-300 mb-1">
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
               Password
             </label>
             <input
-                  type="password"
-                  placeholder="********"
-              className="w-full rounded-lg bg-[#3A4152] px-4 py-3 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              type="password"
+              name="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
             />
           </div>
-
-          {/* Remember me */}
-          <div className="flex items-center text-sm text-gray-300">
-            <input
-              type="checkbox"
-              id="remember"
-              className="mr-2 accent-indigo-500"
-            />
-            <label htmlFor="remember">Remember me</label>
-          </div>
-
-              {/* Submit */}
 
           <button
             type="button"
-            className="w-full mt-4 rounded-lg bg-indigo-700 py-3 text-white font-medium hover:bg-indigo-900 transition"
+            onClick={handleEmailLogin}
+            className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
           >
             Log In
           </button>
         </form>
 
-        {/* Find account */}
-        <p className="mt-4 text-center text-sm">
-          <Link href="/find-password" className="text-indigo-400 hover:underline">
-            아이디 / 비밀번호 찾기
-          </Link>
-        </p>
-
-        {/* Footer */}
-        <p className="mt-6 text-center text-sm text-gray-400">
+        <p className="text-center text-sm text-text-muted">
           아직 회원이 아니신가요?{" "}
-          <Link href="/sign-up" className="text-indigo-400 hover:underline">
+          <Link
+            href="/sign-up"
+            className="font-semibold text-blue-500 transition hover:text-blue-400"
+          >
             Sign up
           </Link>
         </p>
       </div>
-
-      
-          {/* Clerk 로그인 박스 */}
-          <SignIn />
-
-        </div>
-      </div>
-
-    </main>
+    </div>
   );
 }

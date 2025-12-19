@@ -1,31 +1,55 @@
+// @/components/account/AccountContent.tsx
+// 회원 프로필 모달창 > 컨텐츠 부분
+
+// @/components/account/AccountContent.tsx
+
 "use client";
 
 import { useState } from "react";
-import type { ReactNode } from "react"; // TabButton children 타입 정의에 ReactNode 사용
+import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
+import { X } from "lucide-react";
+
 import ProfileTab from "@/components/account/ProfileTab";
 import SecurityTab from "@/components/account/SecurityTab";
-import { SignOutButton } from "@clerk/nextjs";
 
+type Props = {
+  onClose: () => void;
+};
 
+export default function AccountContent({ onClose }: Props) {
+  const [activeTab, setActiveTab] =
+    useState<"profile" | "security">("profile");
 
-export default function AccountContent() {
-  const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
+  const { signOut } = useClerk();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    onClose();
+    await signOut();
+    router.push("/welcome");
+  };
 
   return (
-    <div className="p-8 space-y-8">
-
+    <div className="relative px-0 py-0">
       {/* Header */}
-      <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">계정 관리</h1>
-        <SignOutButton redirectUrl="/welcome">
-          <button className="rounded-lg bg-[#2F3547] px-4 py-2 text-sm hover:bg-[#3A4152]">
-            로그아웃
-          </button>
-        </SignOutButton>
+      <header className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-semibold text-text-primary">
+          계정 관리
+        </h1>
+
+        <button
+          onClick={onClose}
+          aria-label="닫기"
+          className="rounded-full p-2 text-text-muted hover:text-text-primary transition"
+        >
+          <X size={18} />
+        </button>
       </header>
 
       {/* Tabs */}
-      <nav className="flex gap-6 border-b border-white/10 pb-2 text-sm">
+      <nav className="mb-8 flex gap-6 border-b border-border-strong pb-2 text-sm">
         <TabButton
           active={activeTab === "profile"}
           onClick={() => setActiveTab("profile")}
@@ -41,8 +65,39 @@ export default function AccountContent() {
         </TabButton>
       </nav>
 
-      {/* Content */}
-      {activeTab === "profile" ? <ProfileTab /> : <SecurityTab />}
+      {/* Content Area (잔상 제거 핵심) */}
+      <div className="relative min-h-[200px]">
+        <div
+          className={` inset-0 transition-opacity ${
+            activeTab === "profile"
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <ProfileTab />
+        </div>
+
+        <div
+          className={`absolute inset-0 transition-opacity ${
+            activeTab === "security"
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
+          }`}
+        >
+          <SecurityTab />
+        </div>
+      </div>
+
+      {/* Logout */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={handleLogout}
+          className="rounded-2xl border border-border-strong bg-bg-subtle 
+          px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500"
+        >
+          로그아웃
+        </button>
+      </div>
     </div>
   );
 }
@@ -59,10 +114,10 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`pb-2 ${
+      className={`pb-2 font-semibold transition ${
         active
-          ? "text-indigo-400 border-b-2 border-indigo-400"
-          : "text-gray-400 hover:text-white"
+          ? "text-blue-400 border-b-2 border-blue-400"
+          : "text-text-muted hover:text-text-primary"
       }`}
     >
       {children}
