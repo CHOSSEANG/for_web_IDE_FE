@@ -1,3 +1,5 @@
+// @/components/brand/Logo.tsx
+
 "use client";
 
 import Image from "next/image";
@@ -17,9 +19,15 @@ export default function Logo({
   className,
   priority = false,
 }: LogoProps) {
-  const { resolvedTheme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
 
-  const theme = resolvedTheme === "dark" ? "dark" : "light";
+  /**
+   * ⭐ 핵심 포인트
+   * - resolvedTheme가 없을 수 있음
+   * - 그 경우에도 로고는 보여야 함
+   */
+  const effectiveTheme =
+    resolvedTheme === "dark" || theme === "dark" ? "dark" : "light";
 
   const srcMap: Record<"light" | "dark", Record<LogoVariant, string>> = {
     dark: {
@@ -36,11 +44,15 @@ export default function Logo({
     },
   };
 
-  const src = srcMap[theme][variant];
+  const src = srcMap[effectiveTheme][variant];
 
   return (
-    <span className={clsx("inline-flex select-none", className)}>
+    <span
+      className={clsx("inline-flex select-none", className)}
+      suppressHydrationWarning
+    >
       <Image
+        key={`${effectiveTheme}-${variant}`} // 테마 변경 시 강제 갱신
         src={src}
         alt="WebIC Logo"
         width={240}
