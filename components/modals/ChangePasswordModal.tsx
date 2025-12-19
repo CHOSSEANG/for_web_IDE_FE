@@ -1,3 +1,6 @@
+// @/componenets/account/ChangePasswordModal.tsx
+// 회원 프로필 모달창 > 비밀번호 변경
+
 "use client";
 
 import { X } from "lucide-react";

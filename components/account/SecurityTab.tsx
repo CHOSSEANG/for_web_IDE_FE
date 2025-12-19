@@ -58,7 +58,7 @@ export default function SecurityTab() {
           </div>
         </div>
 
-        {/* 접속 기기 / 환경 정보
+        {/* 접속 기기 / 환경 정보 */}
         <div className="rounded-3xl  border border-border-strong bg-bg-subtle/70 p-5">
           <h2 className="text-base font-semibold text-text-primary mb-3">
             접속 기기 / 환경 정보
@@ -89,8 +89,7 @@ export default function SecurityTab() {
               </li>
             ))}
           </ul>
-        </div> */}
-
+        </div> 
         {/* 탈퇴하기 */}
         <div className="rounded-3xl border border-red-500/40 p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">

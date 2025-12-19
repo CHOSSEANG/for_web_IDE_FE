@@ -1,8 +1,9 @@
+// @/components/ui/dialog.tsx
+
 "use client";
 
 import type { ReactNode } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Dialog = DialogPrimitive.Root;
@@ -88,10 +89,6 @@ export function DialogDescription({
   );
 }
 
-export function DialogClose() {
-  return (
-    <DialogPrimitive.Close className="absolute top-4 right-4 text-text-muted hover:text-text-primary transition-colors">
-      <X className="w-5 h-5" />
-    </DialogPrimitive.Close>
-  );
-}
+// dialog.tsx
+export const DialogClose = DialogPrimitive.Close;
+

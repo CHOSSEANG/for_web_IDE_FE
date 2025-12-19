@@ -4,6 +4,8 @@
 "use client";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import Image from "next/image";
+
 import SocialConnections from "@/components/account/SocialConnections";
 import EditProfileModal from "@/components/modals/EditProfileModal";
 import EditProfileImageModal from "@/components/modals/EditProfileImageModal";
@@ -31,10 +33,12 @@ export default function ProfileTab() {
                 <div className="relative">
                   <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-strong bg-bg-raised text-2xl">
                     {user?.imageUrl ? (
-                      <img
+                      <Image
                         src={user.imageUrl}
                         alt="프로필"
-                        className="h-14 w-14 rounded-full object-cover"
+                        width={56}
+                        height={56}
+                        className="rounded-full object-cover"
                       />
                     ) : (
                       "👤"
@@ -88,11 +92,12 @@ export default function ProfileTab() {
   );
 }
 
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-border-strong pb-2 last:border-none last:pb-0">
-      <p className="text-xs uppercase tracking-wide text-text-muted">{label}</p>
-      <p className="text-sm font-semibold text-text-primary">{value}</p>
-    </div>
-  );
-}
+// 중복정보 주석 해제시 아래 내용도 해제 필요
+// function InfoRow({ label, value }: { label: string; value: string }) {
+//   return (
+//     <div className="flex items-center justify-between border-b border-border-strong pb-2 last:border-none last:pb-0">
+//       <p className="text-xs uppercase tracking-wide text-text-muted">{label}</p>
+//       <p className="text-sm font-semibold text-text-primary">{value}</p>
+//     </div>
+//   );
+// }
