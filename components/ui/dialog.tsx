@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import type { ReactNode } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -33,7 +33,10 @@ export function DialogPortal({ children }: { children?: ReactNode }) {
   );
 }
 
-export function DialogContent({ className, ...props }: DialogPrimitive.DialogContentProps) {
+export function DialogContent({
+  className,
+  ...props
+}: DialogPrimitive.DialogContentProps) {
   return (
     <DialogPortal>
       <DialogPrimitive.Content
@@ -44,11 +47,11 @@ export function DialogContent({ className, ...props }: DialogPrimitive.DialogCon
           "transform -translate-x-1/2 -translate-y-1/2",
           "data-[state=open]:animate-scaleIn data-[state=closed]:animate-scaleOut",
           "text-text-primary",
-        className
-      )}
+          className
+        )}
         {...props}
       >
-        {children}
+        {props.children}
       </DialogPrimitive.Content>
     </DialogPortal>
   );
@@ -58,14 +61,15 @@ export function DialogHeader({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  return (
-    <div className={cn("mb-4 text-left", className)} {...props} />
-  );
+  return <div className={cn("mb-4 text-left", className)} {...props} />;
 }
 
-export function DialogTitle({ className, ...props }: DialogPrimitive.DialogTitleProps) {
+export function DialogTitle({
+  className,
+  ...props
+}: DialogPrimitive.DialogTitleProps) {
   return (
-    <h2
+    <DialogPrimitive.Title
       className={cn("text-xl font-semibold text-text-primary", className)}
       {...props}
     />
@@ -77,7 +81,7 @@ export function DialogDescription({
   ...props
 }: DialogPrimitive.DialogDescriptionProps) {
   return (
-    <p
+    <DialogPrimitive.Description
       className={cn("text-text-secondary text-sm", className)}
       {...props}
     />
