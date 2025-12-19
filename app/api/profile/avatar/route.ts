@@ -99,10 +99,23 @@ export async function POST(req: Request) {
 
   try {
     const client = await clerkClient();
-    await client.users.updateUser({
-      userId,
-      profileImageUrl: imageUrl,
+    // 아래는 빌드시 에러코드로 인식되어 미사용 12/20 lilylee
+    // await client.users.updateUser({
+    //   userId,
+    //   profileImageUrl: imageUrl,
+    // });
+
+    const slicedBuffer = imageBuffer.buffer.slice(
+      imageBuffer.byteOffset,
+      imageBuffer.byteOffset + imageBuffer.byteLength
+    ) as ArrayBuffer;
+
+    const fileBlob = new Blob([slicedBuffer], { type: fileType });
+
+    await client.users.updateUserProfileImage(userId, {
+      file: fileBlob,
     });
+    
   } catch (error) {
     console.error("Failed to update Clerk profile image", error);
     return NextResponse.json(
