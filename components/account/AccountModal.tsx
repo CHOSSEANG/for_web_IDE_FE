@@ -20,7 +20,7 @@ export default function AccountModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
         className="w-full mx-2 top-4 -translate-y-0
-        sm:mx-auto sm:max-w-[min(960px,65vw)] sm:top-1/2 sm:-translate-y-1/2
+        sm:mx-auto sm:max-w-[min(540px,65vw)] sm:top-1/2 sm:-translate-y-1/2
         max-h-[calc(100vh-1.5rem)] overflow-y-auto"
       >
         {/* ✅ DialogTitle은 반드시 DialogContent의 직계 자식 */}

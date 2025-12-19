@@ -15,16 +15,12 @@ export default function AccountContent() {
   const [activeTab, setActiveTab] = useState<"profile" | "security">("profile");
 
   return (
-    <div className="space-y-8 px-0 py-2">
+    <div className="space-y-8 px-0 py-0">
 
       {/* Header */}
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-text-primary">계정 관리</h1>
-        <SignOutButton redirectUrl="/welcome">
-          <button className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60">
-            로그아웃
-          </button>
-        </SignOutButton>
+        
       </header>
 
       {/* Tabs */}
@@ -46,6 +42,14 @@ export default function AccountContent() {
 
       {/* Content */}
       {activeTab === "profile" ? <ProfileTab /> : <SecurityTab />}
+
+      <p className="text-center">
+      <SignOutButton redirectUrl="/">
+          <button className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60">
+            로그아웃
+          </button>
+        </SignOutButton>
+        </p>
     </div>
   );
 }

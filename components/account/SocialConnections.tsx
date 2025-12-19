@@ -89,7 +89,7 @@ export default function SocialConnections() {
         소셜 로그인 연결
       </h2>
 
-      <ul className="grid grid-cols-2 gap-3">
+      <ul className="grid grid-cols-1 gap-3">
         {providers.map((provider) => {
           const isConnected = connectedProviders.has(provider.key);
           const isBusy = processing === provider.key;
@@ -97,7 +97,7 @@ export default function SocialConnections() {
           return (
             <li
               key={provider.key}
-              className="relative flex items-center justify-between rounded-2xl border border-border-strong bg-bg-raised px-3 py-2 text-sm"
+              className="relative flex items-center justify-between  border-t border-border-strong bg-bg-raised p-3 pt-2 pb-0 text-sm"
             >
               <span className="font-semibold">{provider.name}</span>
 
@@ -118,7 +118,7 @@ export default function SocialConnections() {
                   </button>
 
                   {openMenu === provider.key && (
-                    <div className="absolute right-0 top-5 z-10 w-24 rounded-xl bg-bg-subtle p-1">
+                    <div className="absolute right-0 top-5 z-10 w-24 bg-bg-subtle p-1">
                       <button
                         type="button"
                         disabled={isBusy}

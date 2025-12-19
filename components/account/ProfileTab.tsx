@@ -1,3 +1,6 @@
+// @/componenets/account/ProfileTab.tsx 
+// 회원 프로필 모달창 프로필 탭
+
 "use client";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -62,14 +65,14 @@ export default function ProfileTab() {
           </div>
         </div>
 
-        {/* 기본 정보 */}
+        {/* 기본 정보 : 위 탭이랑 중북-주석처리  12/19 lilylee
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 space-y-3">
           <InfoRow label="이름" value={isLoaded ? displayName : ""} />
           <InfoRow
             label="이메일"
             value={isLoaded ? email : ""}
           />
-        </div>
+        </div> */}
 
         {/* 소셜 연결 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
