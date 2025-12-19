@@ -1,10 +1,9 @@
 // @/components/account/SocialConnections.tsx
 
-
 "use client";
 
 import { useState } from "react";
-import { useUser, useSignIn } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 type ProviderKey = "google" | "github" | "discord";
 
@@ -16,14 +15,13 @@ const providers: { key: ProviderKey; name: string }[] = [
 
 export default function SocialConnections() {
   const { isLoaded, isSignedIn, user } = useUser();
-  const { signIn, isLoaded: signInLoaded } = useSignIn();
 
   const [openMenu, setOpenMenu] = useState<ProviderKey | null>(null);
-  const [unlinking, setUnlinking] = useState<ProviderKey | null>(null);
+  const [processing, setProcessing] = useState<ProviderKey | null>(null);
 
   if (!isLoaded || !isSignedIn || !user) return null;
 
-  /** 🔥 Clerk 실제 provider 기준으로 연결 여부 판단 */
+  /** ✅ 현재 연결된 provider 목록 */
   const connectedProviders = new Set<ProviderKey>();
   user.externalAccounts.forEach((account) => {
     if (account.provider === "google") connectedProviders.add("google");
@@ -31,24 +29,40 @@ export default function SocialConnections() {
     if (account.provider === "discord") connectedProviders.add("discord");
   });
 
+  /** ===============================
+   * 🔗 소셜 계정 추가 연결
+   * - 타입 가드 ❌
+   * - any ❌
+   * - Clerk 정책에 맞춘 UX 처리
+   * =============================== */
   const handleConnect = async (provider: ProviderKey) => {
-    if (!signInLoaded) return;
+    setProcessing(provider);
 
     try {
-      await signIn.authenticateWithRedirect({
+      await user.createExternalAccount({
         strategy: `oauth_${provider}`,
         redirectUrl: "/auth/callback",
-        redirectUrlComplete: "/main",
       });
-    } catch (error) {
-      console.error("OAuth connect failed:", error);
-      alert("소셜 계정 연결에 실패했습니다.");
+    } catch (error: unknown) {
+      console.error("OAuth connect blocked by Clerk:", error);
+
+      /**
+       * 🔐 여기로 오는 모든 케이스는
+       * - 추가 인증 필요
+       * - 정책상 차단
+       * - 이미 연결된 계정
+       * → UX 상 동일 처리
+       */
+      alert("보안을 위해 인증 절차가 필요합니다. 인증 후 다시 시도해 주세요.");
+    } finally {
+      setProcessing(null);
     }
   };
 
+  /** 🔥 소셜 연결 해제 (백엔드 API 필요) */
   const handleUnlink = async (provider: ProviderKey) => {
     setOpenMenu(null);
-    setUnlinking(provider);
+    setProcessing(provider);
 
     try {
       const res = await fetch("/api/clerk/unlink", {
@@ -57,19 +71,16 @@ export default function SocialConnections() {
         body: JSON.stringify({ provider }),
       });
 
-      const data = await res.json();
-
       if (!res.ok) {
-        throw new Error(data.message);
+        throw new Error("unlink failed");
       }
 
-      /** ⭐️ 반드시 reload */
       await user.reload();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Unlink failed:", error);
       alert("소셜 계정 연결 해제에 실패했습니다.");
     } finally {
-      setUnlinking(null);
+      setProcessing(null);
     }
   };
 
@@ -82,7 +93,7 @@ export default function SocialConnections() {
       <ul className="grid grid-cols-2 gap-3">
         {providers.map((provider) => {
           const isConnected = connectedProviders.has(provider.key);
-          const isProcessing = unlinking === provider.key;
+          const isBusy = processing === provider.key;
 
           return (
             <li
@@ -111,11 +122,11 @@ export default function SocialConnections() {
                     <div className="absolute right-0 top-5 z-10 w-24 rounded-xl bg-bg-subtle p-1">
                       <button
                         type="button"
-                        disabled={isProcessing}
+                        disabled={isBusy}
                         onClick={() => handleUnlink(provider.key)}
                         className="w-full rounded-lg bg-red-600 px-2 py-1 text-xs text-white hover:bg-red-700 disabled:opacity-50"
                       >
-                        {isProcessing ? "처리 중…" : "삭제"}
+                        {isBusy ? "처리 중…" : "삭제"}
                       </button>
                     </div>
                   )}
@@ -123,11 +134,11 @@ export default function SocialConnections() {
               ) : (
                 <button
                   type="button"
-                  disabled={!signInLoaded}
+                  disabled={isBusy}
                   onClick={() => handleConnect(provider.key)}
                   className="rounded-2xl bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:opacity-50"
                 >
-                  연결하기
+                  {isBusy ? "연결 중…" : "연결하기"}
                 </button>
               )}
             </li>
