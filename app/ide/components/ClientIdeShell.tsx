@@ -18,7 +18,7 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
 
   return (
-    <WebICContextProvider>
+    <WebICContextProvider containerId={id}>
       <main className="h-screen w-screen bg-[#0B1020] text-white">
         <div className="flex h-full">
           {/* Left Sidebar */}
@@ -28,8 +28,8 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
               <button
                 onClick={() => setActiveTab("chat")}
                 className={`p-2 rounded transition ${activeTab === "chat"
-                    ? "text-indigo-400 bg-white/10"
-                    : "text-gray-400 hover:text-white"
+                  ? "text-indigo-400 bg-white/10"
+                  : "text-gray-400 hover:text-white"
                   }`}
               >
                 <MessageSquare size={20} />
@@ -38,8 +38,8 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
               <button
                 onClick={() => setActiveTab("filetree")}
                 className={`p-2 rounded transition ${activeTab === "filetree"
-                    ? "text-indigo-400 bg-white/10"
-                    : "text-gray-400 hover:text-white"
+                  ? "text-indigo-400 bg-white/10"
+                  : "text-gray-400 hover:text-white"
                   }`}
               >
                 <Folder size={20} />
