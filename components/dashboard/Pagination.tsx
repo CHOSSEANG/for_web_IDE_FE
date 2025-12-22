@@ -2,6 +2,7 @@ type PaginationProps = {
   currentPage: number;
   totalPages: number;
 };
+import { Button } from "@/components/ui/button";
 
 export default function Pagination({
   currentPage,
@@ -21,16 +22,16 @@ export default function Pagination({
 
       {/* Page Numbers */}
       {[1, 2, 3, 4, 5].map((page) => (
-        <button
+        <Button
           key={page}
-          className={`px-3 py-1 rounded ${
+          className={`px-4 py-1 rounded ${
             page === currentPage
-              ? "bg-indigo-600 text-white"
+              ? "bg-blue-800 text-white"
               : "hover:bg-slate-100 dark:hover:bg-slate-800"
           }`}
         >
           {page}
-        </button>
+        </Button>
       ))}
 
       {/* Ellipsis */}
