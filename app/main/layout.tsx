@@ -1,21 +1,20 @@
 import type { ReactNode } from "react";
-import Header from "@/components/layout/Header/";
+import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-export const metadata = {
-  title: "WEBIC - Main",
-};
-
-export default function WelcomeLayout({ children }: { children: ReactNode }) {
+export default function IDELayout({ children }: { children: ReactNode }) {
   return (
-  <div className="min-h-screen bg-bg flex flex-col">
-        <Header />
-  
-        <main className="flex-1 flex items-center justify-center py-12">
-          {children}
-        </main>
-  
-        <Footer />
-  </div>
+    <div className="w-full flex flex-col">
+      <Header />
+
+      {/* ❗ 가운데 정렬 제거 */}
+      <main className="flex-1">
+        {children}
+      </main>
+
+      <Footer />
+    </div>
   );
 }
+
+export const metadata = { title: "WEBIC - IDE Dashboard" };
