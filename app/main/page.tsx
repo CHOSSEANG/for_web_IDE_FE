@@ -16,6 +16,17 @@
 // | Longest Day     | maxWeeklyCodingTime       |
 // | Bar Chart       | daily[].codingTimeMs      |
 
+// TEMP: backend login API integration (spec not finalized)
+// TODO: refactor after API spec confirmation
+// NOTE: backend login API not ready yet
+// DO NOT IMPLEMENT until backend spec is finalized
+
+// UX RULE:
+// - backend login 실패 → toast만 표시
+// - coding stats 실패 → 위젯 skeleton 유지
+// - 치명적 에러 → empty state
+
+
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -37,21 +48,27 @@ export default function DashboardMain() {
 
     hasCalledLoginApi.current = true;
 
+    // TEMP: backend login API integration (spec not finalized)
     const loginToBackend = async () => {
+      // TODO: auth.ts loginUser 연결
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              clerkUserId: user.id,
-              email: user.primaryEmailAddress?.emailAddress ?? "",
-            }),
-          }
-        );
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+        if (!apiBaseUrl) {
+          console.warn("NEXT_PUBLIC_API_BASE_URL is not set, skipping backend login");
+          return;
+        }
+
+        const response = await fetch(`${apiBaseUrl}/user/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clerkUserId: user.id,
+            email: user.primaryEmailAddress?.emailAddress ?? "",
+          }),
+        });
 
         if (!response.ok) {
           throw new Error("Backend login failed");
@@ -59,7 +76,10 @@ export default function DashboardMain() {
 
         const data = await response.json();
 
-        // 다음 단계에서 사용 예정
+        if (typeof window !== "undefined" && data?.userId) {
+          localStorage.setItem("webic_user_id", String(data.userId));
+        }
+
         console.log("backend login success:", data);
       } catch (error) {
         console.error("backend login error:", error);
@@ -85,4 +105,3 @@ export default function DashboardMain() {
     </div>
   );
 }
-
