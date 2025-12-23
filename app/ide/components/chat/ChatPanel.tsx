@@ -6,7 +6,7 @@ import MessageInput from "./MessageInput";
 import { useMemo, useState } from "react";
 
 interface ChatPanelProps {
-  containerId: string;
+  containerId: number;
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
@@ -19,7 +19,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
     if (!isSearching) return messages;
 
     return messages.filter((msg) =>
-      msg.content?.toLowerCase().includes(searchKeyword.toLowerCase())
+      msg.message.toLowerCase().includes(searchKeyword.toLowerCase())
     );
   }, [messages, searchKeyword, isSearching]);
 
@@ -51,7 +51,6 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
       ) : (
         <MessageList messages={filteredMessages} />
       )}
-      <MessageList messages={messages} />
 
       <MessageInput
         value={input ?? ""}
