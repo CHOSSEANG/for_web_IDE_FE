@@ -1,5 +1,3 @@
-import Logo from "@/components/brand/Logo";
-
 export const metadata = { title: "WEBIC - services" };
 
 export default function ServicePage() {

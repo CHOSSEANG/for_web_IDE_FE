@@ -13,7 +13,6 @@ import SplitLayout from "@/webic_ide_terminal/components/ui/SplitLayout";
 import FileSidebar from "@/webic_ide_terminal/components/files/FileSidebar";
 import MonacoEditor from "@/webic_ide_terminal/components/editor/MonacoEditor";
 import TerminalPanel from "@/webic_ide_terminal/components/terminal/TerminalPanel";
-import { initialFiles } from "@/webic_ide_terminal/styles/theme";
 import type { FileSystemItem } from "@/webic_ide_terminal/types/fileTypes";
 
 // --- Helper Functions (from WebICEditor) ---

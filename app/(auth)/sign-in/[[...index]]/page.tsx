@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import type { ClerkAPIError } from "@clerk/types";
 
 type SocialProvider = "github" | "google" | "discord";
 // Define the social login union once so the handler stays strongly typed without redefinition.
