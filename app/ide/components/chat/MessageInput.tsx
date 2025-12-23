@@ -13,7 +13,7 @@ export default function MessageInput({
 }: MessageInputProps) {
   return (
     <form
-      className="flex gap-2 p-2 w-full"
+      className="flex items-center gap-2 p-2 w-full"
       onSubmit={(e) => {
         e.preventDefault();
         onSend();
@@ -23,11 +23,12 @@ export default function MessageInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="메시지 입력"
-        className="flex-1 bg-white text-black px-2 py-1 rounded placeholder:text-gray-400"
+        className="flex-1 h-10 bg-white text-black px-3 rounded placeholder:text-gray-400 text-sm"
       />
       <button
+        onClick={onSend}
         type="submit"
-        className="px-3 py-2 rounded-md border border-white/20"
+        className="h-10 min-w-[56px] px-4 rounded-md bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition flex items-center justify-center whitespace-nowrap"
       >
         전송
       </button>

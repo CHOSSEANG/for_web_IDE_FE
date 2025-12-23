@@ -1,5 +1,6 @@
 export interface ChatMessage {
-  id: number;
-  content: string;
-  sender: "me" | "other";
+  userName: string;
+  userImgUrl: string;
+  message: string;
+  createdAt: string; // ISO DateTime
 }

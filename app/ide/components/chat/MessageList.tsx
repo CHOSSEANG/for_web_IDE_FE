@@ -11,7 +11,7 @@ export default function MessageList({ messages }: MessageListProps) {
   return (
     <div className="flex-1 overflow-y-auto">
       {messages.map((msg) => (
-        <MessageItem key={msg.id} message={msg} />
+        <MessageItem key={`${msg.createdAt}-${msg.userName}`} message={msg} />
       ))}
     </div>
   );
