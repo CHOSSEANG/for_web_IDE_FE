@@ -38,8 +38,20 @@ export default function ServicePage() {
         </p>
       </section>
 
+
+
        {/* Dashboard Preview */}
       <section className="w-full max-w-5xl flex flex-col items-center gap-8">
+        <Link href="/main">
+          <Button
+            variant="primary"
+            size="lg"
+            className="px-6 py-3 rounded-md font-medium  text-yellow-400"
+          >
+            대시보드 바로가기 <FaCircleArrowRight className="ml-2" />
+          </Button>
+        </Link>
+        
         <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden border-2 border-border-light bg-bg-raised">
           <Image
             src="/images/dashboard-preview.png"
@@ -50,15 +62,7 @@ export default function ServicePage() {
           />
         </div>
 
-        <Link href="/main">
-          <Button
-            variant="primary"
-            size="lg"
-            className="px-6 py-3 rounded-md font-medium  text-yellow-400"
-          >
-            대시보드 바로가기 <FaCircleArrowRight className="ml-2" />
-          </Button>
-        </Link>
+        
       </section>
 
       {/* Feature Cards – 웰컴 스타일 */}
