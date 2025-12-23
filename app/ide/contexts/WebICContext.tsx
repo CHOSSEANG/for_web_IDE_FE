@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useUser } from '@clerk/nextjs'
 import type { FileSystemItem } from '../types/fileTypes'
 import { initialFiles } from '@/app/ide/lib/workspaceFiles'
@@ -21,18 +21,11 @@ export interface CodingStats {
     totalWeeklyCodingTime: number;
 }
 
-// Mock Data (Initial State)
 const INITIAL_STATS: CodingStats = {
-    daily: [
-        { todayDate: "2025-12-15", codingTimeMs: 570000 },
-        { todayDate: "2025-12-16", codingTimeMs: 0 },
-        { todayDate: "2025-12-17", codingTimeMs: 291991 },
-        { todayDate: "2025-12-18", codingTimeMs: 30000 },
-        // ... assuming these are past dates
-    ],
-    avgWeeklyCodingTime: 43531,
-    maxWeeklyCodingTime: 570000,
-    totalWeeklyCodingTime: 59392084
+    daily: [],
+    avgWeeklyCodingTime: 0,
+    maxWeeklyCodingTime: 0,
+    totalWeeklyCodingTime: 0
 };
 
 // Helper Functions
@@ -63,19 +56,17 @@ interface WebICContextType {
     activeId: string | undefined
     activeFile: { name: string; content: string; id: string } | null
     containerId: string | undefined
-    // ... rest
-    // Timer & Stats
     stats: CodingStats
     currentSessionMs: number
     getTodayTotalTime: () => number
-    saveCodingSession: () => void
-    setIsWorking: (isWorking: boolean) => void
-    // File Actions
+    saveCodingSession: () => Promise<void>
+    setIsWorking: (working: boolean) => void
     setActiveId: (id: string | undefined) => void
     addFile: (parentId?: string) => void
     addFolder: (parentId?: string) => void
     deleteItem: (itemId: string) => void
     renameItem: (itemId: string, newName: string) => void
+    saveFileContent: (content?: string) => Promise<void>
     updateFileContent: (content: string) => void
 }
 
@@ -92,130 +83,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     const [isWorkingState, setIsWorkingState] = useState(false)
     const [codingId, setCodingId] = useState<number | null>(null)
 
-    // Fetch stats on mount
-    useEffect(() => {
-        const fetchStats = async () => {
-            const today = new Date().toISOString().split('T')[0];
-            try {
-                const [dailyRes, weeklyRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/code/coding-stats/${today}`),
-                    fetch(`${API_BASE_URL}/code/coding-stats/week?startDate=${today}`) // Simplified week fetch
-                ]);
-
-                if (dailyRes.ok && weeklyRes.ok) {
-                    const dailyData = await dailyRes.json();
-                    const weeklyData = await weeklyRes.json();
-                    // Update stats with server data
-                    setStats(prev => ({
-                        ...prev,
-                        daily: weeklyData.days || prev.daily, // Assume week API returns daily breakdown
-                        totalWeeklyCodingTime: weeklyData.weekTotal || prev.totalWeeklyCodingTime
-                    }));
-                }
-            } catch (error) {
-                console.error('Failed to fetch stats:', error);
-            }
-        };
-
-        fetchStats();
-    }, []);
-
-    // Timer Logic: Increase session time every second ONLY when working
-    useEffect(() => {
-        let interval: NodeJS.Timeout
-        if (isWorkingState) {
-            interval = setInterval(() => {
-                setCurrentSessionMs(prev => prev + 1000)
-            }, 1000)
-        }
-        return () => clearInterval(interval)
-    }, [isWorkingState])
-
-    const setIsWorking = useCallback(async (working: boolean) => {
-        setIsWorkingState(working);
-
-        const userId = user?.id ? parseInt(user.id.replace(/\D/g, '')) || 1 : 1;
-
-        if (working) {
-            // Start Session
-            try {
-                const res = await fetch(`${API_BASE_URL}/code/coding-time/start`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setCodingId(data.codingId);
-                }
-            } catch (error) {
-                console.error('Failed to start coding session:', error);
-            }
-        } else {
-            // End Session
-            if (codingId) {
-                try {
-                    await fetch(`${API_BASE_URL}/code/coding-time/end`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ codingId })
-                    });
-                    setCodingId(null);
-                    saveCodingSession();
-                } catch (error) {
-                    console.error('Failed to end coding session:', error);
-                }
-            }
-        }
-    }, [user, codingId]);
-
-    const getTodayTotalTime = useCallback(() => {
-        const today = new Date().toISOString().split('T')[0];
-        const match = stats.daily.find(d => d.todayDate === today);
-        const serverTime = match ? match.codingTimeMs : 0;
-        return serverTime + currentSessionMs;
-    }, [stats, currentSessionMs])
-
-    const saveCodingSession = useCallback(() => {
-        const today = new Date().toISOString().split('T')[0];
-
-        // Payload Construction
-        const logPayload = {
-            container_id: containerId ? (isNaN(Number(containerId)) ? containerId : Number(containerId)) : null,
-            coding_time_ms: currentSessionMs,
-            record_date: today
-        };
-
-        console.log(JSON.stringify(logPayload, null, 2));
-
-        // Update Local State (Commit session to stats)
-        setStats(prev => {
-            const existingDayIndex = prev.daily.findIndex(d => d.todayDate === today);
-            let newDaily = [...prev.daily];
-
-            if (existingDayIndex >= 0) {
-                newDaily[existingDayIndex] = {
-                    ...newDaily[existingDayIndex],
-                    codingTimeMs: newDaily[existingDayIndex].codingTimeMs + currentSessionMs
-                };
-            } else {
-                newDaily.push({ todayDate: today, codingTimeMs: currentSessionMs });
-            }
-
-            return {
-                ...prev,
-                daily: newDaily,
-                totalWeeklyCodingTime: prev.totalWeeklyCodingTime + currentSessionMs,
-                avgWeeklyCodingTime: prev.avgWeeklyCodingTime, // Keep existing or calc logic
-                maxWeeklyCodingTime: prev.maxWeeklyCodingTime
-            };
-        });
-
-        // Reset Session
-        setCurrentSessionMs(0);
-    }, [currentSessionMs])
-
-    // Active File Derived State
+    // activeFile을 사용하기 전에 미리 선언 (TDZ 방지)
     const activeFile = useMemo(() => {
         if (!activeId) return null
         const item = findItem(files, activeId)
@@ -225,279 +93,295 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         return null
     }, [files, activeId])
 
-    const checkDuplicate = (items: FileSystemItem[], parentId: string | undefined, name: string): boolean => {
-        let siblings: FileSystemItem[] = items
-        if (parentId) {
-            const parent = findItem(items, parentId)
-            if (parent && parent.children) {
-                siblings = parent.children
+    // API 호출 중복 및 상태 체크를 위한 Refs
+    const isWorkingRef = useRef(false);
+    const isRequestingStart = useRef(false);
+    const isRequestingEnd = useRef(false);
+
+    // 1. Fetch Stats (최상단)
+    useEffect(() => {
+        const fetchStats = async () => {
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                const [dailyRes, weeklyRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/code/coding-stats/${today}`).catch(() => null),
+                    fetch(`${API_BASE_URL}/code/coding-stats/week?startDate=${today}`).catch(() => null)
+                ]);
+
+                if (dailyRes?.ok && weeklyRes?.ok) {
+                    const dailyData = await dailyRes.json();
+                    const weeklyData = await weeklyRes.json();
+                    setStats(prev => ({
+                        ...prev,
+                        daily: weeklyData.days || prev.daily,
+                        totalWeeklyCodingTime: weeklyData.weekTotal || prev.totalWeeklyCodingTime
+                    }));
+                }
+            } catch (error) {
+                console.error('통계 로딩 실패:', error);
             }
+        };
+
+        fetchStats();
+    }, []);
+
+    // 2. Timer Logic
+    useEffect(() => {
+        let interval: NodeJS.Timeout
+        if (isWorkingState) {
+            interval = setInterval(() => {
+                setCurrentSessionMs(prev => prev + 1000)
+            }, 1000)
         }
-        return siblings.some(item => item.name === name)
-    }
-
-    const getSiblings = (items: FileSystemItem[], targetId?: string, parentId?: string): FileSystemItem[] => {
-        if (parentId) {
-            const parent = findItem(items, parentId)
-            return parent?.children || []
+        return () => {
+            if (interval) clearInterval(interval)
         }
-        if (targetId) {
-            const parent = findParent(items, targetId)
-            return parent ? parent.children! : items
-        }
-        return items
-    }
+    }, [isWorkingState])
 
-    // --- Actions ---
+    // 3. Helper: Today Total Time
+    const getTodayTotalTime = useCallback(() => {
+        const today = new Date().toISOString().split('T')[0];
+        const match = stats.daily.find(d => d.todayDate === today);
+        const serverTime = match ? match.codingTimeMs : 0;
+        return serverTime + currentSessionMs;
+    }, [stats, currentSessionMs])
 
-    // ... (rest of actions)
+    // 4. Save Coding Session API
+    const saveCodingSession = useCallback(async () => {
+        const today = new Date().toISOString().split('T')[0];
+        const totalMs = getTodayTotalTime();
 
-
-    // --- Actions ---
-
-    const addFile = useCallback(async (parentId?: string) => {
-        const name = prompt('파일 이름을 입력하세요')
-        if (!name) return
-
-        const path = parentId ? findItem(files, parentId)?.name || '' : '';
+        const payload = {
+            containerId: containerId ? Number(containerId) : 0,
+            codingTimeMs: totalMs,
+            recordDate: today
+        };
 
         try {
-            const res = await fetch(`${API_BASE_URL}/file/create`, {
+            const res = await fetch(`${API_BASE_URL}/code`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    container_id: containerId,
-                    name,
-                    path
-                })
+                body: JSON.stringify(payload)
             });
 
             if (res.ok) {
-                setFiles(prev => {
-                    const siblings = getSiblings(prev, undefined, parentId)
-                    if (siblings.some(f => f.name === name)) {
-                        alert('이미 존재하는 파일 이름입니다.')
-                        return prev
-                    }
-
-                    const newFile: FileSystemItem = {
-                        id: `file-${Date.now()}`,
-                        name,
-                        type: 'file',
-                        content: ''
-                    }
-
-                    if (!parentId) return [...prev, newFile]
-
-                    const updateTree = (items: FileSystemItem[]): FileSystemItem[] => {
-                        return items.map(item => {
-                            if (item.id === parentId) {
-                                return { ...item, children: [...(item.children || []), newFile], isOpen: true }
-                            }
-                            if (item.children) {
-                                return { ...item, children: updateTree(item.children) }
-                            }
-                            return item
-                        })
-                    }
-                    return updateTree(prev)
-                })
+                setStats(prev => {
+                    const newDaily = [...prev.daily];
+                    const idx = newDaily.findIndex(d => d.todayDate === today);
+                    if (idx >= 0) newDaily[idx] = { ...newDaily[idx], codingTimeMs: totalMs };
+                    else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
+                    return { ...prev, daily: newDaily };
+                });
+                setCurrentSessionMs(0);
             }
         } catch (error) {
-            console.error('Failed to create file:', error);
+            console.error('세션 저장 실패:', error);
         }
-    }, [containerId, files])
+    }, [getTodayTotalTime, containerId]);
 
-    const addFolder = useCallback(async (parentId?: string) => {
-        const name = prompt('폴더 이름을 입력하세요')
-        if (!name) return
+    // 5. setIsWorking
+    const setIsWorking = useCallback(async (working: boolean) => {
+        // Ref를 사용해 최신 상태와 비교 (Stale closure 문제 해결)
+        if (working === isWorkingRef.current) return;
 
-        const path = parentId ? findItem(files, parentId)?.name || '' : '';
+        isWorkingRef.current = working;
+        setIsWorkingState(working);
 
-        try {
-            const res = await fetch(`${API_BASE_URL}/file/create`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    container_id: containerId,
-                    name,
-                    path
-                })
-            });
+        const userId = user?.id ? parseInt(user.id.replace(/\D/g, '')) || 1 : 1;
 
-            if (res.ok) {
-                setFiles(prev => {
-                    const siblings = getSiblings(prev, undefined, parentId)
-                    if (siblings.some(f => f.name === name)) {
-                        alert('이미 존재하는 폴더 이름입니다.')
-                        return prev
-                    }
-
-                    const newFolder: FileSystemItem = {
-                        id: `folder-${Date.now()}`,
-                        name,
-                        type: 'folder',
-                        children: [],
-                        isOpen: true
-                    }
-
-                    if (!parentId) return [...prev, newFolder]
-
-                    const updateTree = (items: FileSystemItem[]): FileSystemItem[] => {
-                        return items.map(item => {
-                            if (item.id === parentId) {
-                                return { ...item, children: [...(item.children || []), newFolder], isOpen: true }
-                            }
-                            if (item.children) {
-                                return { ...item, children: updateTree(item.children) }
-                            }
-                            return item
-                        })
-                    }
-                    return updateTree(prev)
-                })
+        if (working) {
+            if (isRequestingStart.current) return;
+            isRequestingStart.current = true;
+            try {
+                const res = await fetch(`${API_BASE_URL}/code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setCodingId(data.codingId);
+                }
+            } catch (err) {
+                console.error('세션 시작 API 에러:', err);
+            } finally {
+                isRequestingStart.current = false;
             }
-        } catch (error) {
-            console.error('Failed to create folder:', error);
-        }
-    }, [containerId, files])
-
-    const deleteItem = useCallback(async (itemId: string) => {
-        const item = findItem(files, itemId);
-        if (!item) return;
-
-        const path = findParent(files, itemId)?.name || '';
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/file/delete`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    container_id: containerId,
-                    name: item.name,
-                    path
-                })
-            });
-
-            if (res.ok) {
-                setFiles(prev => {
-                    const deleteRecursive = (items: FileSystemItem[]): FileSystemItem[] => {
-                        return items
-                            .filter(item => item.id !== itemId)
-                            .map(item => {
-                                if (item.children) {
-                                    return { ...item, children: deleteRecursive(item.children) }
-                                }
-                                return item
-                            })
-                    }
-                    return deleteRecursive(prev)
-                })
-                if (activeId === itemId) setActiveId(undefined)
+        } else {
+            if (isRequestingEnd.current || !codingId) return;
+            isRequestingEnd.current = true;
+            try {
+                await fetch(`${API_BASE_URL}/code`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codingId })
+                });
+                setCodingId(null);
+                await saveCodingSession();
+            } catch (err) {
+                console.error('세션 종료 API 에러:', err);
+            } finally {
+                isRequestingEnd.current = false;
             }
-        } catch (error) {
-            console.error('Failed to delete item:', error);
         }
-    }, [activeId, containerId, files])
+    }, [user, codingId, saveCodingSession]);
 
-    const renameItem = useCallback(async (itemId: string, newName: string) => {
-        const item = findItem(files, itemId);
-        if (!item) return;
-
-        try {
-            // Using /file/move for rename/move
-            const res = await fetch(`${API_BASE_URL}/file/move`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    container_id: containerId,
-                    file_id: itemId.startsWith('file-') ? parseInt(itemId.replace('file-', '')) : parseInt(itemId.replace('folder-', '')),
-                    path: newName // Assuming path here is the new name/destination
-                })
-            });
-
-            if (res.ok) {
-                setFiles(prev => {
-                    const siblings = getSiblings(prev, itemId)
-                    if (siblings.some(f => f.id !== itemId && f.name === newName)) {
-                        alert('이미 존재하는 이름입니다.')
-                        return prev
-                    }
-
-                    const updateRecursive = (items: FileSystemItem[]): FileSystemItem[] => {
-                        return items.map(item => {
-                            if (item.id === itemId) {
-                                return { ...item, name: newName }
-                            }
-                            if (item.children) {
-                                return { ...item, children: updateRecursive(item.children) }
-                            }
-                            return item
-                        })
-                    }
-                    return updateRecursive(prev)
-                })
-            }
-        } catch (error) {
-            console.error('Failed to rename item:', error);
-        }
-    }, [containerId, files])
-
-    const updateFileContent = useCallback(async (content: string) => {
+    // 6. File Save Content (통합 페이로드)
+    const saveFileContent = useCallback(async (content?: string) => {
         if (!activeId || !activeFile) return
 
-        const path = findParent(files, activeId)?.name || '';
+        const contentToSave = content !== undefined ? content : activeFile.content;
+        const parent = findParent(files, activeId);
+        const path = parent ? parent.name : '';
+        const today = new Date().toISOString().split('T')[0];
+        const totalMs = getTodayTotalTime();
+
+        const payload = {
+            containerId: containerId ? Number(containerId) : 0,
+            name: activeFile.name,
+            path,
+            content: contentToSave,
+            codingTimeMs: totalMs,
+            recordDate: today
+        };
+
+        console.group(`%c 📤 서버 전송 시도: ${activeFile.name}`, 'color: #ff9800; font-weight: bold;');
+        console.log("전송 데이터:", payload);
+        console.groupEnd();
 
         try {
             const res = await fetch(`${API_BASE_URL}/file/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    container_id: containerId,
-                    name: activeFile.name,
-                    path,
-                    content // Customly adding content
-                })
+                body: JSON.stringify(payload)
             });
 
             if (res.ok) {
+                console.log(`%c ✅ 서버 저장 완료`, 'color: #2196f3; font-weight: bold;');
+                setStats(prev => {
+                    const newDaily = [...prev.daily];
+                    const idx = newDaily.findIndex(d => d.todayDate === today);
+                    if (idx >= 0) newDaily[idx] = { ...newDaily[idx], codingTimeMs: totalMs };
+                    else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
+                    return { ...prev, daily: newDaily };
+                });
+                setCurrentSessionMs(0);
+            } else {
+                console.error('서버 저장 실패:', res.status);
+            }
+        } catch (error) {
+            console.error('네트워크 에러:', error);
+        }
+    }, [getTodayTotalTime, activeId, activeFile, files, containerId]);
+
+
+    const updateFileContent = useCallback((content: string) => {
+        setFiles(prev => {
+            const updateRecursive = (items: FileSystemItem[]): FileSystemItem[] => {
+                return items.map(item => {
+                    if (item.id === activeId) return { ...item, content }
+                    if (item.children) return { ...item, children: updateRecursive(item.children) }
+                    return item
+                })
+            }
+            return updateRecursive(prev)
+        })
+    }, [activeId]);
+
+    const addFile = useCallback(async (parentId?: string) => {
+        const name = prompt('파일 이름을 입력하세요')
+        if (!name) return
+        try {
+            const res = await fetch(`${API_BASE_URL}/file/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ container_id: containerId, name, path: '' })
+            });
+            if (res.ok) {
+                const newFile: FileSystemItem = { id: `file-${Date.now()}`, name, type: 'file', content: '' }
                 setFiles(prev => {
-                    const updateRecursive = (items: FileSystemItem[]): FileSystemItem[] => {
+                    if (!parentId) return [...prev, newFile]
+                    const updateTree = (items: FileSystemItem[]): FileSystemItem[] => {
                         return items.map(item => {
-                            if (item.id === activeId) {
-                                return { ...item, content }
-                            }
-                            if (item.children) {
-                                return { ...item, children: updateRecursive(item.children) }
-                            }
+                            if (item.id === parentId) return { ...item, children: [...(item.children || []), newFile], isOpen: true }
+                            if (item.children) return { ...item, children: updateTree(item.children) }
                             return item
                         })
                     }
-                    return updateRecursive(prev)
+                    return updateTree(prev)
                 })
             }
-        } catch (error) {
-            console.error('Failed to update file content:', error);
-        }
-    }, [activeId, activeFile, containerId, files])
+        } catch (e) { console.error(e) }
+    }, [containerId]);
+
+    const addFolder = useCallback(async (parentId?: string) => {
+        const name = prompt('폴더 이름을 입력하세요')
+        if (!name) return
+        try {
+            const res = await fetch(`${API_BASE_URL}/file/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ container_id: containerId, name, path: '' })
+            });
+            if (res.ok) {
+                const newFolder: FileSystemItem = { id: `folder-${Date.now()}`, name, type: 'folder', children: [], isOpen: true }
+                setFiles(prev => {
+                    if (!parentId) return [...prev, newFolder]
+                    const updateTree = (items: FileSystemItem[]): FileSystemItem[] => {
+                        return items.map(item => {
+                            if (item.id === parentId) return { ...item, children: [...(item.children || []), newFolder], isOpen: true }
+                            if (item.children) return { ...item, children: updateTree(item.children) }
+                            return item
+                        })
+                    }
+                    return updateTree(prev)
+                })
+            }
+        } catch (e) { console.error(e) }
+    }, [containerId]);
+
+    const deleteItem = useCallback(async (itemId: string) => {
+        const item = findItem(files, itemId)
+        if (!item) return
+        try {
+            const res = await fetch(`${API_BASE_URL}/file/delete`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ container_id: containerId, name: item.name, path: '' })
+            });
+            if (res.ok) {
+                setFiles(prev => {
+                    const del = (items: FileSystemItem[]): FileSystemItem[] =>
+                        items.filter(i => i.id !== itemId).map(i => i.children ? { ...i, children: del(i.children) } : i)
+                    return del(prev)
+                })
+                if (activeId === itemId) setActiveId(undefined)
+            }
+        } catch (e) { console.error(e) }
+    }, [files, containerId, activeId]);
+
+    const renameItem = useCallback(async (itemId: string, newName: string) => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/file/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ container_id: containerId, file_id: parseInt(itemId.replace(/\D/g, '') || '0'), path: newName })
+            });
+            if (res.ok) {
+                setFiles(prev => {
+                    const up = (items: FileSystemItem[]): FileSystemItem[] =>
+                        items.map(i => i.id === itemId ? { ...i, name: newName } : (i.children ? { ...i, children: up(i.children) } : i))
+                    return up(prev)
+                })
+            }
+        } catch (e) { console.error(e) }
+    }, [containerId]);
 
     return (
         <WebICContext.Provider value={{
-            files,
-            activeId,
-            activeFile,
-            setActiveId,
-            addFile,
-            addFolder,
-            deleteItem,
-            renameItem,
-            updateFileContent,
-            stats,
-            currentSessionMs,
-            getTodayTotalTime,
-            saveCodingSession,
-            setIsWorking,
-            containerId
+            files, activeId, activeFile, setActiveId, addFile, addFolder, deleteItem,
+            renameItem, updateFileContent, stats, currentSessionMs, getTodayTotalTime,
+            saveCodingSession, saveFileContent, setIsWorking, containerId
         }}>
             {children}
         </WebICContext.Provider>
@@ -506,8 +390,6 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
 
 export const useWebIC = () => {
     const context = useContext(WebICContext)
-    if (context === undefined) {
-        throw new Error('useWebIC must be used within a WebICContextProvider')
-    }
+    if (context === undefined) throw new Error('useWebIC must be used within a WebICContextProvider')
     return context
 }

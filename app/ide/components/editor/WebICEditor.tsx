@@ -8,7 +8,8 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const { activeFile, updateFileContent, activeId, containerId } = useWebIC();
+  const API_BASE_URL = 'https://api.webicapp.com';
+  const { activeFile, updateFileContent, activeId, containerId, saveFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
@@ -24,6 +25,9 @@ const WebICEditorContent = () => {
     setProblems([]);
 
     if (!activeFile) return;
+
+    // --- 실행 전 서버 저장 (파일 내용 & 코딩 시간 통합 전송) ---
+    await saveFileContent(content);
 
     if (!isRunnable(activeFile.name)) {
       setRunOutput([
@@ -47,19 +51,29 @@ const WebICEditorContent = () => {
       eval(content);
       // 로컬 실행 성공 시 출력
       setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
-    } catch (localError) {
+    } catch (localError: any) {
       // --- 2단계: 로컬 실행 실패 시 서버 사이드 실행 시도 ---
       console.log = originalLog; // 원래 콘솔 복원
 
+      const localErrorMessage = localError instanceof Error ? localError.message : String(localError);
+
+      // Problems 탭에 로컬 에러 추가
+      setProblems([{
+        message: localErrorMessage,
+        source: 'Local Runtime',
+        severity: 'error'
+      }]);
+      setActiveTerminalTab("PROBLEMS");
+
       setRunOutput([
         `⚠️ [Local] 실행 중 에러가 발생하여 서버에서 실행을 시도합니다...`,
-        `❌ Error: ${localError instanceof Error ? localError.message : String(localError)}`,
+        `❌ Error: ${localErrorMessage}`,
         `⏳ 서버 사이드 실행 중...`
       ]);
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
-        const res = await fetch('https://api.webicapp.com/code/run', {
+        const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -77,12 +91,11 @@ const WebICEditorContent = () => {
       } catch (serverError: unknown) {
         const errorMessage = serverError instanceof Error ? serverError.message : String(serverError);
         setRunOutput(prev => [...prev, `❌ [Server] Error: ${errorMessage}`]);
-        setProblems([{
+        setProblems(prev => [...prev, {
           message: errorMessage,
           source: 'Server Runtime',
           severity: 'error'
         }]);
-        setActiveTerminalTab("PROBLEMS");
       }
     } finally {
       console.log = originalLog; // 안전하게 원래 콘솔 복원
@@ -94,6 +107,9 @@ const WebICEditorContent = () => {
     setProblems([]);
 
     if (!activeFile) return;
+
+    // --- 디버그 전 서버 저장 (파일 내용 & 코딩 시간 통합 전송) ---
+    await saveFileContent(content);
 
     if (!isRunnable(activeFile.name)) {
       setDebugOutput([
@@ -116,19 +132,28 @@ const WebICEditorContent = () => {
       // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
       setDebugOutput(logs);
-    } catch (localError) {
+    } catch (localError: any) {
       // --- 2단계: 로컬 디버그 실패 시 서버 사이드 시도 ---
       console.log = originalLog;
+
+      const localErrorMessage = localError instanceof Error ? localError.message : String(localError);
+
+      setProblems([{
+        message: localErrorMessage,
+        source: 'Local Debug',
+        severity: 'error'
+      }]);
+      setActiveTerminalTab("PROBLEMS");
 
       setDebugOutput(prev => [
         ...prev,
         `⚠️ [Local] 디버깅 중 에러 발생, 서버 실행 시도...`,
-        `❌ Error: ${localError instanceof Error ? localError.message : String(localError)}`
+        `❌ Error: ${localErrorMessage}`
       ]);
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
-        const res = await fetch('https://api.webicapp.com/code/run', {
+        const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -146,12 +171,11 @@ const WebICEditorContent = () => {
       } catch (serverError: unknown) {
         const errorMessage = serverError instanceof Error ? serverError.message : String(serverError);
         setDebugOutput(prev => [...prev, `❌ [Server] Error: ${errorMessage}`]);
-        setProblems([{
+        setProblems(prev => [...prev, {
           message: errorMessage,
           source: 'Server Debug',
           severity: 'error'
         }]);
-        setActiveTerminalTab("PROBLEMS");
       }
     } finally {
       console.log = originalLog;

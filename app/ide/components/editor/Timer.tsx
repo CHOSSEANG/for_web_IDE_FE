@@ -1,33 +1,21 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useWebIC } from '@/app/ide/contexts/WebICContext'
 
 interface TimerProps {
     isRunning: boolean // 타이머 작동 여부
 }
 
 const Timer = ({ isRunning }: TimerProps) => {
-    // 경과 시간(초 단위)
-    const [timer, setTimer] = useState(0)
+    // WebICContext에서 현재 세션 시간(ms)을 가져옴
+    const { currentSessionMs } = useWebIC()
 
-    // isRunning 상태에 따라 타이머 시작/정지
-    useEffect(() => {
-        let interval: NodeJS.Timeout
-        if (isRunning) {
-            // 1초마다 타이머 증가
-            interval = setInterval(() => {
-                setTimer((prev) => prev + 1)
-            }, 1000)
-        }
-        // 컴포넌트 언마운트 시 인터벌 정리
-        return () => clearInterval(interval)
-    }, [isRunning])
-
-    // 초를 HH:MM:SS 형식으로 변환
-    const formatTime = (seconds: number) => {
-        const hours = Math.floor(seconds / 3600)
-        const mins = Math.floor((seconds % 3600) / 60)
-        const secs = seconds % 60
+    // 밀리초를 HH:MM:SS 형식으로 변환
+    const formatTime = (ms: number) => {
+        const totalSeconds = Math.floor(ms / 1000)
+        const hours = Math.floor(totalSeconds / 3600)
+        const mins = Math.floor((totalSeconds % 3600) / 60)
+        const secs = totalSeconds % 60
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
@@ -39,7 +27,7 @@ const Timer = ({ isRunning }: TimerProps) => {
             </div>
             {/* 타이머 텍스트: 작동 중이면 초록색, 아니면 회색 */}
             <div className={`font-mono text-lg font-bold transition-colors ${isRunning ? 'text-[#4caf50]' : 'text-[#8b949e]'}`}>
-                {formatTime(timer)}
+                {formatTime(currentSessionMs)}
             </div>
         </div>
     )
