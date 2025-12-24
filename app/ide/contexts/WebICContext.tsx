@@ -55,24 +55,6 @@ export const WebICContextProvider = ({ children }: { children: React.ReactNode }
         return null
     }, [files, activeId])
 
-    // Duplicate Check Helper
-    const checkDuplicate = (items: FileSystemItem[], parentId: string | undefined, name: string): boolean => {
-        let siblings: FileSystemItem[] = items
-
-        if (parentId) {
-            const parent = findItem(items, parentId)
-            if (parent && parent.children) {
-                siblings = parent.children
-            }
-        } else {
-            // Root level: Assuming root is a virtual folder or just array
-            // If checking at root of `files`, we just look at top level
-            // But usually we modify logic to search parent
-        }
-
-        return siblings.some(item => item.name === name)
-    }
-
     const getSiblings = (items: FileSystemItem[], targetId?: string, parentId?: string): FileSystemItem[] => {
         if (parentId) {
             const parent = findItem(items, parentId)

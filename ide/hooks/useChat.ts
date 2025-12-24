@@ -9,6 +9,7 @@ export interface ChatMessage {
 }
 
 export function useChat(containerId: string) {
+  void containerId;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 

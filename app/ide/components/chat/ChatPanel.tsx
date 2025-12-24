@@ -6,11 +6,13 @@ import MessageInput from "./MessageInput";
 import { useMemo, useState } from "react";
 
 interface ChatPanelProps {
-  containerId: number;
+  containerId: string | number;
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
-  const { messages, input, setInput, sendMessage } = useChat(containerId);
+  const numericContainerId = Number(containerId);
+  const { messages, input, setInput, sendMessage } =
+    useChat(numericContainerId);
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const isSearching = searchKeyword.trim().length > 0;
@@ -31,10 +33,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           placeholder="메시지 검색"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="w-64 px-3 py-1 rounded
-    bg-white text-black
-    placeholder:text-gray-400
-    text-sm"
+          className="w-64 px-3 py-1 rounded bg-white text-black placeholder:text-gray-400 text-sm"
         />
 
         {isSearching && (

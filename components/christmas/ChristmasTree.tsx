@@ -100,57 +100,57 @@ export default function ChristmasTree() {
       <div className="star"></div>
 
       <div className="level" id="level-1">
-  <div className="circle"></div>
-</div>
+      <div className="circle"></div>
+    </div>
 
-<div className="level" id="level-2">
-  <div className="circle"></div>
-  <div className="circle"></div>
-</div>
+    <div className="level" id="level-2">
+      <div className="circle"></div>
+      <div className="circle"></div>
+    </div>
 
-<div className="level" id="level-3">
-  <div className="toggle-switch toggle-switch-s" data-size="38">
-    <div className="toggle-circle"></div>
-  </div>
-  <div className="circle"></div>
-</div>
+    <div className="level" id="level-3">
+      <div className="toggle-switch toggle-switch-s" data-size="38">
+        <div className="toggle-circle"></div>
+      </div>
+      <div className="circle"></div>
+    </div>
 
-<div className="level" id="level-4">
-  <div className="circle"></div>
-  <div className="circle"></div>
-  <div className="toggle-switch toggle-switch-s" data-size="38">
-    <div className="toggle-circle"></div>
-  </div>
-</div>
+    <div className="level" id="level-4">
+      <div className="circle"></div>
+      <div className="circle"></div>
+      <div className="toggle-switch toggle-switch-s" data-size="38">
+        <div className="toggle-circle"></div>
+      </div>
+    </div>
 
-<div className="level" id="level-5">
-  <div className="circle"></div>
-  <div className="toggle-switch toggle-switch-l" data-size="63">
-    <div className="toggle-circle"></div>
-  </div>
-  <div className="circle"></div>
-</div>
+    <div className="level" id="level-5">
+      <div className="circle"></div>
+      <div className="toggle-switch toggle-switch-l" data-size="63">
+        <div className="toggle-circle"></div>
+      </div>
+      <div className="circle"></div>
+    </div>
 
-<div className="level" id="level-6">
-  <div className="toggle-switch toggle-switch-s" data-size="38">
-    <div className="toggle-circle"></div>
-  </div>
-  <div className="circle"></div>
-  <div className="toggle-switch toggle-switch-s" data-size="38">
-    <div className="toggle-circle"></div>
-  </div>
-  <div className="circle"></div>
-</div>
+    <div className="level" id="level-6">
+      <div className="toggle-switch toggle-switch-s" data-size="38">
+        <div className="toggle-circle"></div>
+      </div>
+      <div className="circle"></div>
+      <div className="toggle-switch toggle-switch-s" data-size="38">
+        <div className="toggle-circle"></div>
+      </div>
+      <div className="circle"></div>
+    </div>
 
-<div className="level" id="level-7">
-  <div className="circle"></div>
-  <div className="toggle-switch toggle-switch-m" data-size="50">
-    <div className="toggle-circle"></div>
-  </div>
-  <div className="circle"></div>
-  <div className="circle"></div>
-  <div className="circle"></div>
-</div>
+    <div className="level" id="level-7">
+      <div className="circle"></div>
+      <div className="toggle-switch toggle-switch-m" data-size="50">
+        <div className="toggle-circle"></div>
+      </div>
+      <div className="circle"></div>
+      <div className="circle"></div>
+      <div className="circle"></div>
+    </div>
 
 
       {/* ... 이하 동일하게 모든 level 복붙 */}

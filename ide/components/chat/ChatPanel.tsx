@@ -3,11 +3,13 @@
 import { useChat } from "@/app/ide/hooks/useChat";
 
 interface ChatPanelProps {
-  containerId: string;
+  containerId: string | number;
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
-  const { messages, input, setInput, sendMessage } = useChat(containerId);
+  const numericContainerId = Number(containerId);
+  const { messages, input, setInput, sendMessage } =
+    useChat(numericContainerId);
 
   return (
     <div className="h-full flex flex-col p-4">

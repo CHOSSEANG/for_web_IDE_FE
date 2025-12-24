@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import MonacoEditor from "./MonacoEditor";
 import TerminalPanel, { Problem } from "../terminal/TerminalPanel";
 import FileSidebar from "../filetree/FileSidebar";
@@ -8,7 +8,7 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const { activeFile, updateFileContent, activeId } = useWebIC();
+  const { activeFile, updateFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
