@@ -48,14 +48,7 @@ export function useChat(
 } {
   const { getToken, isSignedIn } = useAuth();
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [input, setInput] = useState("");
-  const stompClientRef = useRef<Client | null>(null);
-
-  /* ==========================
-      더미 메시지 (초기 UI 확인용)
-  ========================== */
-  useEffect(() => {
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
     const seedMessages: RawChatMessage[] = [
       {
         userName: "홍길동",
@@ -91,8 +84,10 @@ export function useChat(
       },
     ];
 
-    setMessages(seedMessages.map(normalizeChatMessage));
-  }, []);
+    return seedMessages.map(normalizeChatMessage);
+  });
+  const [input, setInput] = useState("");
+  const stompClientRef = useRef<Client | null>(null);
 
   /* ==========================
       STOMP 연결 & 구독
