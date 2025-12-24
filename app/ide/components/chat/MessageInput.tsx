@@ -12,25 +12,26 @@ export default function MessageInput({
   onSend,
 }: MessageInputProps) {
   return (
-    <div className="flex gap-2 p-2 w-full">
+    <form
+      className="flex items-center gap-2 p-2 w-full"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSend();
+      }}
+    >
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            onSend();
-          }
-        }}
         placeholder="메시지 입력"
-        className="flex-1 bg-white text-black px-2 py-1 rounded placeholder:text-gray-400"
+        className="flex-1 h-10 bg-white text-black px-3 rounded placeholder:text-gray-400 text-sm"
       />
       <button
-        className="px-3 py-2 rounded-md border border-white/20"
         onClick={onSend}
+        type="submit"
+        className="h-10 min-w-[56px] px-4 rounded-md bg-indigo-500 text-white text-sm font-medium hover:bg-indigo-600 transition flex items-center justify-center whitespace-nowrap"
       >
         전송
       </button>
-    </div>
+    </form>
   );
 }
