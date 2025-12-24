@@ -3,5 +3,5 @@
 import SecurityTab from "@/components/account/SecurityTab";
 
 export default function SecurityPage() {
-  return <SecurityTab />;
+  return <SecurityTab onDeleted={() => {}} />;
 }
