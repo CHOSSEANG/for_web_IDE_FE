@@ -5,7 +5,7 @@ import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 
 interface ChatPanelProps {
-  containerId: string;
+  containerId: number;
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {

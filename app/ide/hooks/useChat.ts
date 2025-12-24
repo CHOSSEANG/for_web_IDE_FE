@@ -8,7 +8,7 @@ export interface ChatMessage {
   sender: "me" | "other";
 }
 
-export function useChat(containerId: string) {
+export function useChat(containerId: number) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
 

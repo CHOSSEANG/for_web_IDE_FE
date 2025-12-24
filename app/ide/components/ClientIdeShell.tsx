@@ -7,7 +7,7 @@ import ChatPanel from "@/app/ide/components/chat/ChatPanel";
 import WebICEditor from "@/app/ide/components/editor/WebICEditor";
 
 type ClientIdeShellProps = {
-  id: string;
+  id: number;
 };
 
 type LeftPanelTab = "chat" | "filetree";

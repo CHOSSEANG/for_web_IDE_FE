@@ -55,7 +55,7 @@ interface WebICContextType {
     files: FileSystemItem[]
     activeId: string | undefined
     activeFile: { name: string; content: string; id: string } | null
-    containerId: string | undefined
+    containerId: number | undefined
     stats: CodingStats
     currentSessionMs: number
     getTodayTotalTime: () => number
@@ -72,7 +72,7 @@ interface WebICContextType {
 
 const WebICContext = createContext<WebICContextType | undefined>(undefined)
 
-export const WebICContextProvider = ({ children, containerId }: { children: React.ReactNode; containerId?: string }) => {
+export const WebICContextProvider = ({ children, containerId }: { children: React.ReactNode; containerId?: number }) => {
     const { user } = useUser();
     const [files, setFiles] = useState<FileSystemItem[]>(initialFiles)
     const [activeId, setActiveId] = useState<string | undefined>('root-welcome')
@@ -80,6 +80,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     // --- Timer & Stats State ---
     const [stats, setStats] = useState<CodingStats>(INITIAL_STATS)
     const [currentSessionMs, setCurrentSessionMs] = useState(0)
+    const [baseTimeToday, setBaseTimeToday] = useState(0)
     const [isWorkingState, setIsWorkingState] = useState(false)
     const [codingId, setCodingId] = useState<number | null>(null)
 
@@ -111,6 +112,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 if (dailyRes?.ok && weeklyRes?.ok) {
                     const dailyData = await dailyRes.json();
                     const weeklyData = await weeklyRes.json();
+
+                    setBaseTimeToday(dailyData.codingTimeMs || 0);
                     setStats(prev => ({
                         ...prev,
                         daily: weeklyData.days || prev.daily,
@@ -140,11 +143,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
 
     // 3. Helper: Today Total Time
     const getTodayTotalTime = useCallback(() => {
-        const today = new Date().toISOString().split('T')[0];
-        const match = stats.daily.find(d => d.todayDate === today);
-        const serverTime = match ? match.codingTimeMs : 0;
-        return serverTime + currentSessionMs;
-    }, [stats, currentSessionMs])
+        return baseTimeToday + currentSessionMs;
+    }, [baseTimeToday, currentSessionMs])
 
     // 4. Save Coding Session API
     const saveCodingSession = useCallback(async () => {
@@ -152,7 +152,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         const totalMs = getTodayTotalTime();
 
         const payload = {
-            containerId: containerId ? Number(containerId) : 0,
+            containerId: containerId || 0,
             codingTimeMs: totalMs,
             recordDate: today
         };
@@ -172,6 +172,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                     else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
                     return { ...prev, daily: newDaily };
                 });
+                setBaseTimeToday(totalMs);
                 setCurrentSessionMs(0);
             }
         } catch (error) {
@@ -237,7 +238,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         const totalMs = getTodayTotalTime();
 
         const payload = {
-            containerId: containerId ? Number(containerId) : 0,
+            containerId: containerId || 0,
             name: activeFile.name,
             path,
             content: contentToSave,
@@ -265,7 +266,6 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                     else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
                     return { ...prev, daily: newDaily };
                 });
-                setCurrentSessionMs(0);
             } else {
                 console.error('서버 저장 실패:', res.status);
             }
