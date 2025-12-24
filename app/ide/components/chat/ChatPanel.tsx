@@ -6,12 +6,13 @@ import MessageInput from "./MessageInput";
 import { useMemo, useState } from "react";
 
 interface ChatPanelProps {
-  containerId: number;
+  containerId: string | number;
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
-  // ✅ number 그대로 전달
-  const { messages, input, setInput, sendMessage } = useChat(containerId);
+  const numericContainerId = Number(containerId);
+  const { messages, input, setInput, sendMessage } =
+    useChat(numericContainerId);
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const isSearching = searchKeyword.trim().length > 0;
