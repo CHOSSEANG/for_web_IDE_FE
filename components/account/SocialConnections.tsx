@@ -105,7 +105,7 @@ export default function SocialConnections() {
                 <div className="relative flex items-center gap-2 text-xs text-success">
                   <span className="font-semibold">연결됨</span>
 
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() =>
                       setOpenMenu(
@@ -128,7 +128,7 @@ export default function SocialConnections() {
                         {isBusy ? "처리 중…" : "삭제"}
                       </button>
                     </div>
-                  )}
+                  )} */}
                 </div>
               ) : (
                 <button
