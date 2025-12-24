@@ -22,14 +22,17 @@ type NewTemplateModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   templates: Template[];
+  selectedTemplate: string | null;
+  setSelectedTemplate: (id: string | null) => void;
 };
 
 export default function NewTemplateModal({
   open,
   onOpenChange,
   templates,
+  selectedTemplate,
+  setSelectedTemplate,
 }: NewTemplateModalProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -111,7 +114,9 @@ export default function NewTemplateModal({
 
         {/* ===== Actions ===== */}
         <div className="flex justify-center gap-2 mt-6">
-          <Button variant="secondary" onClick={() => onOpenChange(false)}
+          <Button
+            variant="secondary"
+            onClick={() => onOpenChange(false)}
             className="px-5 py-1"
           >
             취소

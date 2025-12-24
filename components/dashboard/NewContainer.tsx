@@ -65,23 +65,32 @@ const TEMPLATES: Template[] = [
 
 export default function NewContainer() {
   const [open, setOpen] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  const openWithTemplate = (templateId: string) => {
+    setSelectedTemplate(templateId);
+    setOpen(true);
+  };
 
   return (
     <section className="mb-8">
-      {/* ===== Header ===== */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold">Create new container</h2>
         <Button
           type="button"
           variant="secondary"
           className="text-xs px-3 py-1.5 rounded-md"
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setSelectedTemplate(null);
+            setOpen(true);
+          }}
         >
           + New Template
         </Button>
       </div>
 
-      {/* ===== Template Preview ===== */}
+      {/* Template Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {TEMPLATES.map((item) => (
           <TemplateCard
@@ -89,15 +98,18 @@ export default function NewContainer() {
             icon={item.icon}
             name={item.name}
             desc={item.desc}
+            onClick={() => openWithTemplate(item.id)}
           />
         ))}
       </div>
 
-      {/* ===== Modal ===== */}
+      {/* Modal */}
       <NewTemplateModal
         open={open}
         onOpenChange={setOpen}
         templates={TEMPLATES}
+        selectedTemplate={selectedTemplate}
+        setSelectedTemplate={setSelectedTemplate}
       />
     </section>
   );
