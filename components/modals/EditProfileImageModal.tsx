@@ -113,12 +113,14 @@ export default function EditProfileImageModal({ open, onClose }: Props) {
         {/* 미리보기 */}
         <div className="mb-4 flex justify-center">
           {previewSource ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={previewSource}
-              alt="선택된 프로필"
-              className="h-24 w-24 rounded-full border border-border-strong object-cover"
-            />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewSource}
+                alt="선택된 프로필"
+                className="h-24 w-24 rounded-full border border-border-strong object-cover"
+              />
+            </>
           ) : (
             <div className="flex h-24 w-24 items-center justify-center rounded-full border border-border-strong bg-bg-subtle text-3xl">
               👤

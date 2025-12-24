@@ -27,23 +27,19 @@
 // - 치명적 에러 → empty state
 
 
-// /app/main/page.tsx
-// WebIC Dashboard – Clerk token + backend login integration
-
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
-import { loginUser } from "@/lib/api/auth";
 import NewContainer from "@/components/dashboard/NewContainer";
 import ListContainer from "@/components/dashboard/ListContainer";
 
 export default function DashboardMain() {
   const { isSignedIn, user } = useUser();
-  const { getToken } = useAuth();
 
-  // StrictMode / Fast Refresh 중복 호출 방지
+// 현재 백엔드 서버 머지 대기 상태일 수 있으므로
+// fetch 실패 시에도 앱 동작은 유지되도록 처리
   const hasCalledLoginApi = useRef(false);
 
   useEffect(() => {
@@ -52,46 +48,46 @@ export default function DashboardMain() {
 
     hasCalledLoginApi.current = true;
 
-    const syncLogin = async () => {
+    // TEMP: backend login API integration (spec not finalized)
+    const loginToBackend = async () => {
+      // TODO: auth.ts loginUser 연결
       try {
-        /**
-         * 1️⃣ Clerk JWT 토큰 획득
-         * - template 이름은 Clerk 콘솔에 생성한 JWT template 이름과 반드시 일치해야 함
-         */
-        const token = await getToken({
-          template: "jwt", // ⚠️ 실제 JWT template 이름으로 교체
-        });
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-        if (!token) {
-          throw new Error("Authorization token is missing");
+        if (!apiBaseUrl) {
+          console.warn("NEXT_PUBLIC_API_BASE_URL is not set, skipping backend login");
+          return;
         }
 
-        /**
-         * 2️⃣ 백엔드 로그인 API 호출
-         */
-        const data = await loginUser(
-          {
+        const response = await fetch(`${apiBaseUrl}/user/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             clerkUserId: user.id,
             email: user.primaryEmailAddress?.emailAddress ?? "",
-          },
-          token
-        );
+          }),
+        });
 
-        /**
-         * 3️⃣ userId 로컬 저장 (후속 API에서 사용)
-         */
+        if (!response.ok) {
+          throw new Error("Backend login failed");
+        }
+
+        const data = await response.json();
+
         if (typeof window !== "undefined" && data?.userId) {
           localStorage.setItem("webic_user_id", String(data.userId));
         }
 
-        console.log("✅ backend login success:", data);
+        console.log("backend login success:", data);
       } catch (error) {
-        console.error("❌ backend login error:", error);
+        console.error("backend login error:", error);
       }
     };
 
-    syncLogin();
-  }, [isSignedIn, user, getToken]);
+    loginToBackend();
+  }, [isSignedIn, user]);
 
   return (
     <div className="w-full flex flex-col">
