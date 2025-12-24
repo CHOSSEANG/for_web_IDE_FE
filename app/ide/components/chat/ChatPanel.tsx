@@ -10,6 +10,7 @@ interface ChatPanelProps {
 }
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
+  // ✅ number 그대로 전달
   const { messages, input, setInput, sendMessage } = useChat(containerId);
 
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -31,10 +32,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           placeholder="메시지 검색"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="w-64 px-3 py-1 rounded
-    bg-white text-black
-    placeholder:text-gray-400
-    text-sm"
+          className="w-64 px-3 py-1 rounded bg-white text-black placeholder:text-gray-400 text-sm"
         />
 
         {isSearching && (
