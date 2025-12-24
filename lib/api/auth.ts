@@ -4,25 +4,35 @@ import type { LoginResponse } from "./types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function loginUser(payload: {
+type LoginPayload = {
   clerkUserId: string;
   email: string;
-}): Promise<LoginResponse> {
+};
+
+export async function loginUser(
+  payload: LoginPayload,
+  token: string
+): Promise<LoginResponse> {
   if (!BASE_URL) {
-    throw new Error("API BASE URL is not defined");
+    throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
+  }
+
+  if (!token) {
+    throw new Error("Authorization token is missing");
   }
 
   const response = await fetch(`${BASE_URL}/user/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // Authorization 필요 여부 → 백엔드 메모 후 결정
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
-    throw new Error("loginUser failed");
+    const text = await response.text();
+    throw new Error(`loginUser failed: ${response.status} ${text}`);
   }
 
   return response.json();
