@@ -1,7 +1,7 @@
 // @/components/account/SecurityTab.tsx
 // 회원 프로필 모달창 보안탭
-// 서버 API에서 User-Agent 수집 필요 (접속 기기 정보 노출이 필요함) 현재 1개만 가능
-// 비밀번호는 소셜 로그인시 변경할 수 없다는 경고창으로 대체
+// Clerk 세션 기준: 현재 로그인 세션의 로그인 시간만 표시
+// 비밀번호는 소셜 로그인 시 변경 불가 (경고 처리)
 
 "use client";
 
@@ -11,13 +11,11 @@ import { useSessionList, useUser } from "@clerk/nextjs";
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
 import ChangePasswordModal from "@/components/modals/ChangePasswordModal";
 
-/**
- * 🔒 접속 기기 노출 개수 제한
- * 추후 숫자만 바꾸면 됨
- */
-const MAX_VISIBLE_DEVICES = 1;
+type SecurityTabProps = {
+  onDeleted: () => void;
+};
 
-export default function SecurityTab() {
+export default function SecurityTab({ onDeleted }: SecurityTabProps) {
   const [open, setOpen] = useState(false);
   const [pwOpen, setPwOpen] = useState(false);
 
@@ -25,38 +23,33 @@ export default function SecurityTab() {
   const { user, isLoaded: isUserLoaded } = useUser();
 
   /**
-   * Clerk 세션 → 기존 UI에서 쓰던 device 형태로 변환
-   * (UI 구조/스타일 변경 없음)
+   * 현재 로그인 세션의 로그인 시간
    */
-  const devices = useMemo(() => {
-    if (!isLoaded || !sessions) return [];
+  const loginAt = useMemo(() => {
+    if (!isLoaded || !sessions || sessions.length === 0) return "-";
 
-    return sessions.slice(0, MAX_VISIBLE_DEVICES).map((session, index) => ({
-      name: `세션 ${index + 1}`,
-      lastActive: session.lastActiveAt
-        ? new Date(session.lastActiveAt)
-            .toISOString()
-            .slice(0, 10)
-            .replaceAll("-", ".")
-        : "-",
-      current: session.status === "active",
-      os: "-",
-      environment: "-",
-    }));
+    const currentSession =
+      sessions.find((s) => s.status === "active") ?? sessions[0];
+
+    return currentSession.createdAt
+      ? new Date(currentSession.createdAt).toLocaleString("ko-KR", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "-";
   }, [isLoaded, sessions]);
 
-  const totalDeviceCount = sessions?.length ?? 0;
-
   /**
-   * 🔐 비밀번호 변경 클릭 핸들러
-   * - 소셜 로그인: 경고창만 노출
-   * - 비밀번호 로그인: 모달 오픈
+   * 비밀번호 변경
    */
   const handlePasswordClick = () => {
-    if (!isUserLoaded) return;
+    if (!isUserLoaded || !user) return;
 
-    if (!user?.passwordEnabled) {
-      alert("소셜 로그인 중으로 비밀번호를 변경할 수 없습니다");
+    if (!user.passwordEnabled) {
+      alert("소셜 로그인 계정은 비밀번호를 변경할 수 없습니다.");
       return;
     }
 
@@ -66,7 +59,7 @@ export default function SecurityTab() {
   return (
     <>
       <section className="space-y-5">
-        {/* 비밀번호 변경 */}
+        {/* 비밀번호 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -79,7 +72,7 @@ export default function SecurityTab() {
             </div>
             <button
               onClick={handlePasswordClick}
-              className="shrink-0 rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 
+              className="shrink-0 rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2
               text-sm font-semibold text-text-primary transition hover:border-blue-500
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
             >
@@ -88,46 +81,27 @@ export default function SecurityTab() {
           </div>
         </div>
 
-        {/* 접속 기기 / 환경 정보 */}
+        {/* 마지막 접속일 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-text-primary">
-              접속 기기 / 환경 정보
-            </h2>
-            <span className="text-xs text-text-muted">
-              {Math.min(totalDeviceCount, MAX_VISIBLE_DEVICES)} /{" "}
-              {totalDeviceCount}
-            </span>
+          <h2 className="text-base font-semibold text-text-primary mb-2">
+            마지막 접속일
+          </h2>
+
+          <div className="border-t pt-3 border-border-strong bg-bg-raised text-sm text-text-primary">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold">현재 로그인</span>
+              <span className="text-xs text-text-muted">
+                {loginAt} · 현재 세션
+              </span>
+            </div>
+
+            <p className="mt-1 text-xs text-text-muted">
+              현재 로그인된 세션 기준으로 표시됩니다.
+            </p>
           </div>
-
-          <ul className="space-y-3">
-            {devices.map((device, idx) => (
-              <li
-                key={idx}
-                className="border-t pt-2.5 ml-0 border-border-strong bg-bg-raised text-sm text-text-primary"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">{device.name}</span>
-                  <span className="text-xs text-text-muted">
-                    {device.lastActive}
-                    {device.current && " · 현재 세션"}
-                  </span>
-                </div>
-
-                <div className="text-xs text-text-muted">
-                  <p>
-                    <span className="font-semibold text-text-primary text-[11px] uppercase tracking-wide mr-1">
-                      OS :
-                    </span>
-                    <span className="text-[11px]">{device.os}</span>
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
 
-        {/* 탈퇴하기 */}
+        {/* 계정 탈퇴 */}
         <div className="rounded-3xl border border-red-500/40 p-5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1 min-w-0">
@@ -135,12 +109,12 @@ export default function SecurityTab() {
                 계정 탈퇴
               </h2>
               <p className="text-xs text-text-muted leading-snug">
-                탈퇴시 모든 데이터가 영구적으로 삭제됩니다.
+                탈퇴 시 모든 데이터가 영구적으로 삭제됩니다.
               </p>
             </div>
             <button
               onClick={() => setOpen(true)}
-              className="shrink-0 rounded-2xl bg-red-400 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-400 
+              className="shrink-0 rounded-2xl bg-red-400 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-400
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
             >
               탈퇴하기
@@ -150,7 +124,11 @@ export default function SecurityTab() {
       </section>
 
       {/* 모달 */}
-      <DeleteAccountModal open={open} onClose={() => setOpen(false)} />
+      <DeleteAccountModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onDeleted={onDeleted}
+      />
       <ChangePasswordModal open={pwOpen} onClose={() => setPwOpen(false)} />
     </>
   );
