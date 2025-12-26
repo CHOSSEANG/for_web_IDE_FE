@@ -10,11 +10,15 @@ export async function loginUser(
     email: string;
   }
 ): Promise<LoginResponse> {
-  return authorizedFetch<LoginResponse>(token, "/user/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  return authorizedFetch<LoginResponse>({
+    token,
+    path: "/user/login",
+    init: {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     },
-    body: JSON.stringify(payload),
   });
 }
