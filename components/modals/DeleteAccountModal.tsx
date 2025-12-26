@@ -1,34 +1,58 @@
 // @/components/modals/DeleteAccountModal.tsx
-// 계정 탈퇴 모달
-// ⚠️ 소셜 로그인 사용자를 고려하여 "비밀번호 입력"이 아닌
-// "이메일 입력 인증" 방식으로 탈퇴 진행
-// (백엔드 연동 시 이메일 검증 기반으로 처리 필요)
-
 "use client";
 
 import { useState } from "react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useUser } from "@clerk/nextjs";
 
 type DeleteAccountModalProps = {
   open: boolean;
   onClose: () => void;
+  onDeleted: () => void;
 };
 
 export default function DeleteAccountModal({
   open,
   onClose,
+  onDeleted,
 }: DeleteAccountModalProps) {
-  /**
-   * ⚠️ 계정 탈퇴 인증 방식
-   * - 소셜 로그인 사용자를 고려하여
-   * - 비밀번호 입력이 아닌 "이메일 입력 인증" 방식으로 진행
-   * - 백엔드 연동 시 이메일 검증 기반 탈퇴 처리 필요
-   */
+  const { user, isLoaded } = useUser();
+
   const [email, setEmail] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState("");
 
   if (!open) return null;
 
-  const canDelete = email.length > 0;
+  const userEmail = user?.primaryEmailAddress?.emailAddress ?? "";
+
+  const canDelete =
+    isLoaded &&
+    !!user &&
+    email === userEmail &&
+    !isDeleting;
+
+  const handleDelete = async () => {
+    if (!user || !canDelete) return;
+
+    try {
+      setIsDeleting(true);
+      setError("");
+
+      // ✅ Clerk 계정 삭제
+      await user.delete();
+
+      // 1️⃣ 탈퇴 모달 닫기
+      onClose();
+
+      // 2️⃣ 상위(Account)에게 탈퇴 완료 알림
+      onDeleted();
+    } catch (e) {
+      console.error("계정 탈퇴 실패", e);
+      setError("계정 탈퇴 중 오류가 발생했습니다.");
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 py-8">
@@ -37,54 +61,57 @@ export default function DeleteAccountModal({
           <h2>계정 탈퇴</h2>
         </VisuallyHidden>
 
-        {/* Title */}
         <h2 className="text-lg font-semibold text-red-300 mb-2">
           계정을 탈퇴하시겠습니까?
         </h2>
 
-        {/* Description */}
-        <p className="text-sm text-text-muted leading-snug mb-4">
-          계정을 탈퇴하면 모든 데이터가 영구적으로 삭제되며,
-          <br />
-          이 작업은 되돌릴 수 없습니다.
+        <p className="text-sm text-text-muted mb-4">
+          계정을 탈퇴하면 모든 데이터가 영구적으로 삭제됩니다.
         </p>
 
-        {/* Email input (직접 입력 필수) */}
-        <div className="mb-4">
-          <form autoComplete="off">
-            <label className="block text-xs font-semibold text-text-muted mb-1">
-              이메일 확인
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="이메일을 직접 입력하세요"
-              autoComplete="off"
-              name="delete-confirm-email"
-              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/60 transition-colors"
-            />
-          </form>
-        </div>
+        <label className="block text-xs font-semibold text-text-muted mb-1">
+          이메일 확인
+        </label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="이메일을 직접 입력하세요"
+          autoComplete="off"
+          className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary"
+        />
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3">
+        {email && email !== userEmail && (
+          <p className="mt-1 text-xs text-red-400">
+            현재 로그인된 이메일과 일치하지 않습니다.
+          </p>
+        )}
+
+        {error && (
+          <p className="mt-2 text-xs text-red-400">{error}</p>
+        )}
+
+        <div className="mt-5 flex justify-end gap-3">
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+            disabled={isDeleting}
+            className="rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary disabled:opacity-60"
           >
             취소
           </button>
 
           <button
+            type="button"
+            onClick={handleDelete}
             disabled={!canDelete}
             className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
               canDelete
-                ? "bg-red-500 text-white hover:bg-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60"
+                ? "bg-red-500 text-white hover:bg-red-400"
                 : "bg-red-500/40 text-white/80 cursor-not-allowed"
             }`}
           >
-            탈퇴하기
+            {isDeleting ? "탈퇴 처리 중..." : "탈퇴하기"}
           </button>
         </div>
       </div>

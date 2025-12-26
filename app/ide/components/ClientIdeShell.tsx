@@ -7,7 +7,7 @@ import ChatPanel from "@/app/ide/components/chat/ChatPanel";
 import WebICEditor from "@/app/ide/components/editor/WebICEditor";
 
 type ClientIdeShellProps = {
-  id: string;
+  id: number;
 };
 
 type LeftPanelTab = "chat" | "filetree" | "invite";
@@ -19,7 +19,7 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
 
   return (
-    <WebICContextProvider>
+    <WebICContextProvider containerId={id}>
       <main className="h-screen w-screen bg-[#0B1020] text-white">
         <div className="flex h-full">
           {/* Left Sidebar */}
@@ -39,6 +39,7 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
               <button
                 onClick={() => setActiveTab("chat")}
+
                 className={`p-2 rounded transition ${
                   activeTab === "chat"
                     ? "text-indigo-400 bg-white/10"
