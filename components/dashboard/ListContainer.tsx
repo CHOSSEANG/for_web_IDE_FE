@@ -1,56 +1,32 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
+
 import { FiPlay, FiSquare } from "react-icons/fi";
 import { FaListUl, FaPlay } from "react-icons/fa";
 import { FaRegFolderOpen } from "react-icons/fa6";
 import { MdMoreHoriz } from "react-icons/md";
-
 import { SiJavascript, SiPython } from "react-icons/si";
 import { DiJava } from "react-icons/di";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/dashboard/Pagination";
+import type { ContainerItem } from "@/types/container";
 
-type ContainerItem = {
-  name: string;
-  tech: string;
-  time: string;
-  status: "running" | "stopped";
+type ListContainerProps = {
+  containers: ContainerItem[];
 };
 
-export default function ListContainer() {
+export default function ListContainer({ containers }: ListContainerProps) {
   const techIconMap: Record<string, ReactNode> = {
     JavaScript: <SiJavascript className="text-yellow-400 text-lg" />,
     Python: <SiPython className="text-blue-400 text-lg" />,
     Java: <DiJava className="text-red-500 text-lg" />,
   };
 
-  const containers: ContainerItem[] = [
-    {
-      name: "vanilla-js-playground",
-      tech: "JavaScript",
-      time: "1시간 전",
-      status: "stopped",
-    },
-    {
-      name: "python-playground",
-      tech: "Python",
-      time: "방금 전",
-      status: "stopped",
-    },
-    {
-      name: "java-playground",
-      tech: "Java",
-      time: "방금 전",
-      status: "stopped",
-    },
-  ];
-
   const handleEdit = (item: ContainerItem) => {
     console.log("EDIT:", item.name);
-    // TODO: 이름 수정 모달 연결
   };
 
   const handleDelete = (item: ContainerItem) => {
@@ -60,12 +36,11 @@ export default function ListContainer() {
     if (!ok) return;
 
     console.log("DELETE:", item.name);
-    // TODO: 삭제 API
   };
 
   return (
     <section>
-      {/* ================= Header ================= */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold">Recent Containers</h2>
 
@@ -79,11 +54,11 @@ export default function ListContainer() {
         </Button>
       </div>
 
-      {/* ================= List ================= */}
+      {/* List */}
       <div className="space-y-2">
         {containers.map((item) => (
           <div
-            key={item.name}
+            key={item.id}
             className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-800"
           >
             {/* Info */}
@@ -102,7 +77,7 @@ export default function ListContainer() {
               </div>
             </div>
 
-            {/* Status + Actions */}
+            {/* Actions */}
             <div className="flex items-center gap-2">
               {item.status === "running" ? (
                 <span className="flex items-center gap-1 text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-500">
@@ -116,31 +91,23 @@ export default function ListContainer() {
                 </span>
               )}
 
-              {item.status === "running" ? (
-                <Link href="/ide/room-a">
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    className="text-xs px-3 py-1.5 flex items-center gap-1"
-                  >
+              <Link href={`/ide/${item.id}`}>
+                <Button
+                  type="button"
+                  variant={
+                    item.status === "running" ? "destructive" : "primary"
+                  }
+                  className="text-xs px-3 py-1.5 flex items-center gap-1"
+                >
+                  {item.status === "running" ? (
                     <FaRegFolderOpen className="text-sm" />
-                    Open
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/ide/room-b">
-                  <Button
-                    type="button"
-                    variant="primary"
-                    className="text-xs px-3 py-1.5 flex items-center gap-1"
-                  >
+                  ) : (
                     <FaPlay className="text-sm" />
-                    Start
-                  </Button>
-                </Link>
-              )}
+                  )}
+                  {item.status === "running" ? "Open" : "Start"}
+                </Button>
+              </Link>
 
-              {/* ⋯ 메뉴 (안전 버전) */}
               <Button
                 type="button"
                 variant="ghost"
@@ -149,7 +116,6 @@ export default function ListContainer() {
                   const action = window.prompt(
                     "작업 선택:\n1 = 수정\n2 = 삭제"
                   );
-
                   if (action === "1") handleEdit(item);
                   if (action === "2") handleDelete(item);
                 }}

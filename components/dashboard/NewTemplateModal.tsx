@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
+import type { TemplateWithIcon } from "@/components/dashboard/templateClient";
+
 import {
   Dialog,
   DialogContent,
@@ -10,26 +11,16 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.webicapp.com";
-
-const DISABLE_AUTH = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true";
-
-type Template = {
-  id: string;
-  name: string;
-  desc: string;
-  icon: ReactNode;
-};
 
 type NewTemplateModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  templates: Template[];
+  templates: TemplateWithIcon[];
   initialTemplateId?: string | null;
+  onCreate?: (payload: {
+    template: TemplateWithIcon;
+    name: string;
+  }) => Promise<void> | void;
 };
 
 export default function NewTemplateModal({
@@ -37,79 +28,38 @@ export default function NewTemplateModal({
   onOpenChange,
   templates,
   initialTemplateId,
+  onCreate,
 }: NewTemplateModalProps) {
-  const router = useRouter();
-  const { getToken, isLoaded, isSignedIn } = useAuth();
-
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (open && initialTemplateId) {
-      setSelectedTemplate(initialTemplateId);
+    if (!open) return;
+    if (initialTemplateId) {
+      setSelectedTemplate(initialTemplateId); // ⭐ 자동 선택
     }
   }, [open, initialTemplateId]);
 
   const disabled = !selectedTemplate || containerName.trim() === "";
 
   const handleCreate = async () => {
-    if (disabled) {
-      alert("템플릿 선택 + 컨테이너 이름 입력이 필요합니다.");
-      return;
-    }
+    if (disabled) return;
 
-    if (!DISABLE_AUTH) {
-      if (!isLoaded) return alert("인증 로딩 중입니다.");
-      if (!isSignedIn) return alert("로그인이 필요합니다.");
-    }
+    const template = templates.find((t) => t.id === selectedTemplate);
+    if (!template) return;
 
+    setLoading(true);
     try {
-      setLoading(true);
-
-      const token = DISABLE_AUTH ? null : await getToken();
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (token) headers.Authorization = `Bearer ${token}`;
-
-      const res = await fetch(`${API_BASE}/container/create`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          name: containerName.trim(),
-          lang: selectedTemplate,
-        }),
+      await onCreate?.({
+        template,
+        name: containerName.trim(),
       });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(`컨테이너 생성 실패 (${res.status}) ${text}`);
-      }
-
-      const json = await res.json();
-
-      const containerId =
-        json?.data?.id ??
-        json?.data?.containerId ??
-        json?.id ??
-        json?.containerId;
-
-      if (!containerId) {
-        throw new Error("containerId가 응답에 없습니다.");
-      }
-
-      onOpenChange(false);
-      router.push(`/ide/${containerId}`);
-    } catch (err) {
-      console.error(err);
-      alert(
-        err instanceof Error
-          ? err.message
-          : "컨테이너 생성 중 오류가 발생했습니다."
-      );
     } finally {
       setLoading(false);
+      setSelectedTemplate(null);
+      setContainerName("");
+      onOpenChange(false);
     }
   };
 
@@ -138,8 +88,10 @@ export default function NewTemplateModal({
                 }`}
               >
                 <div className="mb-2">{tpl.icon}</div>
-                <p className="text-sm font-medium">{tpl.name}</p>
-                <p className="text-xs text-slate-500">{tpl.desc}</p>
+                <p className="text-sm font-medium">{tpl.displayName}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {tpl.desc}
+                </p>
               </button>
             );
           })}
@@ -153,12 +105,9 @@ export default function NewTemplateModal({
             value={containerName}
             onChange={(e) => setContainerName(e.target.value)}
             placeholder="my-container"
-            className={
-              "mt-1 w-full rounded-md border px-3 py-2 text-sm\n" +
-              "bg-white dark:bg-white\n" +
-              "text-black placeholder:text-slate-400\n" +
-              "border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            }
+            className="mt-1 w-full rounded-md border px-3 py-2 text-sm
+              bg-white text-black placeholder:text-slate-400
+              border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
