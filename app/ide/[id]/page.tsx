@@ -1,12 +1,14 @@
 import ClientIdeShell from "@/app/ide/components/ClientIdeShell";
 
-type PageProps = {
-  params: Promise<{
-    id: string;
-  }>;
+type IdePageParams = {
+  id: string;
 };
 
-export default async function IdePage({ params }: PageProps) {
-  const { id } = await params;
+type PageProps = {
+  params: IdePageParams;
+};
+
+export default function IdePage({ params }: PageProps) {
+  const id = Number(params.id);
   return <ClientIdeShell id={id} />;
 }
