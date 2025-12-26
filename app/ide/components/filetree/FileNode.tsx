@@ -117,7 +117,7 @@ const FileNode = ({
                                         e.stopPropagation()
                                         onAddFolder?.(item.id)
                                     }}
-                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-base opacity-60 hover:opacity-100 hover:text-[#e6edf3]"
+                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-[#e6edf3]"
                                     title="새 폴더"
                                 >
                                     📁+
@@ -127,10 +127,10 @@ const FileNode = ({
                                         e.stopPropagation()
                                         onAddFile?.(item.id)
                                     }}
-                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-lg opacity-60 hover:opacity-100 hover:text-[#e6edf3] leading-none"
+                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-[#e6edf3] leading-none"
                                     title="새 파일"
                                 >
-                                    +
+                                    📄+
                                 </button>
                             </>
                         )}
@@ -143,7 +143,7 @@ const FileNode = ({
                                     onDelete?.(item.id)
                                 }
                             }}
-                            className="ml-2 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-sm opacity-60 hover:opacity-100 hover:text-[#f78166]"
+                            className="ml-4 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-sm opacity-60 hover:opacity-100 hover:text-[#f78166]"
                             title="삭제"
                         >
                             ✕

@@ -1,3 +1,5 @@
+// app/(auth)/sign-in/page.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -34,7 +36,7 @@ export default function SignInPage() {
     setLastProvider(provider);
 
     signIn.authenticateWithRedirect({
-      strategy: `oauth_${provider}`,
+      strategy: `oauth_${provider}`, // ✅ 문자열 템플릿 수정
       redirectUrl: "/auth/callback",
       redirectUrlComplete: "/main",
     });

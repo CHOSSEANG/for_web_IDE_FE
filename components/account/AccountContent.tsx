@@ -16,19 +16,35 @@ import SecurityTab from "@/components/account/SecurityTab";
 
 type Props = {
   onClose: () => void;
+  onDeleted: () => void; // ✅ 추가
 };
 
-export default function AccountContent({ onClose }: Props) {
+export default function AccountContent({
+  onClose,
+  onDeleted,
+}: Props) {
   const [activeTab, setActiveTab] =
     useState<"profile" | "security">("profile");
 
   const { signOut } = useClerk();
   const router = useRouter();
 
+  /**
+   * 로그아웃
+   */
   const handleLogout = async () => {
     onClose();
     await signOut();
     router.push("/welcome");
+  };
+
+  /**
+   * ✅ 계정 탈퇴 완료 처리
+   * - AccountModal 닫기
+   * - welcome 페이지 이동은 DeleteAccountModal에서 처리됨
+   */
+  const handleDeleted = () => {
+    onDeleted();
   };
 
   return (
@@ -65,10 +81,10 @@ export default function AccountContent({ onClose }: Props) {
         </TabButton>
       </nav>
 
-      {/* Content Area (잔상 제거 핵심) */}
+      {/* Content */}
       <div className="relative min-h-[200px]">
         <div
-          className={` inset-0 transition-opacity ${
+          className={`transition-opacity ${
             activeTab === "profile"
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
@@ -84,7 +100,8 @@ export default function AccountContent({ onClose }: Props) {
               : "opacity-0 pointer-events-none"
           }`}
         >
-          <SecurityTab />
+          {/* ✅ 탈퇴 완료 콜백 전달 */}
+          <SecurityTab onDeleted={handleDeleted} />
         </div>
       </div>
 

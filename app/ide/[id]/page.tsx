@@ -8,6 +8,7 @@ type IdePageProps = {
 
 export default async function IdePage({ params }: IdePageProps) {
   const { id } = await params;
+  const containerId = parseInt(id, 10);
 
-  return <ClientIdeShell id={id} />;
+  return <ClientIdeShell id={containerId} />;
 }
