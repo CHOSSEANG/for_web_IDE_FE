@@ -6,7 +6,7 @@ import { ChatMessage } from "@/app/ide/types/chat";
 import { useAuth } from "@clerk/nextjs";
 import { fetchChatHistory, searchChatMessages } from "@/lib/api/chat";
 
-type RawChatMessage = Partial<ChatMessage> & Record<string, unknown>;
+type RawChatMessage = ChatMessage | (Partial<ChatMessage> & Record<string, unknown>);
 
 let nextMessageId = 1;
 
