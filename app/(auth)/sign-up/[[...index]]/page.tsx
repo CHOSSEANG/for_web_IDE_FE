@@ -49,7 +49,7 @@ export default function SignUpPage() {
   if (!signUpLoaded || !signInLoaded) return null;
 
   /* -----------------------------
-   * OAuth
+   * Social Login
    * ---------------------------- */
   const socialLogin = (provider: SocialProvider) => {
     localStorage.setItem("lastAuthProvider", provider);
@@ -61,7 +61,7 @@ export default function SignUpPage() {
   };
 
   /* -----------------------------
-   * Email Sign Up (핵심 수정)
+   * Email Sign Up
    * ---------------------------- */
   const handleSignUp = async () => {
     if (!signUp || isSubmitting) return;
@@ -75,17 +75,35 @@ export default function SignUpPage() {
         password,
       });
 
-      // ✅ 이메일 인증이 필요한 경우 → 모달만 띄움 (redirect ❌)
+
+// 🚫 인증 안 된 경우 → 절대 다음 단계로 못 가게 고정
+if (
+  result.verifications.emailAddress &&
+  result.verifications.emailAddress.status !== "verified"
+) {
+  await signUp.prepareEmailAddressVerification({
+    strategy: "email_code",
+  });
+
+  setShowVerifyModal(true);
+  setIsSubmitting(false);
+
+  // 🔒 Clerk가 다음 auth 단계로 넘어가지 못하게 명시적으로 종료
+  return;
+}
+
+// ❗ 혹시라도 여기로 내려오면 절대 안 됨
+throw new Error("Unexpected sign-up state");
+
+      // 🔑 이메일 인증 필수 → 모달만 띄우고 절대 redirect 금지
       if (result.verifications.emailAddress?.status === "unverified") {
         await signUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
         setShowVerifyModal(true);
+        setIsSubmitting(false);
         return;
       }
-
-      // ⚠️ email verification OFF인 경우만 여기 도달
-      router.push("/sign-in");
     } catch (err: unknown) {
       let message = "회원가입에 실패했습니다. 다시 시도해주세요.";
 
@@ -98,8 +116,6 @@ export default function SignUpPage() {
       }
 
       setErrorMessage(message);
-    } finally {
-      // 🔒 어떤 경로든 반드시 해제
       setIsSubmitting(false);
     }
   };
@@ -112,7 +128,7 @@ export default function SignUpPage() {
             Create your WebIC
           </h1>
 
-          {/* OAuth */}
+          {/* Social */}
           <div className="grid grid-cols-3 gap-3">
             {(["github", "google", "discord"] as const).map((provider) => (
               <button
@@ -155,7 +171,7 @@ export default function SignUpPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary focus:ring-2 focus:ring-blue-500/60"
+                className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
               />
               {errorMessage && (
                 <p className="text-sm text-red-500">{errorMessage}</p>
@@ -172,16 +188,13 @@ export default function SignUpPage() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary focus:ring-2 focus:ring-blue-500/60"
+                  className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
                 />
                 <PasswordVisibilityToggle
                   visible={showPassword}
                   onToggle={() => setShowPassword((v) => !v)}
                 />
               </div>
-              <p className="text-xs text-text-muted mt-2">
-                * 최소 8자 이상, 영문(대문자 1개 이상)/숫자/특수문자 포함
-              </p>
             </div>
 
             <button
@@ -193,7 +206,7 @@ export default function SignUpPage() {
             </button>
           </form>
 
-          {/* Clerk CAPTCHA DOM */}
+          {/* CAPTCHA mount */}
           <div id="clerk-captcha" className="mt-1" />
 
           <p className="text-center text-sm text-text-muted">
@@ -205,17 +218,16 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* Email Verification Modal */}
       {signUp && (
         <EmailVerificationModal
           open={showVerifyModal}
           signUp={signUp}
           email={email}
-          onSuccess={() => {
-            setShowVerifyModal(false);
-            router.push("/sign-in");
-          }}
           onClose={() => setShowVerifyModal(false)}
+          onSuccess={() => {
+            // ❗ 로그인 / 세션 활성화는 모달에서 처리
+            router.push("/main");
+          }}
         />
       )}
     </>

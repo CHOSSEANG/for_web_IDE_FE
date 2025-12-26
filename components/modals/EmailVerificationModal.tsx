@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useClerk } from "@clerk/nextjs";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,7 @@ export default function EmailVerificationModal({
   onSuccess,
   onClose,
 }: Props) {
+  const { setActive } = useClerk(); // ✅ FIX
   const [code, setCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -44,17 +46,14 @@ export default function EmailVerificationModal({
   const handleVerify = async () => {
     if (isSubmitting || code.length !== 6) return;
 
-    if (signUp.status === "complete") {
-      onSuccess();
-      return;
-    }
-
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
       const result = await signUp.attemptEmailAddressVerification({ code });
-      if (result.status === "complete") {
+
+      if (result.status === "complete" && result.createdSessionId) {
+        await setActive({ session: result.createdSessionId });
         onSuccess();
       } else {
         setErrorMessage("인증을 완료할 수 없습니다. 다시 시도해주세요.");
@@ -67,35 +66,27 @@ export default function EmailVerificationModal({
   };
 
   const handleResend = async () => {
-    if (cooldown > 0 || signUp.status === "complete") return;
+    if (cooldown > 0) return;
     try {
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
       setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch {
       setErrorMessage("인증 코드는 30초 후 다시 요청할 수 있습니다.");
     }
   };
 
+  const isNotVerified = signUp.status !== "complete";
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) onClose?.();
-      }}
-    >
-      <DialogContent
-        className="
-          sm:max-w-[420px]
-          fixed left-1/2 top-1/2
-          -translate-x-1/2 -translate-y-1/2
-        "
-      >
-        {/* 닫기 버튼 */}
+    <Dialog open={open} onOpenChange={(next) => !next && onClose?.()}>
+      <DialogContent className="sm:max-w-[420px] fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <button
           type="button"
-          onClick={() => onClose?.()}
+          onClick={onClose}
           aria-label="닫기"
-          className="absolute right-4 top-4 rounded-full p-2 text-text-muted hover:text-text-primary transition"
+          className="absolute right-4 top-4 rounded-full p-2 text-text-muted hover:text-text-primary"
         >
           <X size={18} />
         </button>
@@ -113,10 +104,12 @@ export default function EmailVerificationModal({
             로 전송된 인증 코드를 입력해주세요.
           </p>
 
-          <p className="text-xs text-muted-foreground text-center">
-            • 인증 코드는 약 10분간 유효합니다.<br />
-            • 인증 코드는 30초 후 다시 요청할 수 있습니다.
-          </p>
+          {/* ✅ 추가된 유도 문구 (디자인 영향 없음) */}
+          {isNotVerified && (
+            <p className="text-xs text-muted-foreground text-center">
+              인증 메일을 받지 못했다면 아래에서 재전송할 수 있습니다.
+            </p>
+          )}
 
           <Input
             placeholder="6자리 인증 코드"
