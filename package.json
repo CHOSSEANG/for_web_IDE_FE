@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
-    "build": "node scripts/build-next.mjs",
+    "build": "next build",
+
     "start": "next start",
     "lint": "eslint",
     "gen:icons": "node scripts/generateIconList.mjs",
