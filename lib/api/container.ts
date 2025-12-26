@@ -1,5 +1,6 @@
 import { authorizedFetch } from "./coding";
 import type { Participant } from "@/app/ide/types/participant";
+import type { ContainerItem } from "@/types/container";
 
 const API_BASE_PATH = "/container";
 const INVITES_PATH = "/container/invites";
@@ -99,6 +100,37 @@ export async function declineInviteRequest(params: {
     path: `${INVITE_ACTION_PATH}/${inviteId}/decline`,
     init: {
       method: "POST",
+    },
+  });
+}
+
+export async function fetchContainers(params: {
+  token: string;
+}): Promise<ContainerItem[]> {
+  const { token } = params;
+  return authorizedFetch<ContainerItem[]>({
+    token,
+    path: "/containers",
+  });
+}
+
+export async function createContainer(params: {
+  token: string;
+  name: string;
+  templateId: string;
+  templateName: string;
+}): Promise<ContainerItem> {
+  const { token, name, templateId, templateName } = params;
+  return authorizedFetch<ContainerItem>({
+    token,
+    path: "/containers",
+    init: {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        templateId,
+        templateName,
+      }),
     },
   });
 }
