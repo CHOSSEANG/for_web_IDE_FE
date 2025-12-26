@@ -24,7 +24,7 @@ const TEMPLATES: TemplateWithIcon[] = TEMPLATE_META.map((template) => ({
 }));
 
 type NewContainerProps = {
-  onCreate?: (payload: { template: Template; name: string }) => Promise<void> | void;
+  onCreate?: (payload: { template: TemplateId; name: string }) => Promise<void> | void;
 };
 
 export default function NewContainer({ onCreate }: NewContainerProps) {
