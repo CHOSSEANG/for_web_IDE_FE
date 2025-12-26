@@ -1,13 +1,17 @@
 import ClientIdeShell from "@/app/ide/components/ClientIdeShell";
 
-type IdePageProps = {
-  params: Promise<{
+type PageProps = {
+  params: {
     id: string;
-  }>;
+  };
 };
 
-export default async function IdePage({ params }: IdePageProps) {
-  const { id } = await params;
+export default function IdePage({ params }: PageProps) {
+  const containerId = Number(params.id);
 
-  return <ClientIdeShell id={id} />;
+  if (Number.isNaN(containerId)) {
+    throw new Error("Invalid IDE id");
+  }
+
+  return <ClientIdeShell id={containerId} />;
 }

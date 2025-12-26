@@ -1,14 +1,17 @@
 import ClientIdeShell from "@/app/ide/components/ClientIdeShell";
 
-type IdePageParams = {
-  id: string;
-};
-
 type PageProps = {
-  params: IdePageParams;
+  params: {
+    id: string;
+  };
 };
 
 export default function IdePage({ params }: PageProps) {
-  const id = Number(params.id);
-  return <ClientIdeShell id={id} />;
+  const containerId = Number(params.id);
+
+  if (Number.isNaN(containerId)) {
+    throw new Error("Invalid IDE id");
+  }
+
+  return <ClientIdeShell id={containerId} />;
 }
