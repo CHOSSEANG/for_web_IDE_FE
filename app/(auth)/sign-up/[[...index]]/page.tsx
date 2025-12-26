@@ -64,46 +64,42 @@ export default function SignUpPage() {
    * Email Sign Up
    * ---------------------------- */
   const handleSignUp = async () => {
-    if (!signUp || isSubmitting) return;
+    if (isSubmitting || !signUp) return;
+
+    // ✅ TS 안전 보장 (이 아래에서 signUp은 절대 undefined 아님)
+    const activeSignUp = signUp;
 
     setIsSubmitting(true);
     setErrorMessage(null);
 
     try {
-      const result = await signUp.create({
+      const result = await activeSignUp.create({
         emailAddress: email,
         password,
       });
 
-
-// 🚫 인증 안 된 경우 → 절대 다음 단계로 못 가게 고정
-if (
-  result.verifications.emailAddress &&
-  result.verifications.emailAddress.status !== "verified"
-) {
-  await signUp.prepareEmailAddressVerification({
-    strategy: "email_code",
-  });
-
-  setShowVerifyModal(true);
-  setIsSubmitting(false);
-
-  // 🔒 Clerk가 다음 auth 단계로 넘어가지 못하게 명시적으로 종료
-  return;
-}
-
-// ❗ 혹시라도 여기로 내려오면 절대 안 됨
-throw new Error("Unexpected sign-up state");
-
-      // 🔑 이메일 인증 필수 → 모달만 띄우고 절대 redirect 금지
-      if (result.verifications.emailAddress?.status === "unverified") {
-        await signUp.prepareEmailAddressVerification({
+      /**
+       * 🚫 이메일 인증이 완료되지 않은 경우
+       * → 모달만 띄우고 절대 redirect / callback / 다음 단계 없음
+       */
+      if (
+        result.verifications.emailAddress &&
+        result.verifications.emailAddress.status !== "verified"
+      ) {
+        await activeSignUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
+
         setShowVerifyModal(true);
         setIsSubmitting(false);
         return;
       }
+
+      /**
+       * ❗ 여기 도달하면 안 됨
+       * (이 플로우에서는 이메일 인증 없이 성공 상태가 존재하지 않음)
+       */
+      throw new Error("Unexpected sign-up state");
     } catch (err: unknown) {
       let message = "회원가입에 실패했습니다. 다시 시도해주세요.";
 
@@ -225,7 +221,7 @@ throw new Error("Unexpected sign-up state");
           email={email}
           onClose={() => setShowVerifyModal(false)}
           onSuccess={() => {
-            // ❗ 로그인 / 세션 활성화는 모달에서 처리
+            // ✅ 세션 활성화는 모달에서 끝났고, 여기서는 이동만
             router.push("/main");
           }}
         />
