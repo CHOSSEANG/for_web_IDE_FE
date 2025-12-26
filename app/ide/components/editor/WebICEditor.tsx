@@ -84,7 +84,8 @@ const WebICEditorContent = () => {
           },
           body: JSON.stringify({
             path: activeFile.name,
-            type: type
+            type: type,
+            lang: type
           })
         });
 
@@ -160,6 +161,7 @@ const WebICEditorContent = () => {
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
         const token = await getToken();
+        // 현재는 단일 파일 실행 기준
         const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
           headers: {
@@ -168,7 +170,8 @@ const WebICEditorContent = () => {
           },
           body: JSON.stringify({
             path: activeFile.name,
-            type: type
+            type: type,
+            lang: type
           })
         });
 
