@@ -4,7 +4,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 
-
 import NewContainer from "@/components/dashboard/NewContainer";
 import ListContainer from "@/components/dashboard/ListContainer";
 import { ContainerItem } from "@/types/container";
@@ -31,7 +30,10 @@ export default function DashboardMain() {
 
   const [containers, setContainers] = useState<ContainerItem[]>([]);
 
-  const handleCreateContainer = async ({ template, name }: ContainerCreatePayload) => {
+  const handleCreateContainer = async ({
+    template,
+    name,
+  }: ContainerCreatePayload) => {
     const normalizedName = name.trim();
     if (!normalizedName) {
       console.warn("create skip: 컨테이너 이름을 입력하세요");
@@ -47,7 +49,9 @@ export default function DashboardMain() {
     // getToken may return null if Clerk session expired/unauthorized; guard before API calls.
     const token = await getToken({ template: "jwt" });
     if (!token) {
-      console.warn("Clerk token missing or expired (re-auth required) – API 호출 생략");
+      console.warn(
+        "Clerk token missing or expired (re-auth required) – API 호출 생략"
+      );
       return;
     }
 
@@ -142,7 +146,7 @@ export default function DashboardMain() {
           컨테이너를 생성하거나 최근 프로젝트를 선택하세요
         </p>
 
-        <NewContainer onCreate={handleCreateContainer} />
+        <NewContainer />
         <ListContainer containers={containers} />
       </main>
     </div>

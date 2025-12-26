@@ -1,4 +1,6 @@
- "use client";
+"use client";
+
+export const dynamic = "force-dynamic";
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -21,10 +23,9 @@ export default function FileTreePreviewPage() {
         <ThemeToggle />
       </div>
 
-      
       <h1 className="text-2xl font-semibold mb-2">WebIC FileTree Preview</h1>
       <p className="mb-6 text-sm">
-       파일트리내 아이콘 이슈로 아직 가이드 잡지 못했습니다. 
+        파일트리내 아이콘 이슈로 아직 가이드 잡지 못했습니다.
       </p>
 
       <div className="flex w-full h-full">
