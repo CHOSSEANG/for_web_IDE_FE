@@ -8,7 +8,8 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const { activeFile, updateFileContent } = useWebIC();
+  const API_BASE_URL = 'https://api.webicapp.com';
+  const { activeFile, updateFileContent, activeId, containerId, saveFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
@@ -19,23 +20,26 @@ const WebICEditorContent = () => {
     return /\.(js|jsx|ts|tsx)$/.test(filename);
   };
 
-  const handleRun = (content: string) => {
+  const handleRun = async (content: string) => {
     setActiveTerminalTab("OUTPUT");
-    setProblems([]); // 초기화
+    setProblems([]);
 
-    // 실행 가능한 언어인지 확인
-    if (activeFile && !isRunnable(activeFile.name)) {
+    if (!activeFile) return;
+
+    // --- 실행 전 서버 저장 (파일 내용 & 코딩 시간 통합 전송) ---
+    await saveFileContent(content);
+
+    if (!isRunnable(activeFile.name)) {
       setRunOutput([
-        `⚠️ [Info] '${activeFile.name}' 파일은 브라우저에서 실행할 수 없습니다.`,
-        `   WebIC는 현재 JavaScript/TypeScript 실행만 지원합니다.`
+        `⚠️ [Info] '${activeFile.name}' 파일은 실행할 수 없는 형식입니다.`,
+        `   현재 JavaScript/TypeScript 실행만 지원합니다.`
       ]);
       return;
     }
 
+    // --- 1단계: 브라우저 로컬 실행 (eval) 시도 ---
     const logs: string[] = [];
     const originalLog = console.log;
-
-    // console.log 오버라이딩
     console.log = (...args: unknown[]) => {
       logs.push(args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
@@ -43,42 +47,81 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // 코드 실행
       // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
-      setRunOutput(logs.length > 0 ? logs : ['실행 완료']);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setRunOutput([`❌ Error: ${errorMessage}`]);
+      // 로컬 실행 성공 시 출력
+      setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
+    } catch (localError: any) {
+      // --- 2단계: 로컬 실행 실패 시 서버 사이드 실행 시도 ---
+      console.log = originalLog; // 원래 콘솔 복원
+
+      const localErrorMessage = localError instanceof Error ? localError.message : String(localError);
+
+      // Problems 탭에 로컬 에러 추가
       setProblems([{
-        message: errorMessage,
-        source: 'Runtime',
+        message: localErrorMessage,
+        source: 'Local Runtime',
         severity: 'error'
       }]);
-      setActiveTerminalTab("PROBLEMS"); // 에러 발생 시 Problems 탭으로 이동
+      setActiveTerminalTab("PROBLEMS");
+
+      setRunOutput([
+        `⚠️ [Local] 실행 중 에러가 발생하여 서버에서 실행을 시도합니다...`,
+        `❌ Error: ${localErrorMessage}`,
+        `⏳ 서버 사이드 실행 중...`
+      ]);
+
+      try {
+        const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const res = await fetch(`${API_BASE_URL}/code/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: activeFile.name,
+            type: type
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setRunOutput(prev => [...prev, `🌐 [Server] 실행 결과:`, data.description || '실행 완료']);
+        } else {
+          setRunOutput(prev => [...prev, `❌ [Server] 실행 실패 (Status: ${res.status})`]);
+        }
+      } catch (serverError: unknown) {
+        const errorMessage = serverError instanceof Error ? serverError.message : String(serverError);
+        setRunOutput(prev => [...prev, `❌ [Server] Error: ${errorMessage}`]);
+        setProblems(prev => [...prev, {
+          message: errorMessage,
+          source: 'Server Runtime',
+          severity: 'error'
+        }]);
+      }
     } finally {
-      // 원래 console.log 복원
-      console.log = originalLog;
+      console.log = originalLog; // 안전하게 원래 콘솔 복원
     }
   };
 
-  const handleDebug = (content: string) => {
+  const handleDebug = async (content: string) => {
     setActiveTerminalTab("DEBUG CONSOLE");
-    setProblems([]); // 초기화
+    setProblems([]);
 
-    // 실행 가능한 언어인지 확인
-    if (activeFile && !isRunnable(activeFile.name)) {
+    if (!activeFile) return;
+
+    // --- 디버그 전 서버 저장 (파일 내용 & 코딩 시간 통합 전송) ---
+    await saveFileContent(content);
+
+    if (!isRunnable(activeFile.name)) {
       setDebugOutput([
-        `⚠️ [Info] '${activeFile.name}' 파일은 브라우저에서 디버깅할 수 없습니다.`,
-        `   WebIC는 현재 JavaScript/TypeScript 디버깅만 지원합니다.`
+        `⚠️ [Info] '${activeFile.name}' 파일은 디버깅할 수 없습니다.`,
+        `   현재 JavaScript/TypeScript 디버깅만 지원합니다.`
       ]);
       return;
     }
 
-    const logs: string[] = [];
+    // --- 1단계: 브라우저 로컬 디버그 시도 ---
+    const logs: string[] = ['🐛 [Local] Debug Mode'];
     const originalLog = console.log;
-
-    // console.log 오버라이딩
     console.log = (...args: unknown[]) => {
       logs.push(args.map(arg =>
         typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
@@ -86,22 +129,55 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // 디버그 모드로 실행
-      logs.push('🐛 Debug Mode');
       // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
       setDebugOutput(logs);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setDebugOutput([...logs, `❌ Error: ${errorMessage}`]);
+    } catch (localError: any) {
+      // --- 2단계: 로컬 디버그 실패 시 서버 사이드 시도 ---
+      console.log = originalLog;
+
+      const localErrorMessage = localError instanceof Error ? localError.message : String(localError);
+
       setProblems([{
-        message: errorMessage,
-        source: 'Debug',
+        message: localErrorMessage,
+        source: 'Local Debug',
         severity: 'error'
       }]);
-      setActiveTerminalTab("PROBLEMS"); // 에러 발생 시 Problems 탭으로 이동
+      setActiveTerminalTab("PROBLEMS");
+
+      setDebugOutput(prev => [
+        ...prev,
+        `⚠️ [Local] 디버깅 중 에러 발생, 서버 실행 시도...`,
+        `❌ Error: ${localErrorMessage}`
+      ]);
+
+      try {
+        const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const res = await fetch(`${API_BASE_URL}/code/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: activeFile.name,
+            type: type
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setDebugOutput(prev => [...prev, `🌐 [Server] Debug Result:`, data.description || '실행 완료']);
+        } else {
+          setDebugOutput(prev => [...prev, `❌ [Server] 디버그 실행 실패 (Status: ${res.status})`]);
+        }
+      } catch (serverError: unknown) {
+        const errorMessage = serverError instanceof Error ? serverError.message : String(serverError);
+        setDebugOutput(prev => [...prev, `❌ [Server] Error: ${errorMessage}`]);
+        setProblems(prev => [...prev, {
+          message: errorMessage,
+          source: 'Server Debug',
+          severity: 'error'
+        }]);
+      }
     } finally {
-      // 원래 console.log 복원
       console.log = originalLog;
     }
   };
@@ -147,18 +223,6 @@ const WebICEditor = () => {
 
 /** 🔑 Left Panel 전용 */
 WebICEditor.LeftPanel = function LeftPanel() {
-  // LeftPanel needs to use the SAME context. 
-  // IMPORTANT: Context only works if LeftPanel is also under the Provider.
-  // However, in ClientIdeShell, LeftPanel and Main are rendered as siblings.
-  // If ClientIdeShell doesn't wrap both with Provider, they will have separate states (or fail if we enforce provider).
-  // Let's modify ClientIdeShell to hold the Provider, OR create a global Provider wrapper component exported from here.
-
-  // BUT since we are keeping the file structure, we probably rely on ClientIdeShell to wrap them, or we export the Provider.
-  // Currently ClientIdeShell renders <WebICEditor.LeftPanel> and <WebICEditor.Main>.
-  // If we want them to share state, ClientIdeShell MUST be the one wrapping them with Provider.
-
-  // For now, let's assume we will update ClientIdeShell to wrap everything.
-  // Here we just define the component consuming the context.
   const {
     files,
     activeId,

@@ -4,6 +4,7 @@ import { Editor } from '@monaco-editor/react'
 import { useState, useRef } from 'react'
 import type { editor as MonacoEditorInstance } from 'monaco-editor'
 import Timer from './Timer'
+import { useWebIC } from '@/app/ide/contexts/WebICContext'
 
 interface MonacoEditorProps {
     file: {
@@ -18,8 +19,8 @@ interface MonacoEditorProps {
 
 const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => {
     const [isRunning, setIsRunning] = useState(false)
+    const { setIsWorking } = useWebIC()
     const editorRef = useRef<MonacoEditorInstance.IStandaloneCodeEditor | null>(null)
-    // Typing the ref keeps the editor instance cryptic-free while satisfying ESLint.
     const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const handleEditorDidMount = (editorInstance: MonacoEditorInstance.IStandaloneCodeEditor) => {
@@ -43,6 +44,7 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
 
         // Activate "Working" state
         setIsRunning(true)
+        setIsWorking(true)
 
         // Reset the idle timeout
         if (idleTimeoutRef.current) {
@@ -52,16 +54,21 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
         // Set back to "Idle" after 2 seconds of inactivity
         idleTimeoutRef.current = setTimeout(() => {
             setIsRunning(false)
+            setIsWorking(false)
         }, 2000)
     }
 
     const handleRun = () => {
         // UI 상태 변경을 먼저 수행 (조건문 밖으로)
         setIsRunning(true)
+        setIsWorking(true)
 
         // Reset idle timeout
         if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current)
-        idleTimeoutRef.current = setTimeout(() => setIsRunning(false), 2000)
+        idleTimeoutRef.current = setTimeout(() => {
+            setIsRunning(false)
+            setIsWorking(false)
+        }, 2000)
 
         // 실제 실행 로직
         if (onRun) {
@@ -73,10 +80,14 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
     const handleDebug = () => {
         // UI 상태 변경을 먼저 수행
         setIsRunning(true)
+        setIsWorking(true)
 
         // Reset idle timeout
         if (idleTimeoutRef.current) clearTimeout(idleTimeoutRef.current)
-        idleTimeoutRef.current = setTimeout(() => setIsRunning(false), 2000)
+        idleTimeoutRef.current = setTimeout(() => {
+            setIsRunning(false)
+            setIsWorking(false)
+        }, 2000)
 
         // 실제 디버그 로직
         if (onDebug) {
@@ -88,7 +99,6 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
     return (
         <div className="h-full flex flex-col bg-[#0d1117] text-[#e6edf3]">
             {/* Toolbar */}
-            {/* Toolbar (Timer Bar) */}
             <div className={`
                 flex justify-between items-center px-4 py-2 gap-4 
                 border-b border-[#333] bg-[#0d1117] overflow-hidden
