@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import MonacoEditor from "./MonacoEditor";
 import TerminalPanel, { Problem } from "../terminal/TerminalPanel";
 import FileSidebar from "../filetree/FileSidebar";
@@ -8,8 +9,9 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const API_BASE_URL = 'https://api.webicapp.com';
-  const { activeFile, updateFileContent, activeId, containerId, saveFileContent } = useWebIC();
+  const API_BASE_URL = '/api-proxy';
+  const { getToken } = useAuth();
+  const { activeFile, updateFileContent, saveFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
@@ -51,7 +53,7 @@ const WebICEditorContent = () => {
       eval(content);
       // 로컬 실행 성공 시 출력
       setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
-    } catch (localError: any) {
+    } catch (localError: unknown) {
       // --- 2단계: 로컬 실행 실패 시 서버 사이드 실행 시도 ---
       console.log = originalLog; // 원래 콘솔 복원
 
@@ -73,9 +75,13 @@ const WebICEditorContent = () => {
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const token = await getToken();
         const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             path: activeFile.name,
             type: type
@@ -132,7 +138,7 @@ const WebICEditorContent = () => {
       // eslint-disable-next-line react-hooks/unsupported-syntax
       eval(content);
       setDebugOutput(logs);
-    } catch (localError: any) {
+    } catch (localError: unknown) {
       // --- 2단계: 로컬 디버그 실패 시 서버 사이드 시도 ---
       console.log = originalLog;
 
@@ -153,9 +159,13 @@ const WebICEditorContent = () => {
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const token = await getToken();
         const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             path: activeFile.name,
             type: type

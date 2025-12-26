@@ -3,7 +3,7 @@ import path from "node:path";
 
 const nextCommand = process.platform === "win32" ? "next.cmd" : "next";
 
-const child = spawn(nextCommand, ["build", "--webpack"], {
+const child = spawn(nextCommand, ["build"], {
   env: {
     ...process.env,
     NEXT_DISABLE_TURBOPACK: "1",
@@ -11,6 +11,7 @@ const child = spawn(nextCommand, ["build", "--webpack"], {
   },
   stdio: "inherit",
   cwd: path.resolve(process.cwd()),
+  shell: true,
 });
 
 child.on("close", (code) => {
