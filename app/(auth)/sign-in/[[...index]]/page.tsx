@@ -37,7 +37,7 @@ export default function SignInPage() {
 
     signIn.authenticateWithRedirect({
       strategy: `oauth_${provider}`, // ✅ 문자열 템플릿 수정
-      redirectUrl: "/auth/callback",
+      redirectUrl: "/callback",
       redirectUrlComplete: "/main",
     });
   };

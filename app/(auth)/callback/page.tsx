@@ -1,4 +1,5 @@
-// app/auth/callback/page.tsx
+// app/(auth)/callback/page.tsx
+// (auth) 그룹 폴더이므로 실제 라우트는 `/callback`입니다.
 // import { RedirectToSignIn } from "@clerk/nextjs";
 
 // export default function Page() {

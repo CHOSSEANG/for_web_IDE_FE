@@ -4,9 +4,10 @@
 import { useEffect, useRef } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 
-import { loginUser } from "@/lib/api/auth";
+
 import NewContainer from "@/components/dashboard/NewContainer";
 import ListContainer from "@/components/dashboard/ListContainer";
+import { loginUser } from "@/lib/api/auth";
 
 export default function DashboardMain() {
   const { isSignedIn, user } = useUser();

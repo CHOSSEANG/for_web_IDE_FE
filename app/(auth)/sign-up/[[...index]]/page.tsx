@@ -55,7 +55,7 @@ export default function SignUpPage() {
     localStorage.setItem("lastAuthProvider", provider);
     signIn.authenticateWithRedirect({
       strategy: `oauth_${provider}`,
-      redirectUrl: "/auth/callback",
+      redirectUrl: "/callback",
       redirectUrlComplete: "/main",
     });
   };
