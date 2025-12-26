@@ -1,19 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { FiPlay,FiSquare } from "react-icons/fi";
+import { FiPlay, FiSquare } from "react-icons/fi";
 import { FaListUl, FaPlay } from "react-icons/fa";
 import { FaRegFolderOpen } from "react-icons/fa6";
 import { MdMoreHoriz } from "react-icons/md";
 
-import {
-  SiHtml5,
-  SiCss3,
-  SiJavascript,
-  SiReact,
-  SiNodedotjs,
-  SiNextdotjs,
-} from "react-icons/si";
+import { SiJavascript, SiPython } from "react-icons/si";
+import { DiJava } from "react-icons/di";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,33 +21,29 @@ type ContainerItem = {
 };
 
 export default function ListContainer() {
-  /* tech → icon 매핑 */
   const techIconMap: Record<string, ReactNode> = {
-    HTML: <SiHtml5 className="text-orange-500 text-lg" />,
-    CSS: <SiCss3 className="text-blue-500 text-lg" />,
     JavaScript: <SiJavascript className="text-yellow-400 text-lg" />,
-    React: <SiReact className="text-sky-500 text-lg" />,
-    "Node.js": <SiNodedotjs className="text-green-500 text-lg" />,
-    "Next.js": (
-      <SiNextdotjs className="text-neutral-800 dark:text-neutral-200 text-lg" />
-    ),
+    Python: <SiPython className="text-blue-400 text-lg" />,
+    Java: <DiJava className="text-red-500 text-lg" />,
   };
 
   const containers: ContainerItem[] = [
-    { name: "my-react-app", tech: "React", time: "2분 전", status: "running" },
-    { name: "landing-html", tech: "HTML", time: "10분 전", status: "stopped" },
-    { name: "style-library", tech: "CSS", time: "30분 전", status: "stopped" },
     {
       name: "vanilla-js-playground",
       tech: "JavaScript",
       time: "1시간 전",
       status: "stopped",
     },
-    { name: "api-server", tech: "Node.js", time: "3시간 전", status: "stopped" },
     {
-      name: "webic-dashboard",
-      tech: "Next.js",
-      time: "1일 전",
+      name: "python-playground",
+      tech: "Python",
+      time: "방금 전",
+      status: "stopped",
+    },
+    {
+      name: "java-playground",
+      tech: "Java",
+      time: "방금 전",
       status: "stopped",
     },
   ];

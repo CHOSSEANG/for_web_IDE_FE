@@ -14,7 +14,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.webicapp.com";
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  (process.env.NODE_ENV === "development"
+    ? "http://localhost:8080"
+    : "https://api.webicapp.com");
+
+const DISABLE_AUTH = process.env.NEXT_PUBLIC_DISABLE_AUTH === "true";
 
 type Template = {
   id: string;
@@ -30,6 +35,42 @@ type NewTemplateModalProps = {
   initialTemplateId?: string | null;
 };
 
+type CreateContainerResponse = {
+  data?: {
+    id?: string;
+    containerId?: string;
+  };
+  id?: string;
+  containerId?: string;
+};
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function extractContainerId(payload: unknown): string | null {
+  if (!isObject(payload)) return null;
+
+  const directId = payload["id"];
+  if (typeof directId === "string" && directId.length > 0) return directId;
+
+  const directContainerId = payload["containerId"];
+  if (typeof directContainerId === "string" && directContainerId.length > 0)
+    return directContainerId;
+
+  const data = payload["data"];
+  if (!isObject(data)) return null;
+
+  const dataId = data["id"];
+  if (typeof dataId === "string" && dataId.length > 0) return dataId;
+
+  const dataContainerId = data["containerId"];
+  if (typeof dataContainerId === "string" && dataContainerId.length > 0)
+    return dataContainerId;
+
+  return null;
+}
+
 export default function NewTemplateModal({
   open,
   onOpenChange,
@@ -41,57 +82,85 @@ export default function NewTemplateModal({
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Clerk는 DISABLE_AUTH=true여도 훅 자체는 호출돼야 하므로 유지
   const { getToken, isLoaded, isSignedIn } = useAuth();
 
-  /** 🔹 모달 열릴 때 템플릿 자동 선택 */
   useEffect(() => {
-    if (open) {
-      setSelectedTemplate(initialTemplateId ?? null);
+    if (open && initialTemplateId) {
+      setSelectedTemplate(initialTemplateId);
     }
-  }, [open, initialTemplateId]);
+  }, [initialTemplateId, open]);
 
-  const disabled = !selectedTemplate || !containerName;
+  const disabled = !selectedTemplate || containerName.trim().length === 0;
 
   const handleCreate = async () => {
-    if (disabled) return;
-
-    // 🔴 이거 없으면 무조건 터진다
-    if (!isLoaded) return;
-    if (!isSignedIn) {
-      alert("로그인이 필요합니다.");
+    if (disabled) {
+      alert("템플릿 선택 + 컨테이너 이름 입력이 필요합니다.");
       return;
+    }
+
+    // 배포 환경에서는 DISABLE_AUTH=false로 두고 Clerk 토큰을 붙여야 함
+    if (!DISABLE_AUTH) {
+      if (!isLoaded) {
+        alert("인증 모듈(Clerk)이 아직 로딩되지 않았습니다.");
+        return;
+      }
+      if (!isSignedIn) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
     }
 
     try {
       setLoading(true);
 
-      const token = await getToken();
-      if (!token) throw new Error("인증 토큰 없음");
+      const name = containerName.trim();
+      const lang = selectedTemplate;
+      if (!lang) throw new Error("템플릿이 선택되지 않았습니다.");
+
+      const token = DISABLE_AUTH ? null : await getToken();
+      if (!DISABLE_AUTH && !token) throw new Error("인증 토큰 없음");
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+      if (token) headers.Authorization = `Bearer ${token}`;
 
       const res = await fetch(`${API_BASE}/container/create`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: containerName,
-        }),
+        headers,
+        body: JSON.stringify({ name, lang }),
       });
 
-      const json = await res.json();
-      const containerId = json?.data?.id;
-
-      if (!containerId) {
-        console.error("create container failed:", json);
-        throw new Error("containerId 없음");
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(
+          `컨테이너 생성 실패 (status ${res.status})${text ? `: ${text}` : ""}`
+        );
       }
+
+      const contentType = res.headers.get("content-type") || "";
+
+      let payload: unknown;
+      if (contentType.includes("application/json")) {
+        // 가능한 응답 타입을 좁히기 위해 unknown으로 받음
+        payload = (await res.json()) as CreateContainerResponse;
+      } else {
+        payload = await res.text();
+      }
+
+      const containerId = extractContainerId(payload);
+      if (!containerId) throw new Error("containerId 없음");
 
       onOpenChange(false);
       router.push(`/ide/${containerId}`);
     } catch (e) {
       console.error(e);
-      alert("컨테이너 생성에 실패했습니다.");
+      const message =
+        e instanceof Error ? e.message : "컨테이너 생성에 실패했습니다.";
+      alert(message);
     } finally {
       setLoading(false);
     }
@@ -107,7 +176,6 @@ export default function NewTemplateModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Template Select */}
         <div className="grid grid-cols-2 gap-3 mt-4">
           {templates.map((tpl) => {
             const isSelected = tpl.id === selectedTemplate;
@@ -135,7 +203,6 @@ export default function NewTemplateModal({
           })}
         </div>
 
-        {/* Container Name */}
         <div className="mt-4">
           <label className="text-xs font-medium text-slate-500">
             컨테이너 이름
@@ -154,7 +221,6 @@ export default function NewTemplateModal({
           />
         </div>
 
-        {/* Actions */}
         <div className="flex justify-center gap-2 mt-6">
           <Button
             variant="secondary"

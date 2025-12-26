@@ -30,12 +30,10 @@ export default function TemplateCard({
         transition
       "
     >
-      {/* Icon */}
       <div className="w-12 h-12 flex items-center justify-center shrink-0">
         {icon}
       </div>
 
-      {/* Text */}
       <div>
         <p className="text-sm font-semibold">{name}</p>
         <p className="hidden sm:block text-xs text-slate-500 dark:text-slate-400">
