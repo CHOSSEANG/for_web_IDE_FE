@@ -1,6 +1,22 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { formatDuration } from "@/components/dashboard/stats/timeUtils";
 
-export default function StatsSummaryCards() {
+interface StatsSummaryCardsProps {
+  currentSessionMs: number;
+  todayTotalMs: number;
+  weeklyTotalMs: number;
+}
+
+export default function StatsSummaryCards({
+  currentSessionMs,
+  todayTotalMs,
+  weeklyTotalMs,
+}: StatsSummaryCardsProps) {
+  const sessionLabel = formatDuration(currentSessionMs);
+  const todayLabel = formatDuration(todayTotalMs);
+  const weeklyLabel = formatDuration(weeklyTotalMs);
+  const isActive = currentSessionMs > 0;
+
   return (
     <>
       {/* ================= 모바일 전용 (리스트형) ================= */}
@@ -11,15 +27,21 @@ export default function StatsSummaryCards() {
               <li className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Current Session</p>
-                  <p className="font-semibold">0h 0m 33s</p>
+                  <p className="font-semibold">{sessionLabel}</p>
                 </div>
-                <span className="text-xs text-emerald-500">Active</span>
+                <span
+                  className={`text-xs ${
+                    isActive ? "text-emerald-500" : "text-muted-foreground"
+                  }`}
+                >
+                  {isActive ? "Active" : "Idle"}
+                </span>
               </li>
 
               <li className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Today’s Total</p>
-                  <p className="font-semibold">2h 18m</p>
+                  <p className="font-semibold">{todayLabel}</p>
                 </div>
                 <span className="text-xs text-muted-foreground">Daily</span>
               </li>
@@ -27,9 +49,9 @@ export default function StatsSummaryCards() {
               <li className="flex items-center justify-between py-3">
                 <div>
                   <p className="text-sm text-muted-foreground">This Week</p>
-                  <p className="font-semibold">30h 0m</p>
+                  <p className="font-semibold">{weeklyLabel}</p>
                 </div>
-                <span className="text-xs text-emerald-500">+12%</span>
+                <span className="text-xs text-emerald-500">Weekly</span>
               </li>
             </ul>
           </CardContent>
@@ -41,15 +63,17 @@ export default function StatsSummaryCards() {
         <Card className="bg-bg-raised rounded border border-slate-300 dark:border-slate-700">
           <CardContent className="p-6 space-y-2">
             <p className="text-sm text-muted-foreground">Current Session</p>
-            <p className="text-2xl font-bold">0h 0m 33s</p>
-            <p className="text-xs text-emerald-500">Active now</p>
+            <p className="text-2xl font-bold">{sessionLabel}</p>
+            <p className="text-xs text-emerald-500">
+              {isActive ? "Active now" : "Idle"}
+            </p>
           </CardContent>
         </Card>
 
         <Card className="bg-bg-raised rounded border border-slate-300 dark:border-slate-700">
           <CardContent className="p-6 space-y-2">
             <p className="text-sm text-muted-foreground">Today’s Total</p>
-            <p className="text-2xl font-bold">2h 18m</p>
+            <p className="text-2xl font-bold">{todayLabel}</p>
             <p className="text-xs text-muted-foreground">Daily progress</p>
           </CardContent>
         </Card>
@@ -57,7 +81,7 @@ export default function StatsSummaryCards() {
         <Card className="bg-bg-raised rounded border border-slate-300 dark:border-slate-700">
           <CardContent className="p-6 space-y-2">
             <p className="text-sm text-muted-foreground">This Week</p>
-            <p className="text-2xl font-bold">30h 0m</p>
+            <p className="text-2xl font-bold">{weeklyLabel}</p>
             <p className="text-xs text-emerald-500">+12% from last week</p>
           </CardContent>
         </Card>

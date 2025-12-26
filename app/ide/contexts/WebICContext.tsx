@@ -146,8 +146,11 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     }, [containerId, convertTreeToFileSystem, getToken]);
 
     useEffect(() => {
+        if (containerId === undefined || Number.isNaN(containerId)) {
+            return;
+        }
         refreshFileTree();
-    }, [refreshFileTree]);
+    }, [refreshFileTree, containerId]);
 
     // 1. Fetch Stats (최상단)
     useEffect(() => {
