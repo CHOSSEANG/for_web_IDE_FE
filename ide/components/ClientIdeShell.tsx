@@ -40,14 +40,7 @@ const updateItem = (
     return item;
   });
 
-const deleteItem = (items: FileSystemItem[], id: string): FileSystemItem[] =>
-  items
-    .filter((item) => item.id !== id)
-    .map((item) =>
-      item.children
-        ? { ...item, children: deleteItem(item.children, id) }
-        : item
-    );
+// deleteItem removed (unused)
 
 const getAllFiles = (items: FileSystemItem[]): FileSystemItem[] => {
   let results: FileSystemItem[] = [];
@@ -95,8 +88,8 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
   const [activeId, setActiveId] = useState<string | undefined>("1");
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
-  const [runOutput, setRunOutput] = useState<string[]>([]);
-  const [debugOutput, setDebugLogs] = useState<string[]>([]);
+  const [runOutput] = useState<string[]>([]);
+  const [debugOutput] = useState<string[]>([]);
 
   const activeItem = useMemo(
     () => (activeId ? findItem(files, activeId) : undefined),
@@ -131,10 +124,9 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
           key={file.id}
           onClick={() => setActiveId(file.id)}
           className={`px-3 py-2 text-sm cursor-pointer border-r border-[#2d333b]
-            ${
-              activeId === file.id
-                ? "bg-[#1f2428] text-white"
-                : "text-gray-400"
+            ${activeId === file.id
+              ? "bg-[#1f2428] text-white"
+              : "text-gray-400"
             }`}
         >
           {file.name}
@@ -181,8 +173,8 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
                   content: activeItem.content || "",
                 }}
                 onChange={handleContentChange}
-                onRun={() => {}}
-                onDebug={() => {}}
+                onRun={() => { }}
+                onDebug={() => { }}
               />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400">
