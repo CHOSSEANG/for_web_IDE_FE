@@ -7,6 +7,8 @@ import { useUser, useAuth } from "@clerk/nextjs";
 import NewContainer from "@/components/dashboard/NewContainer";
 import ListContainer from "@/components/dashboard/ListContainer";
 
+import { loginUser } from "@/lib/api/auth";
+
 export default function DashboardMain() {
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
@@ -21,16 +23,6 @@ export default function DashboardMain() {
 
     const loginToBackend = async () => {
       try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-        if (!apiBaseUrl) {
-          console.warn(
-            "NEXT_PUBLIC_API_BASE_URL is not set, skipping backend login"
-          );
-          return;
-        }
-
-        // ✅ Clerk JWT 발급
         const token = await getToken({ template: "jwt" });
 
         if (!token) {
@@ -38,24 +30,10 @@ export default function DashboardMain() {
           return;
         }
 
-        const response = await fetch(`${apiBaseUrl}/user/login`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            clerkUserId: user.id,
-            email: user.primaryEmailAddress?.emailAddress ?? "",
-          }),
+        const data = await loginUser(token, {
+          clerkUserId: user.id,
+          email: user.primaryEmailAddress?.emailAddress ?? "",
         });
-
-        if (!response.ok) {
-          throw new Error("Backend login failed");
-        }
-
-        const data = await response.json();
 
         if (typeof window !== "undefined" && data?.userId) {
           localStorage.setItem("webic_user_id", String(data.userId));
