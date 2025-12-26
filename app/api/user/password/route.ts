@@ -1,4 +1,4 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, verifyToken } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 type ChangePasswordBody = {
@@ -9,10 +9,40 @@ type ChangePasswordBody = {
 const MIN_PASSWORD_LENGTH = 8;
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
+  const authorization = req.headers.get("authorization") ?? "";
+  const bearerMatch = authorization.match(/^Bearer\s+(.+)$/i);
+  const token = bearerMatch?.[1]?.trim() ?? "";
+
+  if (!token) {
+    return NextResponse.json(
+      { message: "Authorization header를 확인해 주세요." },
+      { status: 401 }
+    );
+  }
+
+  const secretKey = process.env.CLERK_SECRET_KEY;
+  if (!secretKey) {
+    return NextResponse.json(
+      { message: "서버 설정이 올바르지 않습니다." },
+      { status: 500 }
+    );
+  }
+
+  let verified;
+  try {
+    verified = await verifyToken(token, { secretKey });
+  } catch (error) {
+    console.error("Token verification failed", error);
+    return NextResponse.json(
+      { message: "토큰이 유효하지 않습니다." },
+      { status: 401 }
+    );
+  }
+
+  const userId = verified.sub;
   if (!userId) {
     return NextResponse.json(
-      { message: "로그인이 필요합니다." },
+      { message: "사용자 정보를 찾을 수 없습니다." },
       { status: 401 }
     );
   }

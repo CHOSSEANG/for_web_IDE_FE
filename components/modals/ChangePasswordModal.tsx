@@ -1,11 +1,9 @@
-// @/componenets/account/ChangePasswordModal.tsx
-// 회원 프로필 모달창 > 비밀번호 변경
-
 "use client";
 
 import { useState } from "react";
 import { X } from "lucide-react";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useAuth } from "@clerk/nextjs";
 
 interface Props {
   open: boolean;
@@ -15,6 +13,7 @@ interface Props {
 const MIN_PASSWORD_LENGTH = 8;
 
 export default function ChangePasswordModal({ open, onClose }: Props) {
+  const { getToken, isLoaded: isAuthLoaded } = useAuth();
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,7 +24,10 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
 
   const handleSubmit = async () => {
     if (submitting) return;
-    setErrorMessage(null);
+    if (!isAuthLoaded) {
+      setErrorMessage("인증 정보가 아직 로딩되지 않았습니다.");
+      return;
+    }
 
     if (!currentPassword) {
       setErrorMessage("현재 비밀번호를 입력해 주세요.");
@@ -42,13 +44,21 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
       return;
     }
 
+    const token = await getToken({ template: "jwt" });
+    if (!token) {
+      setErrorMessage("세션을 확인할 수 없습니다. 다시 로그인해 주세요.");
+      return;
+    }
+
     setSubmitting(true);
+    setErrorMessage(null);
 
     try {
       const response = await fetch("/api/user/password", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         credentials: "include",
         body: JSON.stringify({
@@ -94,7 +104,6 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
         <VisuallyHidden>
           <h2>비밀번호 변경</h2>
         </VisuallyHidden>
-        {/* Header */}
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">비밀번호 변경</h2>
           <button
@@ -105,7 +114,6 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="space-y-3">
           <input
             type="password"
@@ -128,7 +136,6 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
             onChange={(event) => setConfirmPassword(event.target.value)}
             className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60 transition-colors"
           />
-
           <p className="text-xs text-text-muted">
             비밀번호는 8자 이상이며, 영문/숫자를 포함해야 합니다.
           </p>
@@ -137,7 +144,6 @@ export default function ChangePasswordModal({ open, onClose }: Props) {
           )}
         </div>
 
-        {/* Footer */}
         <div className="mt-5 flex justify-end gap-2">
           <button
             onClick={onClose}
