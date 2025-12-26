@@ -23,6 +23,7 @@ export default function PublicMenu({
           : "flex items-center gap-6 text-sm text-text-muted"
       }
     >
+
       <Link
         href="/company"
         onClick={onItemClick}

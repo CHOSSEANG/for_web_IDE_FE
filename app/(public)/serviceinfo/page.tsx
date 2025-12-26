@@ -1,4 +1,8 @@
-import Logo from "@/components/brand/Logo";
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { FaCircleArrowRight } from "react-icons/fa6";
 
 export const metadata = { title: "WEBIC - services" };
 
@@ -25,13 +29,40 @@ export default function ServicePage() {
   ];
 
   return (
-    <main className="w-full flex flex-col items-center px-6 py-20 gap-20">
+    <main className="w-full flex flex-col items-center px-6 py-10 gap-10">
       {/* Hero 영역 – 웰컴과 동일한 톤 */}
       <section className="text-center max-w-2xl">
         <h1 className="text-4xl font-bold mb-4">서비스 소개</h1>
         <p className="text-text-muted text-lg">
           WebIC에서 제공하는 다양한 협업 기능과 AI 기반 개발 도구를 살펴보세요.
         </p>
+      </section>
+
+
+
+       {/* Dashboard Preview */}
+      <section className="w-full max-w-5xl flex flex-col items-center gap-8">
+        <Link href="/main">
+          <Button
+            variant="primary"
+            size="lg"
+            className="px-6 py-3 rounded-md font-medium  text-yellow-400"
+          >
+            대시보드 바로가기 <FaCircleArrowRight className="ml-2" />
+          </Button>
+        </Link>
+        
+        <div className="relative w-full aspect-[16/9] rounded-xl overflow-hidden border-2 border-border-light bg-bg-raised">
+          <Image
+            src="/images/dashboard-preview.png"
+            alt="WebIC Dashboard Preview"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        
       </section>
 
       {/* Feature Cards – 웰컴 스타일 */}
@@ -55,6 +86,8 @@ export default function ServicePage() {
           </div>
         ))}
       </section>
+
+     
     </main>
   );
 }

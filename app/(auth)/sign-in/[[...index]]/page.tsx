@@ -1,14 +1,13 @@
-// app/(auth)/sign-in/page.tsx
+// @/app/(auth)/sign-in/page.tsx
+
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { useSignIn } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import type { ClerkAPIError } from "@clerk/types";
 
 type SocialProvider = "github" | "google" | "discord";
-// Define the social login union once so the handler stays strongly typed without redefinition.
 
 export default function SignInPage() {
   const { signIn, isLoaded } = useSignIn();
@@ -18,43 +17,56 @@ export default function SignInPage() {
   const [password, setPassword] = useState("");
 
   const [lastProvider, setLastProvider] = useState<string | null>(() => {
-    // eslint requires avoiding immediate setState in effects, so we read localStorage lazily here.
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastAuthProvider");
   });
 
   if (!isLoaded) return null;
-    
-  const socialLogin = (provider: SocialProvider) => {
 
-    if (!provider) {
-      console.error("Provider is missing");
-      return;
-    }
+  /* =========================
+   * 소셜 로그인
+   * ========================= */
+  const socialLogin = (provider: SocialProvider) => {
     localStorage.setItem("lastAuthProvider", provider);
     setLastProvider(provider);
 
     signIn.authenticateWithRedirect({
-      strategy: `oauth_${provider}`,
+      strategy: `oauth_${provider}`, // ✅ 문자열 템플릿 수정
       redirectUrl: "/auth/callback",
       redirectUrlComplete: "/main",
     });
   };
 
+  /* =========================
+   * 이메일 + 비밀번호 로그인
+   * ========================= */
   const handleEmailLogin = async () => {
+  if (!signIn) return;
+
   try {
-    await signIn.create({
+    // 1️⃣ 로그인 플로우 생성
+    const signInResult = await signIn.create({
       identifier: email,
+    });
+
+    // 2️⃣ 비밀번호 검증 (이게 빠져 있었음)
+    const attempt = await signIn.attemptFirstFactor({
+      strategy: "password",
       password,
     });
 
-    router.push("/main");
+    // 3️⃣ 완료 여부 확인
+    if (attempt.status === "complete") {
+      router.replace("/main");
+      return;
+    }
+
+    console.error("Sign-in not completed:", attempt);
   } catch (err) {
     console.error(err);
   }
-  };
-  
-  
+};
+
   return (
     <div className="w-full max-w-[420px] px-4">
       <div className="space-y-6 rounded-3xl border border-border-strong bg-bg-raised/90 p-8 backdrop-blur">
@@ -91,7 +103,13 @@ export default function SignInPage() {
         </div>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleEmailLogin();
+          }}
+        >
           <div className="space-y-2">
             <label className="block text-xs font-semibold uppercase tracking-wide text-text-muted">
               Email
@@ -99,11 +117,10 @@ export default function SignInPage() {
             <input
               type="email"
               name="email"
-              placeholder="Email"
-              autoComplete="email"
+              autoComplete="email"   // ✅ 유지
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm"
             />
           </div>
 
@@ -114,17 +131,15 @@ export default function SignInPage() {
             <input
               type="password"
               name="password"
-              placeholder="Password"
-              autoComplete="current-password"
+              autoComplete="current-password" // ✅ 유지
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm"
             />
           </div>
 
           <button
-            type="button"
-            onClick={handleEmailLogin}
+            type="submit"
             className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
           >
             Log In

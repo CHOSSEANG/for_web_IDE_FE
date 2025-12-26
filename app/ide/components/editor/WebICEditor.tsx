@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import MonacoEditor from "./MonacoEditor";
 import TerminalPanel, { Problem } from "../terminal/TerminalPanel";
 import FileSidebar from "../filetree/FileSidebar";

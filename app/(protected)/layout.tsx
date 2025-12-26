@@ -1,3 +1,4 @@
+// 계정 정보를 페이지로 띄우기가 필요할 경우를 대비 
 "use client";
 
 import type { ReactNode } from "react";

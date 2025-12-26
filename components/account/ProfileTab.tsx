@@ -1,7 +1,5 @@
-// @/componenets/account/ProfileTab.tsx 
-// 회원 프로필 모달창 프로필 탭
-
 "use client";
+
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
@@ -16,25 +14,29 @@ export default function ProfileTab() {
 
   const { isLoaded, user } = useUser();
 
+  /* =========================
+   * 기본 사용자 정보 (Clerk 기준)
+   * ========================= */
   const displayName =
     user?.fullName ||
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     "사용자";
 
-  /** ✅ 상단 프로필 요약용: 항상 실제 이메일 */
-  const profileEmail =
-    user?.primaryEmailAddress?.emailAddress ?? "";
+  const profileEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 
-  /** ✅ 기본 정보 박스용 */
   const emailValue = (() => {
     if (!isLoaded) return "";
-
     if (user?.passwordEnabled) {
-      return user.primaryEmailAddress?.emailAddress ?? "";
+      return profileEmail;
     }
-
     return "소셜 로그인 상태입니다";
   })();
+
+  /* =========================
+   * 프로필 이미지
+   * - Clerk 단일 Source of Truth
+   * ========================= */
+  const profileImage = user?.imageUrl ?? "";
 
   return (
     <>
@@ -44,22 +46,25 @@ export default function ProfileTab() {
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border-strong bg-bg-raised text-2xl">
-                  {user?.imageUrl ? (
+                <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-border-strong bg-bg-raised text-2xl">
+                  {profileImage ? (
                     <Image
-                      src={user.imageUrl}
+                      src={profileImage}
                       alt="프로필"
                       width={56}
                       height={56}
                       className="rounded-full object-cover"
+                      priority
                     />
                   ) : (
                     "👤"
                   )}
                 </div>
+
                 <button
+                  type="button"
                   onClick={() => setImageOpen(true)}
-                  className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+                  className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-semibold text-white transition hover:bg-blue-500"
                 >
                   📷
                 </button>
@@ -76,8 +81,9 @@ export default function ProfileTab() {
             </div>
 
             <button
+              type="button"
               onClick={() => setEditOpen(true)}
-              className="shrink-0 rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold text-text-primary transition hover:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60"
+              className="shrink-0 rounded-2xl border border-border-strong bg-bg-subtle px-4 py-2 text-sm font-semibold"
             >
               프로필 수정
             </button>
@@ -98,7 +104,10 @@ export default function ProfileTab() {
 
       {/* 모달 */}
       <EditProfileModal open={editOpen} onClose={() => setEditOpen(false)} />
-      <EditProfileImageModal open={imageOpen} onClose={() => setImageOpen(false)} />
+      <EditProfileImageModal
+        open={imageOpen}
+        onClose={() => setImageOpen(false)}
+      />
     </>
   );
 }
@@ -106,8 +115,12 @@ export default function ProfileTab() {
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between border-b border-border-strong pb-2 last:border-none last:pb-0">
-      <p className="text-xs uppercase tracking-wide text-text-muted">{label}</p>
-      <p className="text-sm font-semibold text-text-primary">{value}</p>
+      <p className="text-xs uppercase tracking-wide text-text-muted">
+        {label}
+      </p>
+      <p className="text-sm font-semibold text-text-primary">
+        {value}
+      </p>
     </div>
   );
 }
