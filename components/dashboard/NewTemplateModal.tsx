@@ -41,7 +41,7 @@ export default function NewTemplateModal({
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   /** 🔹 모달 열릴 때 템플릿 자동 선택 */
   useEffect(() => {
@@ -54,6 +54,13 @@ export default function NewTemplateModal({
 
   const handleCreate = async () => {
     if (disabled) return;
+
+    // 🔴 이거 없으면 무조건 터진다
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -73,11 +80,11 @@ export default function NewTemplateModal({
       });
 
       const json = await res.json();
-
       const containerId = json?.data?.id;
+
       if (!containerId) {
         console.error("create container failed:", json);
-        throw new Error(json?.error?.message ?? "containerId 없음");
+        throw new Error("containerId 없음");
       }
 
       onOpenChange(false);
