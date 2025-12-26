@@ -106,7 +106,7 @@ export default function ListContainer({ containers }: ListContainerProps) {
               )}
 
               {item.status === "running" ? (
-                <Link href="/ide/room-a">
+                <Link href={`/ide/${item.id}`}>
                   <Button
                     type="button"
                     variant="destructive"
@@ -117,7 +117,7 @@ export default function ListContainer({ containers }: ListContainerProps) {
                   </Button>
                 </Link>
               ) : (
-                <Link href="/ide/room-b">
+                <Link href={`/ide/${item.id}`}>
                   <Button
                     type="button"
                     variant="primary"
