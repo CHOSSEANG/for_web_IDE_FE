@@ -1,10 +1,5 @@
-// app/auth/callback/page.tsx
-// import { RedirectToSignIn } from "@clerk/nextjs";
-
-// export default function Page() {
-//   return <RedirectToSignIn />;
-// }
-// 콜백 에러 404 이슈로 위 소스 사용안함 12/24 lilylee
+// app/(auth)/callback/page.tsx
+// (auth) 그룹 폴더이므로 실제 라우트는 `/callback`
 
 "use client";
 
@@ -17,12 +12,22 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    handleRedirectCallback({
-      afterSignInUrl: "/main",
-      afterSignUpUrl: "/main",
-    }).catch(() => {
-      router.replace("/welcome");
-    });
+    const runCallback = async () => {
+      try {
+        await handleRedirectCallback({
+          afterSignInUrl: "/main",
+          afterSignUpUrl: "/main",
+        });
+
+        // Clerk 내부 redirect가 실패하거나 적용되지 않는 경우를 대비한 fallback
+        router.replace("/main");
+      } catch (error) {
+        console.error("OAuth callback error:", error);
+        router.replace("/welcome");
+      }
+    };
+
+    runCallback();
   }, [handleRedirectCallback, router]);
 
   return (

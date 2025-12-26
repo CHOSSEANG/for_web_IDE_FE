@@ -27,7 +27,7 @@ export default function AuthLayout({ children, modal }: AuthLayoutProps) {
     if (!isLoaded) return;
 
     if (user) {
-      router.replace("/app/main");
+      router.replace("/main");
     }
   }, [isLoaded, user, router]);
 
