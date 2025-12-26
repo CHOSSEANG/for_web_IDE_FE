@@ -66,6 +66,7 @@ export function useChat(
   clearSearch: () => void;
   isSearchActive: boolean;
   isSearching: boolean;
+  hasMoreHistory: boolean;
 } {
   const { getToken, isSignedIn } = useAuth();
 
