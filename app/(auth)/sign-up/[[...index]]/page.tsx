@@ -35,12 +35,10 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [lastProvider, setLastProvider] =
-    useState<SocialProvider | null>(null);
+  const [lastProvider, setLastProvider] = useState<SocialProvider | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  /** 최근 사용 소셜 로그인 */
   useEffect(() => {
     const stored = localStorage.getItem("lastAuthProvider");
     if (stored === "github" || stored === "google" || stored === "discord") {
@@ -50,7 +48,9 @@ export default function SignUpPage() {
 
   if (!signUpLoaded || !signInLoaded) return null;
 
-  /** OAuth */
+  /* -----------------------------
+   * OAuth
+   * ---------------------------- */
   const socialLogin = (provider: SocialProvider) => {
     localStorage.setItem("lastAuthProvider", provider);
     signIn.authenticateWithRedirect({
@@ -60,7 +60,9 @@ export default function SignUpPage() {
     });
   };
 
-  /** 이메일 회원가입 */
+  /* -----------------------------
+   * Email Sign Up (핵심 수정)
+   * ---------------------------- */
   const handleSignUp = async () => {
     if (!signUp || isSubmitting) return;
 
@@ -73,12 +75,8 @@ export default function SignUpPage() {
         password,
       });
 
-      /**
-       * ⚠️ 핵심 포인트
-       * email verification 이 켜져 있으면
-       * create() 후 바로 complete 되지 않는다
-       */
-      if (result.status !== "complete") {
+      // ✅ 이메일 인증이 필요한 경우 → 모달만 띄움 (redirect ❌)
+      if (result.verifications.emailAddress?.status === "unverified") {
         await signUp.prepareEmailAddressVerification({
           strategy: "email_code",
         });
@@ -86,7 +84,7 @@ export default function SignUpPage() {
         return;
       }
 
-      // 이 케이스는 사실상 거의 없음 (보조 가드)
+      // ⚠️ email verification OFF인 경우만 여기 도달
       router.push("/sign-in");
     } catch (err: unknown) {
       let message = "회원가입에 실패했습니다. 다시 시도해주세요.";
@@ -101,6 +99,7 @@ export default function SignUpPage() {
 
       setErrorMessage(message);
     } finally {
+      // 🔒 어떤 경로든 반드시 해제
       setIsSubmitting(false);
     }
   };
@@ -180,6 +179,9 @@ export default function SignUpPage() {
                   onToggle={() => setShowPassword((v) => !v)}
                 />
               </div>
+              <p className="text-xs text-text-muted mt-2">
+                * 최소 8자 이상, 영문(대문자 1개 이상)/숫자/특수문자 포함
+              </p>
             </div>
 
             <button
@@ -191,6 +193,7 @@ export default function SignUpPage() {
             </button>
           </form>
 
+          {/* Clerk CAPTCHA DOM */}
           <div id="clerk-captcha" className="mt-1" />
 
           <p className="text-center text-sm text-text-muted">
@@ -202,7 +205,7 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* 🔐 이메일 인증 모달 */}
+      {/* Email Verification Modal */}
       {signUp && (
         <EmailVerificationModal
           open={showVerifyModal}
@@ -212,6 +215,7 @@ export default function SignUpPage() {
             setShowVerifyModal(false);
             router.push("/sign-in");
           }}
+          onClose={() => setShowVerifyModal(false)}
         />
       )}
     </>
