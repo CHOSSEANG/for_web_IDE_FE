@@ -10,13 +10,10 @@ import ListContainer from "@/components/dashboard/ListContainer";
 import { ContainerItem } from "@/types/container";
 import { createContainer, fetchContainers } from "@/lib/api/container";
 import { loginUser } from "@/lib/api/auth";
+import type { TemplateWithIcon } from "@/components/dashboard/templateClient";
 
 type ContainerCreatePayload = {
-  template: {
-    id: string;
-    name: string;
-    desc: string;
-  };
+  template: TemplateWithIcon;
   name: string;
 };
 

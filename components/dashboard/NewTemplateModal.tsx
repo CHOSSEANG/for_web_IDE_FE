@@ -22,6 +22,7 @@ export default function NewTemplateModal({
   open,
   onOpenChange,
   templates,
+  onCreate,
 }: NewTemplateModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
