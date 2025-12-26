@@ -1,13 +1,24 @@
 // @/main/page.tsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 
 
 import NewContainer from "@/components/dashboard/NewContainer";
 import ListContainer from "@/components/dashboard/ListContainer";
+import { ContainerItem } from "@/types/container";
+import { createContainer, fetchContainers } from "@/lib/api/container";
 import { loginUser } from "@/lib/api/auth";
+
+type ContainerCreatePayload = {
+  template: {
+    id: string;
+    name: string;
+    desc: string;
+  };
+  name: string;
+};
 
 export default function DashboardMain() {
   const { isSignedIn, user } = useUser();
@@ -17,6 +28,77 @@ export default function DashboardMain() {
 
   const clerkUserId = user?.id;
   const email = user?.primaryEmailAddress?.emailAddress;
+
+  const [containers, setContainers] = useState<ContainerItem[]>([]);
+
+  const handleCreateContainer = async ({ template, name }: ContainerCreatePayload) => {
+    const normalizedName = name.trim();
+    if (!normalizedName) {
+      console.warn("create skip: 컨테이너 이름을 입력하세요");
+      return;
+    }
+
+    if (containers.some((item) => item.name === normalizedName)) {
+      window.alert("같은 이름의 컨테이너가 이미 존재합니다.");
+      console.warn("duplicate container prevented:", normalizedName);
+      return;
+    }
+
+    // getToken may return null if Clerk session expired/unauthorized; guard before API calls.
+    const token = await getToken({ template: "jwt" });
+    if (!token) {
+      console.warn("Clerk token missing or expired (re-auth required) – API 호출 생략");
+      return;
+    }
+
+    try {
+      const createdContainer = await createContainer({
+        token,
+        name: normalizedName,
+        templateId: template.id,
+        templateName: template.name,
+      });
+
+      setContainers((prev) => [createdContainer, ...prev]);
+    } catch (error) {
+      console.error("컨테이너 생성 중 오류 발생:", error);
+      window.alert("컨테이너 생성에 실패했습니다.");
+      // TODO: API 실패 시 토스트/상태 표시로 사용자 알림
+    }
+  };
+
+  useEffect(() => {
+    if (!isSignedIn) return;
+
+    // Authorization/credentials are injected via auth helpers; backend config handles CORS.
+    // Verify NEXT_PUBLIC_API_BASE_URL per environment when deploying (dev vs prod).
+
+    let isMounted = true;
+    const loadContainers = async () => {
+      // getToken may return null if Clerk session expired or token generation fails.
+      const token = await getToken({ template: "jwt" });
+      if (!token) {
+        console.warn("Clerk token missing or expired; 컨테이너 목록 호출 생략");
+        return;
+      }
+
+      try {
+        const data = await fetchContainers({ token });
+        if (isMounted) {
+          setContainers(data);
+        }
+      } catch (error) {
+        console.error("컨테이너 목록 로딩 실패 (GET /containers):", error);
+        // TODO: retry/backoff toast를 여기서 연결하고, 현재는 빈 상태 유지
+      }
+    };
+
+    loadContainers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [getToken, isSignedIn]);
 
   useEffect(() => {
     if (!isSignedIn || !clerkUserId || !email) return;
@@ -60,8 +142,8 @@ export default function DashboardMain() {
           컨테이너를 생성하거나 최근 프로젝트를 선택하세요
         </p>
 
-        <NewContainer />
-        <ListContainer />
+        <NewContainer onCreate={handleCreateContainer} />
+        <ListContainer containers={containers} />
       </main>
     </div>
   );

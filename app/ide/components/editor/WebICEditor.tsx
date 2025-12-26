@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import MonacoEditor from "./MonacoEditor";
 import TerminalPanel, { Problem } from "../terminal/TerminalPanel";
 import FileSidebar from "../filetree/FileSidebar";
@@ -8,8 +9,9 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const API_BASE_URL = 'https://api.webicapp.com';
-  const { activeFile, updateFileContent, activeId, containerId, saveFileContent } = useWebIC();
+  const API_BASE_URL = '/api-proxy';
+  const { getToken } = useAuth();
+  const { activeFile, updateFileContent, saveFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
@@ -73,12 +75,17 @@ const WebICEditorContent = () => {
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const token = await getToken();
         const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             path: activeFile.name,
-            type: type
+            type: type,
+            lang: type
           })
         });
 
@@ -153,12 +160,18 @@ const WebICEditorContent = () => {
 
       try {
         const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
+        const token = await getToken();
+        // 현재는 단일 파일 실행 기준
         const res = await fetch(`${API_BASE_URL}/code/run`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
           body: JSON.stringify({
             path: activeFile.name,
-            type: type
+            type: type,
+            lang: type
           })
         });
 
