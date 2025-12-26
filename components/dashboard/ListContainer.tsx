@@ -18,15 +18,13 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/dashboard/Pagination";
+import type { ContainerItem } from "@/types/container";
 
-type ContainerItem = {
-  name: string;
-  tech: string;
-  time: string;
-  status: "running" | "stopped";
+type ListContainerProps = {
+  containers: ContainerItem[];
 };
 
-export default function ListContainer() {
+export default function ListContainer({ containers }: ListContainerProps) {
   /* tech → icon 매핑 */
   const techIconMap: Record<string, ReactNode> = {
     HTML: <SiHtml5 className="text-orange-500 text-lg" />,
@@ -38,25 +36,6 @@ export default function ListContainer() {
       <SiNextdotjs className="text-neutral-800 dark:text-neutral-200 text-lg" />
     ),
   };
-
-  const containers: ContainerItem[] = [
-    { name: "my-react-app", tech: "React", time: "2분 전", status: "running" },
-    { name: "landing-html", tech: "HTML", time: "10분 전", status: "stopped" },
-    { name: "style-library", tech: "CSS", time: "30분 전", status: "stopped" },
-    {
-      name: "vanilla-js-playground",
-      tech: "JavaScript",
-      time: "1시간 전",
-      status: "stopped",
-    },
-    { name: "api-server", tech: "Node.js", time: "3시간 전", status: "stopped" },
-    {
-      name: "webic-dashboard",
-      tech: "Next.js",
-      time: "1일 전",
-      status: "stopped",
-    },
-  ];
 
   const handleEdit = (item: ContainerItem) => {
     console.log("EDIT:", item.name);
@@ -93,7 +72,7 @@ export default function ListContainer() {
       <div className="space-y-2">
         {containers.map((item) => (
           <div
-            key={item.name}
+            key={item.id}
             className="flex items-center justify-between px-4 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-800"
           >
             {/* Info */}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type { ReactNode } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,18 +9,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
-type Template = {
-  id: string;
-  name: string;
-  desc: string;
-  icon: ReactNode;
-};
+import type { TemplateWithIcon } from "@/components/dashboard/templateClient";
 
 type NewTemplateModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  templates: Template[];
+  templates: TemplateWithIcon[];
+  onCreate?: (payload: { template: TemplateWithIcon; name: string }) => Promise<void> | void;
 };
 
 export default function NewTemplateModal({
@@ -35,21 +29,26 @@ export default function NewTemplateModal({
 
   const disabled = !selectedTemplate || !containerName;
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
+    if (!selectedTemplate) return;
+
+    const template = templates.find((tpl) => tpl.id === selectedTemplate);
+    if (!template) return;
+
     setLoading(true);
-
-    // ❗ mock
-    console.log({
-      template: selectedTemplate,
-      name: containerName,
-    });
-
-    setTimeout(() => {
+    try {
+      await onCreate?.({
+        template,
+        name: containerName,
+      });
+    } catch (error) {
+      console.error("Failed to create container:", error);
+    } finally {
       setLoading(false);
       setSelectedTemplate(null);
       setContainerName("");
       onOpenChange(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -81,7 +80,7 @@ export default function NewTemplateModal({
                 `}
               >
                 <div className="mb-2">{tpl.icon}</div>
-                <p className="text-sm font-medium">{tpl.name}</p>
+                <p className="text-sm font-medium">{tpl.displayName}</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {tpl.desc}
                 </p>
