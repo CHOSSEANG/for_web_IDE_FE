@@ -12,18 +12,22 @@ export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    (async () => {
+    const runCallback = async () => {
       try {
         await handleRedirectCallback({
           afterSignInUrl: "/main",
           afterSignUpUrl: "/main",
         });
+
+        // Clerk 내부 redirect가 실패하거나 적용되지 않는 경우를 대비한 fallback
         router.replace("/main");
       } catch (error) {
         console.error("OAuth callback error:", error);
         router.replace("/welcome");
       }
-    })();
+    };
+
+    runCallback();
   }, [handleRedirectCallback, router]);
 
   return (
