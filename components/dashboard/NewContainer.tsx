@@ -65,10 +65,12 @@ const TEMPLATES: Template[] = [
 
 export default function NewContainer() {
   const [open, setOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
+    null
+  );
 
   const openWithTemplate = (templateId: string) => {
-    setSelectedTemplate(templateId);
+    setSelectedTemplateId(templateId);
     setOpen(true);
   };
 
@@ -82,7 +84,7 @@ export default function NewContainer() {
           variant="secondary"
           className="text-xs px-3 py-1.5 rounded-md"
           onClick={() => {
-            setSelectedTemplate(null);
+            setSelectedTemplateId(null);
             setOpen(true);
           }}
         >
@@ -106,10 +108,12 @@ export default function NewContainer() {
       {/* Modal */}
       <NewTemplateModal
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(v) => {
+          setOpen(v);
+          if (!v) setSelectedTemplateId(null);
+        }}
         templates={TEMPLATES}
-        selectedTemplate={selectedTemplate}
-        setSelectedTemplate={setSelectedTemplate}
+        initialTemplateId={selectedTemplateId}
       />
     </section>
   );
