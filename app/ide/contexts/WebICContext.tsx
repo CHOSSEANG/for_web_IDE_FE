@@ -410,8 +410,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             const response = await fileApi.createFile(request, token || undefined);
             console.log('✅ API 응답:', response.data);
 
-            if (response.data) {
-                const newFile: FileSystemItem = {
+                if (response.data) {
+                    const newFile: FileSystemItem = {
                     id: `file-${response.data.id}`,
                     serverId: response.data.id,
                     name: response.data.fileName,
@@ -438,6 +438,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 });
 
                 console.log('✅ 파일 생성 완료:', newFile.name);
+                // TODO: 필요하다면 여기서 refreshFileTree()를 호출해 서버 상태를 다시 가져오도록 옵션 추가 가능
             }
         } catch (error) {
             console.error('❌ 파일 생성 실패:', error);
@@ -474,8 +475,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             const response = await fileApi.createFile(request, token || undefined);
             console.log('✅ API 응답:', response.data);
 
-            if (response.data) {
-                const newFolder: FileSystemItem = {
+                if (response.data) {
+                    const newFolder: FileSystemItem = {
                     id: `folder-${response.data.id}`,
                     serverId: response.data.id,
                     name: response.data.fileName,
@@ -502,6 +503,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 });
 
                 console.log('✅ 폴더 생성 완료:', newFolder.name);
+                // TODO: 필요하다면 여기서 refreshFileTree()를 호출해 서버 상태를 다시 가져오도록 옵션 추가 가능
             }
         } catch (error) {
             console.error('❌ 폴더 생성 실패:', error);
@@ -585,6 +587,26 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         const item = findItem(files, itemId);
         if (!item || !item.serverId) {
             console.warn('이동할 항목을 찾을 수 없거나 serverId가 없습니다.');
+            return;
+        }
+
+        if (targetParentId === itemId) {
+            alert('자기 자신을 대상으로 이동할 수 없습니다.');
+            return;
+        }
+
+        const isDescendant = (parentId: string, descendantId: string): boolean => {
+            const parent = findItem(files, parentId);
+            if (!parent?.children) return false;
+            for (const child of parent.children) {
+                if (child.id === descendantId) return true;
+                if (isDescendant(child.id, descendantId)) return true;
+            }
+            return false;
+        };
+
+        if (targetParentId && isDescendant(itemId, targetParentId)) {
+            alert('자식 노드로 이동할 수 없습니다.');
             return;
         }
 
