@@ -1,9 +1,13 @@
 import ClientIdeShell from "@/app/ide/components/ClientIdeShell";
 
+type IdePageParams = {
+  id: string;
+};
+
+type IdePageParamsPromise = Promise<IdePageParams>;
+
 type PageProps = {
-  params: {
-    id: string;
-  };
+  params: IdePageParamsPromise & IdePageParams;
 };
 
 export default function IdePage({ params }: PageProps) {
