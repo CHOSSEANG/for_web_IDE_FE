@@ -13,7 +13,11 @@ type FetchOptions = RequestInit & {
 function getBaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!url) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
+    if (typeof window !== 'undefined') {
+      // 클라이언트 사이드 fallback (개발 환경용 - 운영 서버 연결)
+      return 'https://api.webicapp.com';
+    }
+    return 'https://api.webicapp.com';
   }
   return url;
 }
@@ -67,13 +71,73 @@ export async function authorizedFetch<T>(
 export async function getCodingStats(
   params: {
     token: string;
-    userId: string;
   }
 ): Promise<CodingStatsResponse> {
-  const { token, userId } = params;
+  const { token } = params;
 
   return authorizedFetch<CodingStatsResponse>({
     token,
-    path: `/code/coding-stats/${userId}`,
+    path: "/code/coding-stats",
+  });
+}
+
+/**
+ * 코딩 세션 시작
+ */
+export async function startCodingSession(params: {
+  token: string;
+  userId: number;
+}): Promise<{ codingId: number }> {
+  const { token, userId } = params;
+
+  return authorizedFetch<{ codingId: number }>({
+    token,
+    path: "/code",
+    init: {
+      method: "POST",
+      body: JSON.stringify({ userId }),
+    },
+  });
+}
+
+/**
+ * 코딩 세션 종료
+ */
+export async function endCodingSession(params: {
+  token: string;
+  codingId: number;
+}): Promise<void> {
+  const { token, codingId } = params;
+
+  return authorizedFetch<void>({
+    token,
+    path: "/code",
+    init: {
+      method: "POST",
+      body: JSON.stringify({ codingId }),
+    },
+  });
+}
+
+/**
+ * 코딩 누적 시간 저장
+ */
+export async function saveCodingTime(params: {
+  token: string;
+  payload: {
+    containerId: number;
+    codingTimeMs: number;
+    recordDate: string;
+  };
+}): Promise<void> {
+  const { token, payload } = params;
+
+  return authorizedFetch<void>({
+    token,
+    path: "/code",
+    init: {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
   });
 }

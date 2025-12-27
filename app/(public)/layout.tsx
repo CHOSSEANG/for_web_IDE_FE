@@ -16,7 +16,7 @@ export default function ProtectedLayout({
         {children}
       </main>
       <Footer />
-      
+
       <AccountModalRoot />
     </div>
   );

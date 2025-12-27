@@ -12,6 +12,7 @@ interface ParticipantItemProps {
 export default function ParticipantItem({ user }: ParticipantItemProps) {
   return (
     <div className="flex items-center gap-2 mb-2">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={user.userImgUrl || DEFAULT_AVATAR}
         alt={user.userName}

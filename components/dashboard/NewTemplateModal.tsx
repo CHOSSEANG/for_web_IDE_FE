@@ -22,6 +22,7 @@ export default function NewTemplateModal({
   open,
   onOpenChange,
   templates,
+  onCreate,
 }: NewTemplateModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
@@ -72,10 +73,9 @@ export default function NewTemplateModal({
                 onClick={() => setSelectedTemplate(tpl.id)}
                 className={`
                   p-3 rounded-lg border text-left transition
-                  ${
-                    isSelected
-                      ? "border-indigo-500 bg-indigo-500/10"
-                      : "border-slate-300 dark:border-slate-700 hover:border-slate-400"
+                  ${isSelected
+                    ? "border-indigo-500 bg-indigo-500/10"
+                    : "border-slate-300 dark:border-slate-700 hover:border-slate-400"
                   }
                 `}
               >
