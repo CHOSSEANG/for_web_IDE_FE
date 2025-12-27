@@ -129,9 +129,9 @@ export default function StatsSummaryCards({ data, currentSessionMs = 0, isWorkin
                             </div>
                         </div>
                     </div>
-                    <p className="text-[11px] font-medium text-emerald-500 mt-3 uppercase tracking-wider">
+                    {/* <p className="text-[11px] font-medium text-emerald-500 mt-3 uppercase tracking-wider">
                         ↗ +12% from last week
-                    </p>
+                    </p> */}
                 </CardContent>
             </Card>
         </div>
