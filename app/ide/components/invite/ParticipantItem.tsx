@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Participant } from "@/app/ide/types/participant";
 
 const DEFAULT_AVATAR =
@@ -12,11 +13,12 @@ interface ParticipantItemProps {
 export default function ParticipantItem({ user }: ParticipantItemProps) {
   return (
     <div className="flex items-center gap-2 mb-2">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={user.userImgUrl || DEFAULT_AVATAR}
         alt={user.userName}
-        className="w-8 h-8 rounded-full"
+        width={32} // Tailwind w-8
+        height={32} // Tailwind h-8
+        className="rounded-full"
       />
       <span className="text-sm">{user.userName}</span>
     </div>

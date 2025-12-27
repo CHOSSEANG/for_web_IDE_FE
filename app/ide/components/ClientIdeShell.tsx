@@ -65,7 +65,7 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
             <div className="w-[300px] border-r border-white/10 bg-[#12182B]">
               {activeTab === "filetree" && <WebICEditor.LeftPanel />}
               {activeTab === "chat" && <ChatPanel containerId={Number(id)} />}
-              {activeTab === "invite" && <InvitePanel />}
+              {activeTab === "invite" && <InvitePanel containerId={Number(id)}/>}
             </div>
           </aside>
 

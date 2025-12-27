@@ -1,7 +1,9 @@
+import type { TemplateId } from "./templateMeta";
 import type { ReactNode } from "react";
-import type { TemplateId, TemplateMeta } from "@/components/dashboard/templateMeta";
 
-export type TemplateWithIcon = TemplateMeta & {
-  name: TemplateId;
+export type TemplateWithIcon = {
+  id: TemplateId;
+  displayName: string;
+  desc: string;
   icon: ReactNode;
 };

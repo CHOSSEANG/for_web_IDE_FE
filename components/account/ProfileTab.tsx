@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 
@@ -11,6 +11,8 @@ import EditProfileImageModal from "@/components/modals/EditProfileImageModal";
 export default function ProfileTab() {
   const [editOpen, setEditOpen] = useState(false);
   const [imageOpen, setImageOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { isLoaded, user } = useUser();
 
@@ -24,19 +26,39 @@ export default function ProfileTab() {
 
   const profileEmail = user?.primaryEmailAddress?.emailAddress ?? "";
 
-  const emailValue = (() => {
-    if (!isLoaded) return "";
-    if (user?.passwordEnabled) {
-      return profileEmail;
-    }
-    return "소셜 로그인 상태입니다";
-  })();
-
   /* =========================
    * 프로필 이미지
    * - Clerk 단일 Source of Truth
    * ========================= */
   const profileImage = user?.imageUrl ?? "";
+  const clerkId = user?.id ?? "";
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyClerkId = async () => {
+    if (!clerkId || typeof navigator === "undefined" || !navigator.clipboard) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(clerkId);
+      setCopied(true);
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      // silently ignore failure
+    }
+  };
 
   return (
     <>
@@ -93,7 +115,13 @@ export default function ProfileTab() {
         {/* 기본 정보 */}
         <div className="rounded-3xl border border-border-strong bg-bg-subtle/70 p-5 space-y-3">
           <InfoRow label="이름" value={isLoaded ? displayName : ""} />
-          <InfoRow label="이메일" value={emailValue} />
+          <InfoRowWithCopy
+            label="USER ID"
+            value={isLoaded ? clerkId : ""}
+            onCopy={handleCopyClerkId}
+            copied={copied}
+            disabled={!clerkId}
+          />
         </div>
 
         {/* 소셜 연결 */}
@@ -114,13 +142,44 @@ export default function ProfileTab() {
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-border-strong pb-2 last:border-none last:pb-0">
-      <p className="text-xs uppercase tracking-wide text-text-muted">
-        {label}
-      </p>
-      <p className="text-sm font-semibold text-text-primary">
+    <div className="grid grid-cols-[20%_80%] items-center border-b border-border-strong pb-2 last:border-none last:pb-0">
+      <p className="text-xs uppercase tracking-wide text-text-muted">{label}</p>
+      <p className="text-sm font-semibold text-text-primary text-left break-all">
         {value}
       </p>
+    </div>
+  );
+}
+
+function InfoRowWithCopy({
+  label,
+  value,
+  onCopy,
+  copied,
+  disabled,
+}: {
+  label: string;
+  value: string;
+  onCopy: () => Promise<void> | void;
+  copied: boolean;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="grid grid-cols-[20%_80%] items-center border-b border-border-strong pb-2 last:border-none last:pb-0">
+      <p className="text-xs uppercase tracking-wide text-text-muted">{label}</p>
+      <div className="flex items-center gap-2">
+        <p className="flex-1 min-w-0 text-sm font-semibold text-text-primary text-left break-all">
+          {value}
+        </p>
+        <button
+          type="button"
+          onClick={onCopy}
+          disabled={disabled}
+          className="rounded-full border border-border-strong bg-bg-raised/50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-text-primary transition hover:border-blue-500 disabled:opacity-50"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
     </div>
   );
 }

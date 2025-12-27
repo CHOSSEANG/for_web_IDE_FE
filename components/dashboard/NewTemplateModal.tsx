@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { TemplateWithIcon } from "@/components/dashboard/templateClient";
+
 import {
   Dialog,
   DialogContent,
@@ -9,41 +11,50 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import type { TemplateWithIcon } from "@/components/dashboard/templateClient";
 
 type NewTemplateModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   templates: TemplateWithIcon[];
-  onCreate?: (payload: { template: TemplateWithIcon; name: string }) => Promise<void> | void;
+  initialTemplateId?: string | null;
+  onCreate?: (payload: {
+    template: TemplateWithIcon;
+    name: string;
+  }) => Promise<void> | void;
 };
 
 export default function NewTemplateModal({
   open,
   onOpenChange,
   templates,
+  initialTemplateId,
   onCreate,
 }: NewTemplateModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [containerName, setContainerName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const disabled = !selectedTemplate || !containerName;
+  useEffect(() => {
+    if (!open) return;
+    if (initialTemplateId) {
+      setSelectedTemplate(initialTemplateId); // ⭐ 자동 선택
+    }
+  }, [open, initialTemplateId]);
+
+  const disabled = !selectedTemplate || containerName.trim() === "";
 
   const handleCreate = async () => {
-    if (!selectedTemplate) return;
+    if (disabled) return;
 
-    const template = templates.find((tpl) => tpl.id === selectedTemplate);
+    const template = templates.find((t) => t.id === selectedTemplate);
     if (!template) return;
 
     setLoading(true);
     try {
       await onCreate?.({
         template,
-        name: containerName,
+        name: containerName.trim(),
       });
-    } catch (error) {
-      console.error("Failed to create container:", error);
     } finally {
       setLoading(false);
       setSelectedTemplate(null);
@@ -62,22 +73,19 @@ export default function NewTemplateModal({
           </DialogDescription>
         </DialogHeader>
 
-        {/* ===== Template Select ===== */}
         <div className="grid grid-cols-2 gap-3 mt-4">
           {templates.map((tpl) => {
-            const isSelected = tpl.id === selectedTemplate;
+            const selected = tpl.id === selectedTemplate;
             return (
               <button
                 key={tpl.id}
                 type="button"
                 onClick={() => setSelectedTemplate(tpl.id)}
-                className={`
-                  p-3 rounded-lg border text-left transition
-                  ${isSelected
+                className={`p-3 rounded-lg border text-left ${
+                  selected
                     ? "border-indigo-500 bg-indigo-500/10"
-                    : "border-slate-300 dark:border-slate-700 hover:border-slate-400"
-                  }
-                `}
+                    : "border-slate-300 hover:border-slate-400"
+                }`}
               >
                 <div className="mb-2">{tpl.icon}</div>
                 <p className="text-sm font-medium">{tpl.displayName}</p>
@@ -89,37 +97,28 @@ export default function NewTemplateModal({
           })}
         </div>
 
-        {/* ===== Container Name ===== */}
         <div className="mt-4">
           <label className="text-xs font-medium text-slate-500">
             컨테이너 이름
           </label>
           <input
-            type="text"
-            placeholder="my-react-app"
             value={containerName}
             onChange={(e) => setContainerName(e.target.value)}
-            className="
-              mt-1 w-full rounded-md border px-3 py-2 text-sm
-              bg-white dark:bg-slate-900
-              border-slate-300 dark:border-slate-700
-              focus:outline-none focus:ring-2 focus:ring-indigo-500
-            "
+            placeholder="my-container"
+            className="mt-1 w-full rounded-md border px-3 py-2 text-sm
+              bg-white text-black placeholder:text-slate-400
+              border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
-        {/* ===== Actions ===== */}
         <div className="flex justify-center gap-2 mt-6">
-          <Button variant="secondary" onClick={() => onOpenChange(false)}
-            className="px-5 py-1"
-          >
+          <Button variant="secondary" onClick={() => onOpenChange(false)}>
             취소
           </Button>
           <Button
             variant="primary"
-            disabled={disabled || loading}
             onClick={handleCreate}
-            className="px-5"
+            disabled={disabled || loading}
           >
             {loading ? "생성 중..." : "생성"}
           </Button>
