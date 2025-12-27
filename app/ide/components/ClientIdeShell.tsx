@@ -19,12 +19,15 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
   const { userId } = useAuth();
 
-  if (!userId) return null;
+  const resolvedUserId =
+    process.env.NEXT_PUBLIC_DISABLE_AUTH === "true" ? 1 : Number(userId);
+
+  if (!resolvedUserId) return null;
   //임시
   //const myUserId = 1;
 
   return (
-    <WebICContextProvider containerId={id} myUserId={Number(userId)}>
+    <WebICContextProvider containerId={id} myUserId={resolvedUserId}>
       <main className="h-screen w-screen bg-[#0B1020] text-white">
         <div className="flex h-full">
           {/* Left Sidebar */}

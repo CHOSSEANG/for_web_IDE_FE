@@ -3,8 +3,12 @@
 import { ChatMessage } from "@/app/ide/types/chat";
 import MessageItem from "./MessageItem";
 
+type ChatMessageWithClientId = ChatMessage & {
+  _clientId?: string;
+};
+
 interface MessageListProps {
-  messages: ChatMessage[];
+  messages: ChatMessageWithClientId[];
   myUserId: number;
 }
 
@@ -13,7 +17,7 @@ export default function MessageList({ messages, myUserId }: MessageListProps) {
     <div className="flex-1 overflow-y-auto">
       {messages.map((msg) => (
         <MessageItem
-          key={`${msg.userId}-${msg.createdAt}`}
+          key={msg._clientId ?? `${msg.userId}|${msg.createdAt}|${msg.message}`}
           message={msg}
           isMe={msg.userId === myUserId}
         />
