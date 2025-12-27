@@ -24,7 +24,7 @@ const FileSidebar = ({
     onRenameFile
 }: FileSidebarProps) => { // Removed SidebarToggle, assumed to be part of the outer layout or removed for simplicity
     return (
-        <div className="h-full flex flex-col bg-[#0f1520] border-r border-[#2d333b]">
+        <div className="h-full flex flex-col bg-bg-raised border-r border-border-light">
             <FileTree
                 files={files}
                 activeId={activeId}

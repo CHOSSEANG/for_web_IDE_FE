@@ -22,11 +22,11 @@ const Timer = ({ isRunning }: TimerProps) => {
     return (
         <div className="flex items-center gap-3 ml-auto shrink-0 pl-2">
             {/* 상태 표시: 작동 중이면 "● 나 일하는 중", 아니면 "○ 나 쉼" */}
-            <div className={`text-sm font-medium transition-colors ${isRunning ? 'text-[#4caf50]' : 'text-[#8b949e]'}`}>
+            <div className={`text-sm font-medium transition-colors ${isRunning ? 'text-success' : 'text-text-muted'}`}>
                 {isRunning ? '● 나 일하는 중' : '○ 나 쉼'}
             </div>
             {/* 타이머 텍스트: 작동 중이면 초록색, 아니면 회색 */}
-            <div className={`font-mono text-lg font-bold transition-colors ${isRunning ? 'text-[#4caf50]' : 'text-[#8b949e]'}`}>
+            <div className={`font-mono text-lg font-bold transition-colors ${isRunning ? 'text-success' : 'text-text-muted'}`}>
                 {formatTime(currentSessionMs)}
             </div>
         </div>

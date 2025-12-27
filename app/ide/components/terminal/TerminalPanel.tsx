@@ -103,16 +103,16 @@ const TerminalPanel = ({
     }
 
     return (
-        <div className="flex flex-col h-full bg-[#0b101a] text-[#e6edf3] font-mono text-[13px]">
+        <div className="flex flex-col h-full bg-bg-subtle text-text-primary font-mono text-[13px]">
             {/* Tabs Header */}
-            <div className="flex border-b border-[#2d333b] bg-[#0b101a]">
+            <div className="flex border-b border-border-light bg-bg-subtle">
                 {TABS.map((tab) => (
                     <div
                         key={tab}
-                        className={`px-4 py-2 cursor-pointer transition-colors border-b hover:text-[#c9d1d9] 
+                        className={`px-4 py-2 cursor-pointer transition-colors border-b hover:text-text-primary 
               ${activeTab === tab
-                                ? 'text-[#e6edf3] border-[#f78166]'
-                                : 'text-[#8b949e] border-transparent'
+                                ? 'text-text-primary border-blue-500'
+                                : 'text-text-secondary border-transparent'
                             }`}
                         onClick={() => handleTabChange(tab)}
                     >
@@ -131,19 +131,19 @@ const TerminalPanel = ({
                             {logs.map((log, idx) => (
                                 <span key={idx} className="whitespace-pre-wrap break-all">{log}</span>
                             ))}
-                            {isExecuting && <span className="text-[#8b949e]">실행 중...</span>}
+                            {isExecuting && <span className="text-text-muted">실행 중...</span>}
                             <div ref={logsEndRef} />
                         </div>
 
-                        <form onSubmit={handleSubmit} className="flex border-t border-[#2d333b] bg-[#0b101a]">
-                            <span className="py-2.5 pl-3 pr-2 text-[#8b949e] select-none">{prompt}</span>
+                        <form onSubmit={handleSubmit} className="flex border-t border-border-light bg-bg-subtle">
+                            <span className="py-2.5 pl-3 pr-2 text-text-secondary select-none">{prompt}</span>
                             <input
                                 ref={inputRef}
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder="명령어를 입력하세요..."
                                 disabled={isExecuting}
-                                className="flex-1 bg-transparent border-none outline-none text-[#e6edf3] py-2.5 placeholder:text-[#484f58] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-1 bg-transparent border-none outline-none text-text-primary py-2.5 placeholder:text-text-muted disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </form>
                     </>
@@ -155,23 +155,23 @@ const TerminalPanel = ({
                         {problemLogs.length > 0 ? (
                             <div className="flex flex-col">
                                 {problemLogs.map((problem, idx) => (
-                                    <div key={idx} className="flex gap-2 px-3 py-2 border-b border-[#2d333b] hover:bg-[#161b22] group">
+                                    <div key={idx} className="flex gap-2 px-3 py-2 border-b border-border-light hover:bg-bg-raised/50 group">
                                         <div className="pt-0.5">
                                             {problem.severity === 'warning' ? (
-                                                <svg className="w-4 h-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg className="w-4 h-4 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                                 </svg>
                                             ) : (
-                                                <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <svg className="w-4 h-4 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             )}
                                         </div>
                                         <div className="flex-1 flex flex-col min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-[#e6edf3] text-sm truncate">{problem.message}</span>
+                                                <span className="text-text-primary text-sm truncate">{problem.message}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs text-[#8b949e]">
+                                            <div className="flex items-center gap-2 text-xs text-text-secondary">
                                                 <span>{problem.source || 'Error'}</span>
                                                 {problem.line && <span>Ln {problem.line}</span>}
                                             </div>
@@ -180,7 +180,7 @@ const TerminalPanel = ({
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-5 text-[#8b949e]">No problems detected in workspace.</div>
+                            <div className="p-5 text-text-muted">No problems detected in workspace.</div>
                         )}
                     </div>
                 )}
@@ -191,7 +191,7 @@ const TerminalPanel = ({
                         {outputLogs.length > 0 ? (
                             outputLogs.map((log, idx) => <span key={idx} className="break-all">{log}</span>)
                         ) : (
-                            <div className="text-[#8b949e]">프로그램 실행 대기 중...</div>
+                            <div className="text-text-muted">프로그램 실행 대기 중...</div>
                         )}
                     </div>
                 )}
@@ -202,7 +202,7 @@ const TerminalPanel = ({
                         {debugLogs.length > 0 ? (
                             debugLogs.map((log, idx) => <span key={idx} className="break-all">{log}</span>)
                         ) : (
-                            <div className="text-[#8b949e]">디버그 세션이 활성화되지 않았습니다.</div>
+                            <div className="text-text-muted">디버그 세션이 활성화되지 않았습니다.</div>
                         )}
                     </div>
                 )}

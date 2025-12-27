@@ -77,7 +77,7 @@ export default function StatsSummaryCards({ data, currentSessionMs = 0, isWorkin
                                 <Activity className="w-5 h-5 text-blue-500" />
                             </div>
                             <div className="space-y-0.5">
-                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Current Session</p>
+                                <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-tight">Current Session</p>
                                 <p className="text-2xl font-bold tracking-tight">
                                     {formatSessionTime(sessionSeconds)}
                                 </p>
@@ -102,14 +102,14 @@ export default function StatsSummaryCards({ data, currentSessionMs = 0, isWorkin
                                 <Clock className="w-5 h-5 text-sky-500" />
                             </div>
                             <div className="space-y-0.5">
-                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">Today&apos;s Total</p>
+                                <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-tight">Today&apos;s Total</p>
                                 <p className="text-2xl font-bold tracking-tight">
                                     {formatDuration(todayTotalMs)}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-3 font-medium uppercase tracking-wider">{todayStr}</p>
+                    <p className="text-[11px] text-text-muted mt-3 font-medium uppercase tracking-wider">{todayStr}</p>
                 </CardContent>
             </Card>
 
@@ -122,7 +122,7 @@ export default function StatsSummaryCards({ data, currentSessionMs = 0, isWorkin
                                 <Calendar className="w-5 h-5 text-amber-500" />
                             </div>
                             <div className="space-y-0.5">
-                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-tight">This Week</p>
+                                <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-tight">This Week</p>
                                 <p className="text-2xl font-bold tracking-tight">
                                     {formatDuration(weeklyTotalMs)}
                                 </p>
@@ -149,7 +149,7 @@ export function StatsAdditionalCards({ data }: StatsCardsProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <Card>
                 <CardContent className="p-5">
-                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-tight mb-2">Daily Average (This Week)</p>
+                    <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-tight mb-2">Daily Average (This Week)</p>
                     <h3 className="text-2xl font-bold tracking-tight">
                         {formatDuration(avgMs)}
                     </h3>
@@ -158,7 +158,7 @@ export function StatsAdditionalCards({ data }: StatsCardsProps) {
 
             <Card>
                 <CardContent className="p-5">
-                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-tight mb-2">Longest Day (This Week)</p>
+                    <p className="text-[11px] font-semibold text-text-secondary uppercase tracking-tight mb-2">Longest Day (This Week)</p>
                     <h3 className="text-2xl font-bold tracking-tight">
                         {formatDuration(maxMs)}
                     </h3>
