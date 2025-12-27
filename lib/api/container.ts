@@ -17,6 +17,11 @@ type ContainerApiItem = {
   createdAt?: string;
 };
 
+type ContainerList ={
+  data: ContainerApiItem[];
+  error: string;
+}
+
 type CreateContainerParams = {
   token: string;
   name: string;
@@ -45,12 +50,18 @@ function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
 export async function fetchContainers(params: FetchContainersParams): Promise<ContainerItem[]> {
   // authorizedFetch already sets Authorization and credentials; CORS headers
   // should be handled server-side (check dev/prod environment if issues surface).
-  const data = await authorizedFetch<ContainerApiItem[]>({
+  const data = await authorizedFetch<ContainerList>({
     token: params.token,
-    path: "/containers",
+    path: "/container/list",
   });
 
-  return data.map(adaptToContainerItem);
+  // null, undefined, 또는 배열이 아닌 경우 빈 배열 반환
+  if (data.data == null) {
+    console.warn("Unexpected response from /containers:", data);
+    return [];
+  }
+
+  return data.data.map(adaptToContainerItem);
 }
 
 export async function createContainer(params: CreateContainerParams): Promise<ContainerItem> {
