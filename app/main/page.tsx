@@ -34,29 +34,18 @@ export default function DashboardMain() {
 
 
       // 페이지 변경 핸들러 함수 추가
-      const handlePageChange = async (page: number) => {
+      const handlePageChange = async (newPage: number) => {
           const token = await getToken({ template: "jwt" });
           if (!token) return;
 
-          try {
-              // API 호출 시 선택한 페이지 번호를 넘겨줍니다.
-              // (fetchContainers 함수가 page 인자를 받도록 구현되어 있다고 가정)
-              const data = await fetchContainers({ token, page });
+          // API 호출 시 선택한 페이지 번호를 넘겨줍니다.
+          // (fetchContainers 함수가 page 인자를 받도록 구현되어 있다고 가정)
+          const data = await fetchContainers({ token, newPage });
 
-              setContainers(data.data);
-              setPaging({
-                  currentPage: data.paging.currentPage,
-                  first: data.paging.first,
-                  hasNext: data.paging.hasNext,
-                  hasPrevious: data.paging.hasPrevious,
-                  last: data.paging.last,
-                  totalElements: data.paging.totalElements,
-                  totalPages: data.paging.totalPages
-              });
-          } catch (error) {
-              console.error("페이지 로딩 실패:", error);
-          }
+          setContainers(data.data);
+          setPaging(data.paging);
       };
+
 
   /* ===============================
    * 컨테이너 목록 로딩
