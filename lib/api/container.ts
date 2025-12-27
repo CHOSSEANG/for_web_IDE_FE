@@ -39,7 +39,7 @@ function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
     : "방금 전";
 
   return {
-    id: apiItem.id,
+    id: Number(apiItem.id),
     name: apiItem.name,
     tech: apiItem.templateName ?? apiItem.templateId ?? "Unknown",
     time: timeLabel,
