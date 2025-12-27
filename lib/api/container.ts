@@ -11,6 +11,7 @@ import type { ContainerItem } from "@/types/container";
 type ContainerApiItem = {
   id: string;
   name: string;
+  lang: string;
   status?: "running" | "stopped";
   templateId?: string;
   templateName?: string;
@@ -18,8 +19,31 @@ type ContainerApiItem = {
 };
 
 type ContainerList ={
-  data: ContainerApiItem[];
+  data:{
+    containers: ContainerApiItem[];
+    currentPage:number,
+    first: boolean,
+    hasNext: boolean,
+    hasPrevious: boolean,
+    last: boolean,
+    totalElements: number,
+    totalPages: number
+  },
   error: string;
+}
+
+type ContainerResult = {
+  data: ContainerItem[];
+  error?: string | null;
+  paging:{
+    currentPage:number,
+    first: boolean,
+    hasNext: boolean,
+    hasPrevious: boolean,
+    last: boolean,
+    totalElements: number,
+    totalPages: number
+  }
 }
 
 type CreateContainerParams = {
@@ -31,6 +55,7 @@ type CreateContainerParams = {
 
 type FetchContainersParams = {
   token: string;
+  page?: number;
 };
 
 function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
@@ -47,21 +72,34 @@ function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
   };
 }
 
-export async function fetchContainers(params: FetchContainersParams): Promise<ContainerItem[]> {
+export async function fetchContainers(params: FetchContainersParams): Promise<ContainerResult> {
+
+  const pageQuery = params.page !== undefined ? `?page=${params.page}` : "";
+
   // authorizedFetch already sets Authorization and credentials; CORS headers
   // should be handled server-side (check dev/prod environment if issues surface).
   const data = await authorizedFetch<ContainerList>({
     token: params.token,
-    path: "/container/list",
+    path: `/container/list${pageQuery}`,
   });
 
-  // null, undefined, 또는 배열이 아닌 경우 빈 배열 반환
-  if (data.data == null) {
-    console.warn("Unexpected response from /containers:", data);
-    return [];
-  }
+  console.log(data);
 
-  return data.data.map(adaptToContainerItem);
+  const containers = data?.data?.containers ?? [];
+
+  return {
+    data: containers.map(adaptToContainerItem),
+    error: data.error ?? null,
+    paging: {
+      currentPage: data?.data?.currentPage ?? 0,
+      first: data?.data?.first ?? true,
+      hasNext: data?.data?.hasNext ?? false,
+      hasPrevious: data?.data?.hasPrevious ?? false,
+      last: data?.data?.last ?? true,
+      totalElements: data?.data?.totalElements ?? 0,
+      totalPages: data?.data?.totalPages ?? 0,
+    }
+  };
 }
 
 export async function createContainer(params: CreateContainerParams): Promise<ContainerItem> {
