@@ -1,3 +1,4 @@
+// @/main/page.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,8 @@ import { loginUser } from "@/lib/api/auth";
 import {Paging} from "@/types/Paging";
 
 export default function DashboardMain() {
+  const PAGE_SIZE = 10;
+
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
 
@@ -40,7 +43,11 @@ export default function DashboardMain() {
 
           // API 호출 시 선택한 페이지 번호를 넘겨줍니다.
           // (fetchContainers 함수가 page 인자를 받도록 구현되어 있다고 가정)
-          const data = await fetchContainers({ token, newPage });
+          const data = await fetchContainers({
+              token,
+              page: newPage,
+              size: PAGE_SIZE
+          });
 
           setContainers(data.data);
           setPaging(data.paging);

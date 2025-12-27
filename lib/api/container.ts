@@ -56,6 +56,7 @@ type CreateContainerParams = {
 type FetchContainersParams = {
   token: string;
   page?: number;
+  size?: number;
 };
 
 function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
@@ -74,13 +75,17 @@ function adaptToContainerItem(apiItem: ContainerApiItem): ContainerItem {
 
 export async function fetchContainers(params: FetchContainersParams): Promise<ContainerResult> {
 
-  const pageQuery = params.page !== undefined ? `?page=${params.page}` : "";
+  const queryParams = new URLSearchParams();
+  if (params.page !== undefined) queryParams.append("page", params.page.toString());
+  if (params.size !== undefined) queryParams.append("size", params.size.toString());
+
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : "";
 
   // authorizedFetch already sets Authorization and credentials; CORS headers
   // should be handled server-side (check dev/prod environment if issues surface).
   const data = await authorizedFetch<ContainerList>({
     token: params.token,
-    path: `/container/list${pageQuery}`,
+    path: `/container/list${queryString}`,
   });
 
   console.log(data);
