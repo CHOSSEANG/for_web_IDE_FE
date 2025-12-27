@@ -49,7 +49,7 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // eslint-disable-next-line react-hooks/unsupported-syntax
+
       eval(content);
       // 로컬 실행 성공 시 출력
       setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
@@ -136,7 +136,7 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // eslint-disable-next-line react-hooks/unsupported-syntax
+
       eval(content);
       setDebugOutput(logs);
     } catch (localError: unknown) {

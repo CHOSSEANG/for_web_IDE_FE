@@ -20,6 +20,7 @@ export default function MessageItem({ message }: MessageItemProps) {
     <div className={`flex mb-3 ${isMe ? "justify-end" : "justify-start"}`}>
       {/* 상대 메시지일 때만 프로필 표시 */}
       {!isMe && (
+        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           src={message.userImgUrl || DEFAULT_AVATAR}
           alt={message.userName}
@@ -29,11 +30,10 @@ export default function MessageItem({ message }: MessageItemProps) {
 
       {/* 메시지 말풍선 */}
       <div
-        className={`max-w-[70%] px-3 py-2 rounded-lg text-sm ${
-          isMe
-            ? "bg-indigo-500 text-white rounded-br-none"
-            : "bg-white/10 text-white rounded-bl-none"
-        }`}
+        className={`max-w-[70%] px-3 py-2 rounded-lg text-sm ${isMe
+          ? "bg-indigo-500 text-white rounded-br-none"
+          : "bg-white/10 text-white rounded-bl-none"
+          }`}
       >
         {/* 이름 + 시간 (상대 메시지만 이름 표시) */}
         {!isMe && (

@@ -8,7 +8,8 @@ import * as fileApi from '../services/fileApi'
 import type { FileTreeResponse } from '../services/fileApi'
 
 // API Configuration
-const API_BASE_URL = '/api-proxy';
+import { getCodingStats, startCodingSession, endCodingSession, saveCodingTime } from '@/lib/api/coding';
+import { useCodingTimerStore } from '@/lib/store/useCodingTimerStore';
 
 // --- Types for Coding Stats ---
 export interface DailyStat {
@@ -75,11 +76,17 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     const [activeId, setActiveId] = useState<string | undefined>(undefined)
     // isLoadingFiles removed (unused)
 
-    // --- Timer & Stats State ---
+    // --- Timer & Stats State (Zustand Global Store) ---
+    const {
+        currentSessionMs,
+        isWorking: isWorkingState,
+        setCurrentSessionMs,
+        setIsWorking: setIsWorkingStore,
+        incrementTimer
+    } = useCodingTimerStore();
+
     const [stats, setStats] = useState<CodingStats>(INITIAL_STATS)
-    const [currentSessionMs, setCurrentSessionMs] = useState(0)
     const [baseTimeToday, setBaseTimeToday] = useState(0)
-    const [isWorkingState, setIsWorkingState] = useState(false)
     const [codingId, setCodingId] = useState<number | null>(null)
 
     // activeFile을 사용하기 전에 미리 선언 (TDZ 방지)
@@ -152,41 +159,35 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     // 1. Fetch Stats (최상단)
     useEffect(() => {
         const fetchStats = async () => {
+            if (!user?.id) return;
+
             try {
                 console.group('📊 코딩 통계 조회 요청');
-                console.log('Endpoint:', `${API_BASE_URL}/code/coding-stats`);
 
                 const token = await getToken();
+                if (!token) return;
 
-                // 백엔드 스펙: GET /code/coding-stats (주별 통계)
-                const res = await fetch(`${API_BASE_URL}/code/coding-stats`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }).catch(() => null);
+                const weeklyData = await getCodingStats({
+                    token,
+                });
 
-                if (res?.ok) {
-                    const weeklyData = await res.json();
-                    console.log('✅ 통계 수신 결과:', weeklyData);
+                console.log('✅ 통계 수신 결과:', weeklyData);
 
-                    // baseTimeToday 설정 (오늘 날짜 데이터 찾기)
-                    const today = new Date().toISOString().split('T')[0];
-                    const todayStat = weeklyData.daily?.find((d: DailyStat) => d.todayDate === today);
+                // baseTimeToday 설정 (오늘 날짜 데이터 찾기)
+                const today = new Date().toISOString().split('T')[0];
+                const todayStat = weeklyData.daily?.find((d) => d.todayDate === today);
 
-                    if (todayStat) {
-                        setBaseTimeToday(todayStat.codingTimeMs || 0);
-                        console.log('📍 오늘 누적 시간:', todayStat.codingTimeMs, 'ms');
-                    }
-
-                    setStats({
-                        daily: weeklyData.daily || [],
-                        avgWeeklyCodingTime: weeklyData.avgWeeklyCodingTime || 0,
-                        maxWeeklyCodingTime: weeklyData.maxWeeklyCodingTime || 0,
-                        totalWeeklyCodingTime: weeklyData.totalWeeklyCodingTime || 0
-                    });
-                } else {
-                    console.warn('⚠️ 통계 조회 실패 (Status:', res?.status, ')');
+                if (todayStat) {
+                    setBaseTimeToday(todayStat.codingTimeMs || 0);
+                    console.log('📍 오늘 누적 시간:', todayStat.codingTimeMs, 'ms');
                 }
+
+                setStats({
+                    daily: weeklyData.daily || [],
+                    avgWeeklyCodingTime: weeklyData.avgWeeklyCodingTime || 0,
+                    maxWeeklyCodingTime: weeklyData.maxWeeklyCodingTime || 0,
+                    totalWeeklyCodingTime: weeklyData.totalWeeklyCodingTime || 0
+                });
             } catch (error) {
                 console.error('❌ 통계 로딩 에러:', error);
             } finally {
@@ -195,20 +196,20 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         };
 
         fetchStats();
-    }, [getToken]);
+    }, [getToken, user?.id]);
 
-    // 2. Timer Logic
+    // 2. Timer Logic (Updates Global Store)
     useEffect(() => {
         let interval: NodeJS.Timeout
         if (isWorkingState) {
             interval = setInterval(() => {
-                setCurrentSessionMs(prev => prev + 1000)
+                incrementTimer(1000)
             }, 1000)
         }
         return () => {
             if (interval) clearInterval(interval)
         }
-    }, [isWorkingState])
+    }, [isWorkingState, incrementTimer])
 
     // 3. Helper: Today Total Time
     const getTodayTotalTime = useCallback(() => {
@@ -231,35 +232,31 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             console.log('Payload:', payload);
 
             const token = await getToken();
+            if (!token) {
+                console.warn('⚠️ 인증 토큰이 없어 세션을 저장할 수 없습니다.');
+                return;
+            }
 
-            const res = await fetch(`${API_BASE_URL}/code`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
+            await saveCodingTime({
+                token,
+                payload
             });
 
-            if (res.ok) {
-                console.log('✅ 세션 저장 성공');
-                setStats(prev => {
-                    const newDaily = [...prev.daily];
-                    const idx = newDaily.findIndex(d => d.todayDate === today);
-                    if (idx >= 0) newDaily[idx] = { ...newDaily[idx], codingTimeMs: totalMs };
-                    else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
-                    return { ...prev, daily: newDaily };
-                });
-                setBaseTimeToday(totalMs);
-                setCurrentSessionMs(0);
-            } else {
-                console.error('❌ 세션 저장 실패 (Status:', res.status, ')');
-            }
+            console.log('✅ 세션 저장 성공');
+            setStats(prev => {
+                const newDaily = [...prev.daily];
+                const idx = newDaily.findIndex(d => d.todayDate === today);
+                if (idx >= 0) newDaily[idx] = { ...newDaily[idx], codingTimeMs: totalMs };
+                else newDaily.push({ todayDate: today, codingTimeMs: totalMs });
+                return { ...prev, daily: newDaily };
+            });
+            setBaseTimeToday(totalMs);
+            setCurrentSessionMs(0);
         } catch (error) {
             console.error('❌ 세션 저장 에러:', error);
             console.groupEnd();
         }
-    }, [getTodayTotalTime, containerId, getToken]);
+    }, [getTodayTotalTime, containerId, getToken, setCurrentSessionMs]);
 
     // 5. setIsWorking
     const setIsWorking = useCallback(async (working: boolean) => {
@@ -267,7 +264,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         if (working === isWorkingRef.current) return;
 
         isWorkingRef.current = working;
-        setIsWorkingState(working);
+        setIsWorkingStore(working);
 
         const userId = user?.id ? parseInt(user.id.replace(/\D/g, '')) || 1 : 1;
 
@@ -279,24 +276,24 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 console.log('UserId:', userId);
 
                 const token = await getToken();
-
-                const res = await fetch(`${API_BASE_URL}/code`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ userId })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    console.log('✅ 세션 시작 성공, codingId:', data.codingId);
-                    setCodingId(data.codingId);
-                } else {
-                    console.error('❌ 세션 시작 실패 (Status:', res.status, ')');
+                if (!token) {
+                    console.warn('⚠️ 인증 토큰이 없어 세션을 시작할 수 없습니다.');
+                    isWorkingRef.current = false;
+                    setIsWorkingStore(false);
+                    return;
                 }
+
+                const data = await startCodingSession({
+                    token,
+                    userId
+                });
+
+                console.log('✅ 세션 시작 성공, codingId:', data.codingId);
+                setCodingId(data.codingId);
             } catch (err) {
                 console.error('❌ 세션 시작 에러:', err);
+                isWorkingRef.current = false;
+                setIsWorkingStore(false);
             } finally {
                 isRequestingStart.current = false;
                 console.groupEnd();
@@ -309,15 +306,16 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 console.log('CodingId:', codingId);
 
                 const token = await getToken();
+                if (!token) {
+                    console.warn('⚠️ 인증 토큰이 없어 세션을 종료할 수 없습니다.');
+                    return;
+                }
 
-                await fetch(`${API_BASE_URL}/code`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ codingId })
+                await endCodingSession({
+                    token,
+                    codingId
                 });
+
                 console.log('✅ 세션 종료 처리 완료');
                 setCodingId(null);
                 await saveCodingSession();
@@ -328,7 +326,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
                 console.groupEnd();
             }
         }
-    }, [user, codingId, saveCodingSession, getToken]);
+    }, [user, codingId, saveCodingSession, getToken, setIsWorkingStore]);
 
     // 6. File Save Content
     const saveFileContent = useCallback(async (content?: string) => {
@@ -410,8 +408,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             const response = await fileApi.createFile(request, token || undefined);
             console.log('✅ API 응답:', response.data);
 
-                if (response.data) {
-                    const newFile: FileSystemItem = {
+            if (response.data) {
+                const newFile: FileSystemItem = {
                     id: `file-${response.data.id}`,
                     serverId: response.data.id,
                     name: response.data.fileName,
@@ -475,8 +473,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             const response = await fileApi.createFile(request, token || undefined);
             console.log('✅ API 응답:', response.data);
 
-                if (response.data) {
-                    const newFolder: FileSystemItem = {
+            if (response.data) {
+                const newFolder: FileSystemItem = {
                     id: `folder-${response.data.id}`,
                     serverId: response.data.id,
                     name: response.data.fileName,

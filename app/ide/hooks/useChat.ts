@@ -14,8 +14,8 @@ function normalizeChatMessage(raw: RawChatMessage): ChatMessage {
     typeof raw.message === "string"
       ? raw.message
       : typeof raw.content === "string"
-      ? raw.content
-      : "";
+        ? raw.content
+        : "";
   const createdAt =
     typeof raw.createdAt === "string"
       ? raw.createdAt

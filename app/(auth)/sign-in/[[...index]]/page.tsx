@@ -134,30 +134,30 @@ export default function SignInPage() {
           }}
         >
           <div>
-          <label className="text-xs font-semibold uppercase text-text-muted">
-                Email
-              </label>
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
+            <label className="text-xs font-semibold uppercase text-text-muted">
+              Email
+            </label>
+            <input
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
             />
-            </div>
+          </div>
 
           <div>
             <label className="text-xs font-semibold uppercase text-text-muted">
-                Password
-              </label>
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
+              Password
+            </label>
+            <input
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-2xl border border-border-strong bg-bg-subtle px-4 py-3 text-sm text-text-primary"
             />
-            </div>
+          </div>
 
           {errorMessage && (
             <p className="text-sm text-red-500">{errorMessage}</p>
