@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, Folder, User } from "lucide-react";
-
+import { useAuth } from "@clerk/nextjs";
 import ChatPanel from "@/app/ide/components/chat/ChatPanel";
 import WebICEditor from "@/app/ide/components/editor/WebICEditor";
 
@@ -17,9 +17,14 @@ import InvitePanel from "./invite/InvitePanel";
 
 export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
+  const { userId } = useAuth();
+
+  if (!userId) return null;
+  //임시
+  //const myUserId = 1;
 
   return (
-    <WebICContextProvider containerId={id}>
+    <WebICContextProvider containerId={id} myUserId={Number(userId)}>
       <main className="h-screen w-screen bg-[#0B1020] text-white">
         <div className="flex h-full">
           {/* Left Sidebar */}
@@ -39,7 +44,6 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
               <button
                 onClick={() => setActiveTab("chat")}
-
                 className={`p-2 rounded transition ${
                   activeTab === "chat"
                     ? "text-indigo-400 bg-white/10"

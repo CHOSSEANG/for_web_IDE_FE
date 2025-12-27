@@ -4,6 +4,7 @@ import { useChat } from "@/app/ide/hooks/useChat";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 import { useMemo, useState } from "react";
+import { useWebIC } from "@/app/ide/contexts/WebICContext";
 
 interface ChatPanelProps {
   containerId: string | number;
@@ -11,8 +12,11 @@ interface ChatPanelProps {
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
   const numericContainerId = Number(containerId);
-  const { messages, input, setInput, sendMessage } =
-    useChat(numericContainerId);
+  const { myUserId } = useWebIC();
+  const { messages, input, setInput, sendMessage } = useChat(
+    numericContainerId,
+    myUserId
+  );
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const isSearching = searchKeyword.trim().length > 0;
@@ -48,7 +52,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           검색 결과가 없습니다.
         </div>
       ) : (
-        <MessageList messages={filteredMessages} />
+        <MessageList messages={filteredMessages} myUserId={myUserId} />
       )}
 
       <MessageInput
