@@ -1,3 +1,4 @@
+// @/main/page.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -9,8 +10,11 @@ import ListContainer from "@/components/dashboard/ListContainer";
 import type { ContainerItem } from "@/types/container";
 import { fetchContainers } from "@/lib/api/container";
 import { loginUser } from "@/lib/api/auth";
+import {Paging} from "@/types/Paging";
 
 export default function DashboardMain() {
+  const PAGE_SIZE = 10;
+
   const { isSignedIn, user } = useUser();
   const { getToken } = useAuth();
 
@@ -20,7 +24,35 @@ export default function DashboardMain() {
   const email = user?.primaryEmailAddress?.emailAddress;
 
   const [containers, setContainers] = useState<ContainerItem[]>([]);
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+  const [paging, setPaging] = useState<Paging>({
+    currentPage: 0,
+    first: true,
+    hasNext: false,
+    hasPrevious: false,
+    last: true,
+    totalElements: 0,
+    totalPages: 0
+  });
+
+
+      // 페이지 변경 핸들러 함수 추가
+      const handlePageChange = async (newPage: number) => {
+          const token = await getToken({ template: "jwt" });
+          if (!token) return;
+
+          // API 호출 시 선택한 페이지 번호를 넘겨줍니다.
+          // (fetchContainers 함수가 page 인자를 받도록 구현되어 있다고 가정)
+          const data = await fetchContainers({
+              token,
+              page: newPage,
+              size: PAGE_SIZE
+          });
+
+          setContainers(data.data);
+          setPaging(data.paging);
+      };
+
 
   /* ===============================
    * 컨테이너 목록 로딩
@@ -42,7 +74,16 @@ export default function DashboardMain() {
       try {
         const data = await fetchContainers({ token });
         if (mounted) {
-          setContainers(data);
+          setContainers(data.data);
+        setPaging({
+            currentPage: data.paging.currentPage,
+            first: data.paging.first,
+            hasNext: data.paging.hasNext,
+            hasPrevious: data.paging.hasPrevious,
+            last: data.paging.last,
+            totalElements: data.paging.totalElements,
+            totalPages: data.paging.totalPages
+        })
         }
       } catch (err) {
         console.error("컨테이너 목록 조회 실패:", err);
@@ -176,6 +217,8 @@ export default function DashboardMain() {
             onRename={handleRename}
             onLeave={handleLeave}
             onDelete={handleDelete}
+            paging={paging}
+            onPageChange={handlePageChange}
           />
         )}
       </main>

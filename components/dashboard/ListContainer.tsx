@@ -14,12 +14,15 @@ import { DiJava } from "react-icons/di";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/dashboard/Pagination";
 import type { ContainerItem } from "@/types/container";
+import {Paging} from "@/types/Paging";
 
 type ListContainerProps = {
   containers: ContainerItem[];
   onRename: (id: number, name: string) => Promise<void>;
   onLeave: (id: number) => Promise<void>;
   onDelete: (id: number) => Promise<void>;
+  paging: Paging;
+  onPageChange: (page: number) => void;
 };
 
 export default function ListContainer({
@@ -27,7 +30,9 @@ export default function ListContainer({
   onRename,
   onLeave,
   onDelete,
-}: ListContainerProps) {
+  paging,
+  onPageChange
+  }: ListContainerProps) {
   const techIconMap: Record<string, ReactNode> = {
     JavaScript: <SiJavascript className="text-yellow-400 text-lg" />,
     Python: <SiPython className="text-blue-400 text-lg" />,
@@ -177,7 +182,7 @@ export default function ListContainer({
         )}
       </div>
 
-      <Pagination currentPage={1} totalPages={99} />
+      <Pagination paging={paging} onPageChange={onPageChange} />
     </section>
   );
 }
