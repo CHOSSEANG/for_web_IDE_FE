@@ -18,7 +18,7 @@ export default function CodingTimeStatsPage() {
                 <Header />
                 <main className="p-6 sm:p-8 lg:p-10 max-w-7xl mx-auto w-full">
                     <div className="flex items-center justify-center h-64">
-                        <p className="text-slate-500 dark:text-slate-400">Loading statistics...</p>
+                        <p className="text-text-muted">Loading statistics...</p>
                     </div>
                 </main>
             </div>
@@ -31,7 +31,7 @@ export default function CodingTimeStatsPage() {
                 <Header />
                 <main className="p-6 sm:p-8 lg:p-10 max-w-7xl mx-auto w-full">
                     <div className="flex items-center justify-center h-64">
-                        <p className="text-red-500">Failed to load statistics: {error || "Unknown error"}</p>
+                        <p className="text-error">Failed to load statistics: {error || "Unknown error"}</p>
                     </div>
                 </main>
             </div>
@@ -49,12 +49,12 @@ export default function CodingTimeStatsPage() {
                     <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
                         Coding Time Statistics
                         {!loading && !user && (
-                            <span className="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20 uppercase font-bold tracking-widest">
+                            <span className="text-[10px] bg-warning/10 text-warning px-2 py-0.5 rounded border border-warning/20 uppercase font-bold tracking-widest">
                                 Demo Mode
                             </span>
                         )}
                     </h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                    <p className="text-sm text-text-muted">
                         {(!user && !loading) ? (
                             "미로그인 상태입니다. 데모 데이터를 표시하며, 실시간 타이머만 로컬에서 작동합니다."
                         ) : (

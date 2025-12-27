@@ -1,5 +1,6 @@
 "use client";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { useTheme } from "@/app/providers/theme-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "./StatsCard";
 import type { DailyStat } from "./StatsSummaryCards";
 
@@ -23,6 +24,17 @@ function formatDurationPrecise(ms: number): string {
 }
 
 export default function CodingActivityChart({ data = [] }: CodingActivityChartProps) {
+    const { theme } = useTheme();
+
+    // Theme-aware colors for Recharts
+    const colors = {
+        grid: theme === 'dark' ? '#1D2633' : '#D6DEE6',
+        tick: theme === 'dark' ? '#A8B2C1' : '#4A5562',
+        cursor: theme === 'dark' ? '#111623' : '#EDF1F7',
+        bar: theme === 'dark' ? '#3368A9' : '#4A89C7',
+        tooltipBg: theme === 'dark' ? '#161D2C' : '#E4E8EF', // bg-raised
+        tooltipBorder: theme === 'dark' ? '#1D2633' : '#D6DEE6', // border-light
+    };
     // 요일 포맷 (YYYY-MM-DD -> MM/DD or Day Name)
     const formattedData = data.map(item => ({
         ...item,
@@ -43,28 +55,34 @@ export default function CodingActivityChart({ data = [] }: CodingActivityChartPr
                 <div className="h-[300px] w-full relative">
                     <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                         <BarChart data={formattedData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={colors.grid} />
                             <XAxis
                                 dataKey="shortDate"
                                 tickLine={false}
                                 axisLine={false}
-                                tick={{ fontSize: 12, fill: '#64748B' }}
+                                tick={{ fontSize: 12, fill: colors.tick }}
                                 dy={10}
                             />
                             <YAxis
                                 tickLine={false}
                                 axisLine={false}
-                                tick={{ fontSize: 12, fill: '#64748B' }}
+                                tick={{ fontSize: 12, fill: colors.tick }}
                                 tickFormatter={(value: number) => `${value}h`}
                             />
                             <Tooltip
-                                cursor={{ fill: '#F1F5F9' }}
+                                cursor={{ fill: colors.cursor }}
                                 content={({ active, payload, label }) => {
                                     if (active && payload && payload.length) {
                                         return (
-                                            <div className="bg-white dark:bg-slate-900 p-3 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg">
-                                                <p className="text-xs font-semibold text-slate-500 mb-1">{label}</p>
-                                                <p className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                                            <div
+                                                className="p-3 border rounded-lg shadow-lg"
+                                                style={{
+                                                    backgroundColor: colors.tooltipBg,
+                                                    borderColor: colors.tooltipBorder
+                                                }}
+                                            >
+                                                <p className="text-xs font-semibold text-text-secondary mb-1">{label}</p>
+                                                <p className="text-sm font-bold text-blue-500">
                                                     {payload[0].payload.preciseTime}
                                                 </p>
                                             </div>
@@ -75,7 +93,7 @@ export default function CodingActivityChart({ data = [] }: CodingActivityChartPr
                             />
                             <Bar
                                 dataKey="hours"
-                                fill="#3B82F6"
+                                fill={colors.bar}
                                 radius={[4, 4, 0, 0]}
                                 maxBarSize={50}
                             />

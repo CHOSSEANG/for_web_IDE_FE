@@ -5,6 +5,7 @@ import { useState, useRef } from 'react'
 import type { editor as MonacoEditorInstance } from 'monaco-editor'
 import Timer from './Timer'
 import { useWebIC } from '@/app/ide/contexts/WebICContext'
+import { useTheme } from '@/app/providers/theme-provider'
 
 interface MonacoEditorProps {
     file: {
@@ -20,6 +21,7 @@ interface MonacoEditorProps {
 const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => {
     const [isRunning, setIsRunning] = useState(false)
     const { setIsWorking } = useWebIC()
+    const { theme } = useTheme()
     const editorRef = useRef<MonacoEditorInstance.IStandaloneCodeEditor | null>(null)
     const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -97,33 +99,33 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
     }
 
     return (
-        <div className="h-full flex flex-col bg-[#0d1117] text-[#e6edf3]">
+        <div className="h-full flex flex-col bg-bg-base text-text-primary">
             {/* Toolbar */}
             <div className={`
                 flex justify-between items-center px-4 py-2 gap-4 
-                border-b border-[#333] bg-[#0d1117] overflow-hidden
+                border-b border-border-light bg-bg-subtle overflow-hidden
                 font-mono font-bold transition-colors duration-300
-                ${isRunning ? 'text-[#4caf50]' : 'text-[#8b949e]'}
+                ${isRunning ? 'text-success' : 'text-text-muted'}
             `}>
                 {/* Left Controls */}
                 <div className="flex items-center gap-2 min-w-0 shrink overflow-hidden">
                     <button
                         onClick={handleRun}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-[#238636] hover:bg-[#2ea043] text-white rounded text-sm font-medium transition-colors whitespace-nowrap font-sans"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-success hover:opacity-90 text-white rounded text-sm font-medium transition-colors whitespace-nowrap font-sans"
                     >
                         <span className="text-lg leading-none">▶</span> Run
                     </button>
 
                     <button
                         onClick={handleDebug}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-[#1f6feb] hover:bg-[#388bfd] text-white rounded text-sm font-medium transition-colors whitespace-nowrap"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm font-medium transition-colors whitespace-nowrap"
                     >
                         <span>🐞</span> Debug
                     </button>
 
-                    <div className="w-[1px] h-6 bg-[#2d333b] mx-2 shrink-0" />
+                    <div className="w-[1px] h-6 bg-border-light mx-2 shrink-0" />
 
-                    <div className="text-sm text-[#8b949e] truncate" title={file.name}>
+                    <div className="text-sm text-text-secondary truncate" title={file.name}>
                         {file.name}
                     </div>
                 </div>
@@ -140,7 +142,7 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
                     value={file.content}
                     onChange={handleEditorChange}
                     onMount={handleEditorDidMount}
-                    theme="vs-dark"
+                    theme={theme === "dark" ? "vs-dark" : "vs"}
                     options={{
                         minimap: { enabled: false },
                         fontSize: 14,

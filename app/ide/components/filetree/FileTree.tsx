@@ -24,20 +24,20 @@ const FileTree = ({
     onRenameFile
 }: FileTreeProps) => {
     return (
-        <div className="flex-1 flex flex-col min-w-0 bg-[#0f1520] text-[#e6edf3]">
-            <div className="px-[14px] py-[12px] border-b border-[#2d333b] font-semibold text-[#8b949e] flex items-center justify-between gap-2">
+        <div className="flex-1 flex flex-col min-w-0 bg-bg-base text-text-primary">
+            <div className="px-[14px] py-[12px] border-b border-border-light font-semibold text-text-muted flex items-center justify-between gap-2">
                 <span>EXPLORER</span>
                 <div className="flex gap-1">
                     <button
                         onClick={() => onAddFolder?.()} // Root folder
-                        className="border border-[#2d333b] bg-transparent text-[#e6edf3] rounded px-2 py-1 cursor-pointer text-xs hover:bg-[#2d333b] transition-colors"
+                        className="border border-border-strong bg-bg-subtle text-text-primary rounded px-2 py-1 cursor-pointer text-xs hover:bg-bg-raised transition-colors"
                         title="새 폴더 생성"
                     >
                         + 폴더
                     </button>
                     <button
                         onClick={() => onAddFile?.()} // Root file
-                        className="border border-[#2d333b] bg-transparent text-[#e6edf3] rounded px-2 py-1 cursor-pointer text-xs hover:bg-[#2d333b] transition-colors"
+                        className="border border-border-strong bg-bg-subtle text-text-primary rounded px-2 py-1 cursor-pointer text-xs hover:bg-bg-raised transition-colors"
                         title="새 파일 생성"
                     >
                         + 파일
@@ -46,7 +46,7 @@ const FileTree = ({
             </div>
             <div className="flex-1 overflow-y-auto">
                 {files.length === 0 && (
-                    <div className="p-[14px] text-[#8b949e] italic text-[0.9em]">
+                    <div className="p-[14px] text-text-muted italic text-[0.9em]">
                         파일이 없습니다.
                     </div>
                 )}

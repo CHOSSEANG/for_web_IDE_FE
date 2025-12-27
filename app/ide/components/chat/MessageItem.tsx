@@ -31,18 +31,18 @@ export default function MessageItem({ message }: MessageItemProps) {
       {/* 메시지 말풍선 */}
       <div
         className={`max-w-[70%] px-3 py-2 rounded-lg text-sm ${isMe
-          ? "bg-indigo-500 text-white rounded-br-none"
-          : "bg-white/10 text-white rounded-bl-none"
+          ? "bg-blue-600 text-white rounded-br-none"
+          : "bg-bg-base text-text-primary border border-border-light rounded-bl-none"
           }`}
       >
         {/* 이름 + 시간 (상대 메시지만 이름 표시) */}
         {!isMe && (
-          <div className="text-xs text-gray-300 mb-1">{message.userName}</div>
+          <div className="text-xs text-text-muted mb-1">{message.userName}</div>
         )}
 
         <div>{message.message}</div>
 
-        <div className="text-[10px] text-gray-300 mt-1 text-right">
+        <div className="text-[10px] text-text-muted mt-1 text-right">
           {dayjs(message.createdAt).format("MM/DD HH:mm")}
         </div>
       </div>

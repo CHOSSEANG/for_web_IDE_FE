@@ -206,13 +206,13 @@ const WebICEditorContent = () => {
             onDebug={handleDebug}
           />
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-500">
+          <div className="h-full flex items-center justify-center text-text-muted">
             Select a file to edit
           </div>
         )}
       </div>
 
-      <div className="h-[240px] border-t border-white/10">
+      <div className="h-[240px] border-t border-border-light">
         <TerminalPanel
           activeTab={activeTerminalTab}
           onTabChange={setActiveTerminalTab}
