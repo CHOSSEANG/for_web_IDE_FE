@@ -258,7 +258,7 @@ export function useChat(containerId: number) {
 
     const optimistic: ChatMessage = {
       userId: userId ? Number(userId) : 0,
-      userName: "익명",
+      userName: "",
       userImgUrl: "",
       message: input,
       createdAt: new Date().toISOString(),
