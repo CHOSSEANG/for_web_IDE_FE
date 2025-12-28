@@ -40,6 +40,8 @@ export function useChat(containerId: number, myUserId: number) {
   const { getToken, isSignedIn } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [searchResults, setSearchResults] = useState<ChatMessage[]>([]);
+
   const [input, setInput] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
@@ -76,6 +78,18 @@ export function useChat(containerId: number, myUserId: number) {
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
     });
+  };
+
+  /* 검색 결과 정렬 (중복 방지) */
+  const normalizeAndSort = (data: ChatMessage[]) => {
+    const map = new Map<string, ChatMessage>();
+    data.forEach((m) => {
+      map.set(messageKey(m), m);
+    });
+    return Array.from(map.values()).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
   };
 
   /* ==========================
@@ -140,6 +154,7 @@ export function useChat(containerId: number, myUserId: number) {
     if (!keyword.trim()) {
       setIsSearching(false);
       isSearchingRef.current = false;
+      setSearchResults([]);
       fetchInitialChats();
       return;
     }
@@ -157,7 +172,7 @@ export function useChat(containerId: number, myUserId: number) {
         controller.signal
       );
       const data = (await res.json()) as ChatMessage[];
-      appendMessages(data);
+      setSearchResults(normalizeAndSort(data));
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
         console.error("searchChats failed", e);
@@ -243,10 +258,14 @@ export function useChat(containerId: number, myUserId: number) {
   ========================== */
   useEffect(() => {
     setMessages([]);
+    setSearchResults([]);
+    setIsSearching(false);
+    isSearchingRef.current = false;
   }, [containerId]);
 
   return {
     messages,
+    searchResults,
     input,
     setInput,
     sendMessage,

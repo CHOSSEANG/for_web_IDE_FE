@@ -16,6 +16,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
 
   const {
     messages,
+    searchResults,
     input,
     setInput,
     sendMessage,
@@ -48,6 +49,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
   }, [searchKeyword]);
 
   const isSearching = searchKeyword.trim().length > 0;
+  const renderedMessages = isSearching ? searchResults : messages;
 
   /* ==========================
      스크롤 최상단 → 과거 채팅 로드
@@ -81,7 +83,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
       </div>
 
       {/* 메시지 영역 (단일 스크롤 컨테이너) */}
-      {isSearching && messages.length === 0 ? (
+      {isSearching && renderedMessages.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
           검색 결과가 없습니다.
         </div>
@@ -91,7 +93,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           className="flex-1 overflow-y-auto"
           onScroll={handleScroll}
         >
-          <MessageList messages={messages} myUserId={myUserId} />
+          <MessageList messages={renderedMessages} myUserId={myUserId} />
         </div>
       )}
 
