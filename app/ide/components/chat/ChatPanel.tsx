@@ -1,10 +1,9 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
-import { useEffect, useRef, useState } from "react";
 import { useChat } from "@/app/ide/hooks/useChat";
-import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
+import MessageInput from "./MessageInput";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatPanelProps {
   containerId: string | number;
@@ -23,10 +22,6 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
     fetchOlderChats,
     searchChats,
   } = useChat(numericContainerId);
-  const { userId } = useAuth();
-  const parsedUserId =
-    userId !== undefined && userId !== null ? Number(userId) : NaN;
-  const currentUserId = Number.isNaN(parsedUserId) ? undefined : parsedUserId;
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -53,8 +48,6 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
 
   const isSearching = searchKeyword.trim().length > 0;
   const renderedMessages = isSearching ? searchResults : messages;
-  const lastMessageTimestamp =
-    renderedMessages[renderedMessages.length - 1]?.createdAt;
 
   /* ==========================
      스크롤 최상단 → 과거 채팅 로드
@@ -67,24 +60,6 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
       fetchOlderChats();
     }
   };
-
-  /* ==========================
-     신규 메시지 도착 시 자동 스크롤
-  ========================== */
-  useEffect(() => {
-    if (isSearching) return;
-
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const atBottomEnough =
-      container.scrollHeight - container.scrollTop - container.clientHeight < 80 ||
-      container.scrollHeight === container.clientHeight;
-
-    if (!atBottomEnough) return;
-
-    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
-  }, [lastMessageTimestamp, renderedMessages.length, isSearching]);
 
   return (
     <div className="h-full flex flex-col p-4">
@@ -116,10 +91,7 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           className="flex-1 overflow-y-auto"
           onScroll={handleScroll}
         >
-          <MessageList
-            messages={renderedMessages}
-            currentUserId={currentUserId}
-          />
+          <MessageList messages={renderedMessages} />
         </div>
       )}
 
