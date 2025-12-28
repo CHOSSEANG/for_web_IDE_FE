@@ -16,9 +16,10 @@ interface MonacoEditorProps {
     onChange?: (value: string) => void
     onRun?: (code: string) => void
     onDebug?: (code: string) => void
+    onSave?: (code: string) => void
 }
 
-const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => {
+const MonacoEditor = ({ file, onChange, onRun, onDebug, onSave }: MonacoEditorProps) => {
     const [isRunning, setIsRunning] = useState(false)
     const { setIsWorking } = useWebIC()
     const { theme } = useTheme()
@@ -98,6 +99,13 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
         }
     }
 
+    const handleSave = () => {
+        if (onSave) {
+            const code = editorRef.current ? editorRef.current.getValue() : file.content
+            onSave(code)
+        }
+    }
+
     return (
         <div className="h-full flex flex-col bg-bg-base text-text-primary">
             {/* Toolbar */}
@@ -121,6 +129,13 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug }: MonacoEditorProps) => 
                         className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm font-medium transition-colors whitespace-nowrap"
                     >
                         <span>🐞</span> Debug
+                    </button>
+
+                    <button
+                        onClick={handleSave}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded text-sm font-medium transition-colors whitespace-nowrap"
+                    >
+                        <span>💾</span> Save
                     </button>
 
                     <div className="w-[1px] h-6 bg-border-light mx-2 shrink-0" />

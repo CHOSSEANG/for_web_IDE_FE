@@ -13,10 +13,12 @@ type ClientIdeShellProps = {
   id: number;
 };
 
-type LeftPanelTab = "chat" | "filetree" | "invite" | null;
+type LeftPanelTab = "chat" | "filetree" | "invite" | "stats" | null;
 
 import { WebICContextProvider } from "@/app/ide/contexts/WebICContext";
 import InvitePanel from "./invite/InvitePanel";
+import StatisticsView from "./dashboard/StatisticsView";
+
 
 export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
@@ -29,13 +31,16 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
           <aside className="flex h-full">
             <div className="w-12 bg-bg-subtle border-r border-border-light flex flex-col items-center py-4 justify-between h-full shrink-0">
               <div className="flex flex-col items-center gap-4">
-                <Link
-                  href="/dashboard/stats"
+                <button
+                  onClick={() => setActiveTab(activeTab === "stats" ? null : "stats")}
+                  className={`p-2 rounded-lg transition-all ${activeTab === "stats"
+                    ? "bg-blue-500/10 text-blue-500"
+                    : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
+                    }`}
                   title="Statistics"
-                  className="p-2 text-text-secondary hover:text-text-primary transition-colors"
                 >
                   <BarChart2 size={22} />
-                </Link>
+                </button>
 
                 {/* 2. File Explorer Toggle */}
                 <button
@@ -81,7 +86,7 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
             </div>
 
             {/* Dynamic Panel */}
-            {activeTab && (
+            {activeTab && activeTab !== "stats" && (
               <div className="w-[300px] border-r border-border-light bg-bg-raised">
                 {activeTab === "filetree" && <WebICEditor.LeftPanel />}
                 {activeTab === "chat" && <ChatPanel containerId={Number(id)} />}
@@ -90,10 +95,16 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
             )}
           </aside>
 
-          {/* Editor Area */}
-          <section className="flex-1 bg-bg-base overflow-hidden">
-            <WebICEditor.Main />
-          </section>
+          {/* Editor Area / Statistics View */}
+          {activeTab === "stats" ? (
+            <section className="flex-1 bg-bg-base overflow-hidden">
+              <StatisticsView />
+            </section>
+          ) : (
+            <section className="flex-1 bg-bg-base overflow-hidden">
+              <WebICEditor.Main />
+            </section>
+          )}
         </div>
       </main>
     </WebICContextProvider>
