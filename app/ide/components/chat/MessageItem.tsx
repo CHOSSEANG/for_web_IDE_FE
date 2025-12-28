@@ -8,33 +8,71 @@ const DEFAULT_AVATAR =
 
 interface MessageItemProps {
   message: ChatMessage;
+  isMine: boolean;
+  showAvatar: boolean;
 }
 
-export default function MessageItem({ message }: MessageItemProps) {
+export default function MessageItem({
+  message,
+  isMine,
+  showAvatar,
+}: MessageItemProps) {
   const avatarSrc =
     message.userImgUrl && message.userImgUrl.trim()
       ? message.userImgUrl
       : DEFAULT_AVATAR;
 
+  const containerClass = [
+    "flex",
+    isMine ? "justify-end" : "justify-start",
+    showAvatar ? "gap-2" : "gap-1",
+    showAvatar ? "mb-3" : "mb-1",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const bubbleClass = [
+    "max-w-[70%] px-3 py-2 rounded-lg text-sm border",
+    isMine
+      ? "bg-blue-600 text-white border-transparent"
+      : "bg-bg-base text-text-primary border-border-light",
+  ].join(" ");
+
+  const alignmentClass = isMine ? "items-end text-right" : "items-start text-left";
+  const nameClass = `${alignmentClass} text-xs text-text-muted mb-1`;
+  const timestampClass = `text-[10px] text-text-muted mt-1 ${isMine ? "text-right" : "text-left"}`;
+
   return (
-    <div className="flex mb-3 justify-start">
-      {/* 항상 동일 UI */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={avatarSrc}
-        alt={message.userName}
-        className="w-8 h-8 rounded-full mr-2"
-      />
+    <div className={containerClass}>
+      {!isMine && showAvatar && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={avatarSrc}
+          alt={message.userName}
+          className="w-8 h-8 rounded-full"
+        />
+      )}
 
-      <div className="max-w-[70%] px-3 py-2 rounded-lg text-sm bg-bg-base text-text-primary border border-border-light">
-        <div className="text-xs text-text-muted mb-1">{message.userName}</div>
+      <div className={`flex flex-col ${alignmentClass}`}>
+        {showAvatar && (
+          <div className={nameClass}>{message.userName}</div>
+        )}
 
-        <div>{message.message}</div>
+        <div className={bubbleClass}>{message.message}</div>
 
-        <div className="text-[10px] text-text-muted mt-1 text-right">
+        <div className={timestampClass}>
           {dayjs(message.createdAt).format("MM/DD HH:mm")}
         </div>
       </div>
+
+      {isMine && showAvatar && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={avatarSrc}
+          alt={message.userName}
+          className="w-8 h-8 rounded-full"
+        />
+      )}
     </div>
   );
 }
