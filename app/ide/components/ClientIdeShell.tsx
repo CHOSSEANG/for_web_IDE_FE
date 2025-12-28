@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { MessageSquare, Folder, User, BarChart2 } from "lucide-react";
-import Link from "next/link";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserToggle } from "@/components/UserToggle";
 
