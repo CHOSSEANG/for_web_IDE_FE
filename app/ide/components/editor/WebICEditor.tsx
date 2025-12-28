@@ -50,7 +50,7 @@ const WebICEditorContent = () => {
 
     try {
 
-      eval(content);
+      (0, eval)(content);
       // 로컬 실행 성공 시 출력
       setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
     } catch (localError: unknown) {
@@ -75,7 +75,7 @@ const WebICEditorContent = () => {
 
       try {
         const token = await getToken();
-        const res = await fetch(`${API_BASE_URL}/code/${containerId}/121/run`, {
+        const res = await fetch(`${API_BASE_URL}/code/${containerId}/${activeFile.serverId}/run`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const WebICEditorContent = () => {
 
     try {
 
-      eval(content);
+      (0, eval)(content);
       setDebugOutput(logs);
     } catch (localError: unknown) {
       // --- 2단계: 로컬 디버그 실패 시 서버 사이드 시도 ---
@@ -155,7 +155,7 @@ const WebICEditorContent = () => {
       try {
         const token = await getToken();
         // 현재는 단일 파일 실행 기준
-        const res = await fetch(`${API_BASE_URL}/code/${containerId}/121/run`, {
+        const res = await fetch(`${API_BASE_URL}/code/${containerId}/${activeFile.serverId}/run`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
