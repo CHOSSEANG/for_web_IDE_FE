@@ -85,7 +85,7 @@ const WebICEditorContent = () => {
 
         if (res.ok) {
           const data = await res.json();
-          setRunOutput(prev => [...prev, `🌐 [Server] 실행 결과:`, data.description || '실행 완료']);
+          setRunOutput(prev => [...prev, `🌐 [Server] 실행 결과:`, data.data.result || '실행 완료']);
         } else {
           setRunOutput(prev => [...prev, `❌ [Server] 실행 실패 (Status: ${res.status})`]);
         }
@@ -165,7 +165,7 @@ const WebICEditorContent = () => {
 
         if (res.ok) {
           const data = await res.json();
-          setDebugOutput(prev => [...prev, `🌐 [Server] Debug Result:`, data.description || '실행 완료']);
+          setDebugOutput(prev => [...prev, `🌐 [Server] Debug Result:`, data.data.result || '실행 완료']);
         } else {
           setDebugOutput(prev => [...prev, `❌ [Server] 디버그 실행 실패 (Status: ${res.status})`]);
         }
