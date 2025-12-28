@@ -1,7 +1,7 @@
 // File API Service Layer
 // API 문서: http://api.webicapp.com/swagger-ui/index.html
 
-const API_BASE_URL = '/api-proxy';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.webicapp.com";
 
 // ===== Type Definitions =====
 
