@@ -9,9 +9,9 @@ import { WebICContextProvider, useWebIC } from "@/app/ide/contexts/WebICContext"
 
 // Internal Component using Context
 const WebICEditorContent = () => {
-  const API_BASE_URL = '/api-proxy';
+  const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}`;
   const { getToken } = useAuth();
-  const { activeFile, updateFileContent, saveFileContent } = useWebIC();
+  const { activeFile, containerId, updateFileContent, saveFileContent } = useWebIC();
 
   const [problems, setProblems] = useState<Problem[]>([]);
   const [activeTerminalTab, setActiveTerminalTab] = useState("TERMINAL");
@@ -19,7 +19,7 @@ const WebICEditorContent = () => {
   const [debugOutput, setDebugOutput] = useState<string[]>([]);
 
   const isRunnable = (filename: string) => {
-    return /\.(js|jsx|ts|tsx)$/.test(filename);
+    return /\.(js|jsx|ts|tsx|java|py)$/.test(filename);
   };
 
   const handleRun = async (content: string) => {
@@ -74,19 +74,13 @@ const WebICEditorContent = () => {
       ]);
 
       try {
-        const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
         const token = await getToken();
-        const res = await fetch(`${API_BASE_URL}/code/run`, {
-          method: 'POST',
+        const res = await fetch(`${API_BASE_URL}/code/${containerId}/121/run`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            path: activeFile.name,
-            type: type,
-            lang: type
-          })
+          }
         });
 
         if (res.ok) {
@@ -159,20 +153,14 @@ const WebICEditorContent = () => {
       ]);
 
       try {
-        const type = activeFile.name.endsWith('.ts') || activeFile.name.endsWith('.tsx') ? 'typescript' : 'javascript';
         const token = await getToken();
         // 현재는 단일 파일 실행 기준
-        const res = await fetch(`${API_BASE_URL}/code/run`, {
-          method: 'POST',
+        const res = await fetch(`${API_BASE_URL}/code/${containerId}/121/run`, {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            path: activeFile.name,
-            type: type,
-            lang: type
-          })
+          }
         });
 
         if (res.ok) {
