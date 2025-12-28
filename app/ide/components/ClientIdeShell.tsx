@@ -18,7 +18,6 @@ import { WebICContextProvider } from "@/app/ide/contexts/WebICContext";
 import InvitePanel from "./invite/InvitePanel";
 import StatisticsView from "./dashboard/StatisticsView";
 
-
 export default function ClientIdeShell({ id }: ClientIdeShellProps) {
   const [activeTab, setActiveTab] = useState<LeftPanelTab>("chat");
 
@@ -93,9 +92,9 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
               </div>
             </div>
 
-            {/* Dynamic Panel */}
+            {/* Dynamic Panel - h-full 추가! */}
             {activeTab && activeTab !== "stats" && (
-              <div className="w-[300px] border-r border-border-light bg-bg-raised">
+              <div className="w-[300px] h-full border-r border-border-light bg-bg-raised">
                 {activeTab === "filetree" && <WebICEditor.LeftPanel />}
                 {activeTab === "chat" && <ChatPanel containerId={Number(id)} />}
                 {activeTab === "invite" && (
