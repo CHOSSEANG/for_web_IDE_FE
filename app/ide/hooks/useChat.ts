@@ -223,33 +223,7 @@ export function useChat(containerId: number) {
               (x) => x.message === msg.message
             );
 
-            if (isMyEcho) {
-              setMessages((prev) => {
-                let replaced = false;
-                const updated = prev.map((existing) => {
-                  const existingTime = new Date(existing.createdAt).getTime();
-                  const incomingTime = new Date(msg.createdAt).getTime();
-                  const timeDiff = Math.abs(existingTime - incomingTime);
-
-                  if (
-                    !replaced &&
-                    existing.userId === msg.userId &&
-                    existing.message === msg.message &&
-                    existing.userName === "익명" &&
-                    timeDiff < 5000
-                  ) {
-                    replaced = true;
-                    return { ...msg, _clientId: existing._clientId };
-                  }
-
-                  return existing;
-                });
-
-                return replaced ? updated : prev;
-              });
-
-              return;
-            }
+            if (isMyEcho) return;
 
             // 🔴 검색 중이면 실시간 반영 X
             if (isSearchingRef.current) return;
