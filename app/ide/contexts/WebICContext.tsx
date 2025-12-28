@@ -48,7 +48,7 @@ const findItem = (items: FileSystemItem[], id: string): FileSystemItem | undefin
 interface WebICContextType {
     files: FileSystemItem[]
     activeId: string | undefined
-    activeFile: { name: string; content: string; id: string } | null
+    activeFile: { name: string; content: string; id: string; serverId: number } | null
     containerId: number | undefined
     stats: CodingStats
     currentSessionMs: number
@@ -93,8 +93,8 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
     const activeFile = useMemo(() => {
         if (!activeId) return null
         const item = findItem(files, activeId)
-        if (item && item.type === 'file') {
-            return { name: item.name, content: item.content || '', id: item.id }
+        if (item && item.type === 'file' && item.serverId !== undefined) {
+            return { name: item.name, content: item.content || '', id: item.id, serverId: item.serverId }
         }
         return null
     }, [files, activeId])
@@ -153,9 +153,56 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         }
     }, [containerId, convertTreeToFileSystem, getToken]);
 
+    const loadFileContent = useCallback(async (fileId: string) => {
+        const item = findItem(files, fileId);
+        if (!item || !item.serverId || item.type !== 'file') {
+            console.warn('파일을 찾을 수 없거나 serverId가 없습니다.');
+            return;
+        }
+
+        try {
+            console.group('📄 파일 내용 로드');
+            console.log('파일명:', item.name);
+            console.log('서버 ID:', item.serverId);
+
+            console.log('📤 API 요청');
+            const token = await getToken();
+            const response = await fileApi.getFileContent(item.serverId, token || undefined);
+            console.log('✅ API 응답:', response.data);
+
+            if (response.data) {
+                // Update file content in local state
+                setFiles(prev => {
+                    const updateContent = (items: FileSystemItem[]): FileSystemItem[] =>
+                        items.map(i =>
+                            i.id === fileId
+                                ? { ...i, content: response.data.content }
+                                : (i.children ? { ...i, children: updateContent(i.children) } : i)
+                        );
+                    return updateContent(prev);
+                });
+
+                console.log('✅ 파일 내용 로드 완료');
+            }
+        } catch (error) {
+            console.error('❌ 파일 내용 로드 실패:', error);
+        } finally {
+            console.groupEnd();
+        }
+    }, [files, getToken]);
+
     useEffect(() => {
         refreshFileTree();
     }, [refreshFileTree]);
+
+    useEffect(() => {
+        if (activeId) {
+            const item = findItem(files, activeId);
+            if (item && item.type === 'file' && item.content === undefined) {
+                loadFileContent(activeId);
+            }
+        }
+    }, [activeId, files, loadFileContent]);
 
     // 1. Fetch Stats (최상단)
     useEffect(() => {
@@ -638,43 +685,7 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
         }
     }, [files, refreshFileTree, getToken]);
 
-    const loadFileContent = useCallback(async (fileId: string) => {
-        const item = findItem(files, fileId);
-        if (!item || !item.serverId || item.type !== 'file') {
-            console.warn('파일을 찾을 수 없거나 serverId가 없습니다.');
-            return;
-        }
 
-        try {
-            console.group('📄 파일 내용 로드');
-            console.log('파일명:', item.name);
-            console.log('서버 ID:', item.serverId);
-
-            console.log('📤 API 요청');
-            const token = await getToken();
-            const response = await fileApi.getFileContent(item.serverId, token || undefined);
-            console.log('✅ API 응답:', response.data);
-
-            if (response.data) {
-                // Update file content in local state
-                setFiles(prev => {
-                    const updateContent = (items: FileSystemItem[]): FileSystemItem[] =>
-                        items.map(i =>
-                            i.id === fileId
-                                ? { ...i, content: response.data.content }
-                                : (i.children ? { ...i, children: updateContent(i.children) } : i)
-                        );
-                    return updateContent(prev);
-                });
-
-                console.log('✅ 파일 내용 로드 완료');
-            }
-        } catch (error) {
-            console.error('❌ 파일 내용 로드 실패:', error);
-        } finally {
-            console.groupEnd();
-        }
-    }, [files, getToken]);
 
     return (
         <WebICContext.Provider value={{
@@ -690,6 +701,6 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
 
 export const useWebIC = () => {
     const context = useContext(WebICContext)
-    if (!context) throw new Error('useWebIC must be used within a WebICContextProvider')
+    if (context === undefined) throw new Error('useWebIC must be used within a WebICContextProvider')
     return context
 }
