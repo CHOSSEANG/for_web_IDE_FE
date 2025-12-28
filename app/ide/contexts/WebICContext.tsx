@@ -115,8 +115,9 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
             extension: node.extension,
             createdAt: node.createdAt,
             updatedAt: node.updatedAt,
-            isOpen: false,
-            children: node.children?.map(child => convertTreeToFileSystem(child)) || (node.isDirectory ? [] : undefined)
+            isOpen: node.isDirectory ? true : undefined, 
+            children: node.children?.map(child => convertTreeToFileSystem(child)) 
+                || (node.isDirectory ? [] : undefined)
         };
     }, []);
 
@@ -689,6 +690,6 @@ export const WebICContextProvider = ({ children, containerId }: { children: Reac
 
 export const useWebIC = () => {
     const context = useContext(WebICContext)
-    if (context === undefined) throw new Error('useWebIC must be used within a WebICContextProvider')
+    if (!context) throw new Error('useWebIC must be used within a WebICContextProvider')
     return context
 }
