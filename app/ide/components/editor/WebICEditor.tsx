@@ -195,6 +195,13 @@ const WebICEditorContent = () => {
     }
   };
 
+  const handleSave = async (content: string) => {
+    if (!activeFile) return;
+    await saveFileContent(content);
+    setActiveTerminalTab("OUTPUT");
+    setRunOutput([`✅ 파일 저장 완료: ${activeFile.name}`]);
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 min-h-0">
@@ -204,6 +211,7 @@ const WebICEditorContent = () => {
             onChange={updateFileContent}
             onRun={handleRun}
             onDebug={handleDebug}
+            onSave={handleSave}
           />
         ) : (
           <div className="h-full flex items-center justify-center text-text-muted">
