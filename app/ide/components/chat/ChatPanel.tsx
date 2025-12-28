@@ -61,6 +61,21 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
     }
   };
 
+  /* ==========================
+     새 메시지 올 때 자동 스크롤
+  ========================== */
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    // 사용자가 거의 맨 아래에 있을 때만 자동 스크롤
+    const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 50;
+
+    if (isAtBottom) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [renderedMessages]); // 메시지가 바뀔 때마다 실행
+
   return (
     <div className="h-full flex flex-col p-4">
       {/* 검색 바 */}

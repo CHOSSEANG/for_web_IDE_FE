@@ -76,15 +76,18 @@ export function useChat(containerId: number) {
   /* ==========================
      메시지 병합 (중복 방지 핵심)
   ========================== */
- const appendMessages = (incoming: ChatMessage[]) => {
-  setMessages((prev) => {
-    const map = new Map(prev.map((m) => [messageKey(m), m]));
-    for (const m of incoming) map.set(messageKey(m), m);
-    return Array.from(map.values()).sort(
-      (a, b) => a.createdAt.localeCompare(b.createdAt) // 문자열 기준 정렬
-    );
-  });
-};
+  const appendMessages = (incoming: ChatMessage[]) => {
+    setMessages((prev) => {
+      const map = new Map(prev.map((m) => [messageKey(m), m]));
+      for (const m of incoming) {
+        map.set(messageKey(m), m);
+      }
+      return Array.from(map.values()).sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    });
+  };
 
   /* 검색 결과 정렬 (중복 방지) */
   const normalizeAndSort = (data: ChatMessage[]) => {
@@ -92,9 +95,10 @@ export function useChat(containerId: number) {
     data.forEach((m) => {
       map.set(messageKey(m), m);
     });
-    return Array.from(map.values()).sort((a, b) =>
-  a.createdAt.localeCompare(b.createdAt)
-);
+    return Array.from(map.values()).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
   };
 
   /* ==========================
@@ -124,28 +128,31 @@ export function useChat(containerId: number) {
   /* ==========================
      2️⃣ 과거 채팅 페이징
   ========================== */
-const fetchOlderChats = async () => {
-  if (isSearching || isFetchingOlderRef.current) return;
-  if (messages.length === 0) return;
+  const fetchOlderChats = async () => {
+    if (isSearching || isFetchingOlderRef.current) return;
+    if (messages.length === 0) return;
 
-  isFetchingOlderRef.current = true;
+    isFetchingOlderRef.current = true;
 
-  try {
-    const oldest = messages.reduce(
-      (min, m) => (m.createdAt < min ? m.createdAt : min),
-      messages[0].createdAt
-    );
-    const res = await authFetch(
-      `${API_BASE}/chat?containerId=${containerId}&lastCreatedAt=${encodeURIComponent(oldest)}`
-    );
-    const data = (await res.json()) as ChatMessage[];
-    if (data.length > 0) appendMessages(data);
-  } catch (e) {
-    console.error("fetchOlderChats failed", e);
-  } finally {
-    isFetchingOlderRef.current = false;
-  }
-};
+    try {
+      const oldest = messages.reduce(
+        (min, m) => (m.createdAt < min ? m.createdAt : min),
+        messages[0].createdAt
+      );
+      const res = await authFetch(
+        `${API_BASE}/chat?containerId=${containerId}&lastCreatedAt=${encodeURIComponent(
+          oldest
+        )}`
+      );
+      const data = (await res.json()) as ChatMessage[];
+      appendMessages(data);
+    } catch (e) {
+      console.error("fetchOlderChats failed", e);
+    } finally {
+      isFetchingOlderRef.current = false;
+    }
+  };
+
   /* ==========================
      3️⃣ 채팅 검색
   ========================== */
