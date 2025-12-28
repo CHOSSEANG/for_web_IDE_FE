@@ -17,6 +17,13 @@ import type { FileTreeResponse } from "../services/fileApi";
 
 // API Configuration
 const API_BASE_URL = "/api-proxy";
+import {
+  getCodingStats,
+  startCodingSession,
+  endCodingSession,
+  saveCodingTime,
+} from "@/lib/api/coding";
+import { useCodingTimerStore } from "@/lib/store/useCodingTimerStore";
 
 // --- Types for Coding Stats ---
 export interface DailyStat {

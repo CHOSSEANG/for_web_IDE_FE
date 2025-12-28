@@ -3,11 +3,9 @@
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { useTheme } from "@/app/providers/theme-provider";
 
 export function WebicTabs() {
   const [active, setActive] = useState("index.tsx");
-  const { theme } = useTheme(); 
 
   const tabs = [
     "index.tsx",
@@ -31,13 +29,8 @@ export function WebicTabs() {
               "border-r border-border-strong",
               "min-w-[120px] whitespace-nowrap transition-colors",
               isActive
-                ? theme === "dark"
-                  ? "bg-[#2D2D2D] font-[300] text-text-primary border-b-1 border-blue-400"
-                  : "bg-bg-code-block font-[300] text-text-primary border-b-1 border-blue-400"
-                :
-                    theme === "dark"
-                  ? "bg-[#1E1E1E] font-[300] text-text-muted border-b-0 border-border-light hover:bg-[#2D2D2D]"
-                  : "bg-bg-raised font-[300] text-text-muted border-b-0 border-border-light hover:bg-bg-subtle"
+                ? "bg-bg-base font-[300] text-text-primary border-b border-blue-400"
+                : "bg-bg-subtle font-[300] text-text-muted border-b-0 border-border-light hover:bg-bg-raised"
             )}
           >
             {/* 텍스트 영역 */}

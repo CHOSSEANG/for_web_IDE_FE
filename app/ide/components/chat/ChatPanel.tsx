@@ -72,12 +72,12 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
           placeholder="메시지 검색"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
-          className="w-64 px-3 py-1 rounded bg-white text-black placeholder:text-gray-400 text-sm"
+          className="w-full px-3 py-1.5 rounded bg-bg-base border border-border-light text-text-primary placeholder:text-text-muted text-sm outline-none focus:ring-1 focus:ring-blue-500"
         />
 
         {isSearching && (
-          <span className="text-sm text-muted-foreground">
-            {messages.length}건 검색됨
+          <span className="text-sm text-text-muted">
+            {renderedMessages.length}건 검색됨
           </span>
         )}
       </div>

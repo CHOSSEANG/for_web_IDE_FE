@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Disable symlinks to avoid EISDIR errors on Windows with special chars in path
     config.resolve.symlinks = false;
 

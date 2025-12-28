@@ -49,7 +49,7 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // eslint-disable-next-line react-hooks/unsupported-syntax
+
       eval(content);
       // 로컬 실행 성공 시 출력
       setRunOutput(logs.length > 0 ? logs : ['✅ [Local] 실행 완료']);
@@ -136,7 +136,7 @@ const WebICEditorContent = () => {
     };
 
     try {
-      // eslint-disable-next-line react-hooks/unsupported-syntax
+
       eval(content);
       setDebugOutput(logs);
     } catch (localError: unknown) {
@@ -206,13 +206,13 @@ const WebICEditorContent = () => {
             onDebug={handleDebug}
           />
         ) : (
-          <div className="h-full flex items-center justify-center text-gray-500">
+          <div className="h-full flex items-center justify-center text-text-muted">
             Select a file to edit
           </div>
         )}
       </div>
 
-      <div className="h-[240px] border-t border-white/10">
+      <div className="h-[240px] border-t border-border-light">
         <TerminalPanel
           activeTab={activeTerminalTab}
           onTabChange={setActiveTerminalTab}

@@ -77,7 +77,7 @@ const FileNode = ({
                 onClick={handleClick}
                 className={`
           flex items-center w-full py-1 pr-2 cursor-pointer transition-colors group
-          ${isActive ? 'bg-[#3b82f633] text-[#e6edf3]' : 'text-[#8b949e] hover:bg-[#1f2428]'}
+          ${isActive ? 'bg-blue-500/10 text-text-primary' : 'text-text-secondary hover:bg-bg-subtle'}
         `}
                 style={{ paddingLeft: 12 + (depth * 16) }}
             >
@@ -93,7 +93,7 @@ const FileNode = ({
                         onBlur={handleSubmit}
                         onKeyDown={handleKeyDown}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-[#161b22] text-[#e6edf3] border border-[#3b82f6] outline-none px-1 py-0.5 w-full text-inherit font-inherit"
+                        className="bg-bg-subtle text-text-primary border border-blue-500 outline-none px-1 py-0.5 w-full text-inherit font-inherit"
                     />
                 ) : (
                     <span
@@ -117,7 +117,7 @@ const FileNode = ({
                                         e.stopPropagation()
                                         onAddFolder?.(item.id)
                                     }}
-                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-[#e6edf3]"
+                                    className="ml-1 border-none bg-transparent text-text-muted cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-text-primary"
                                     title="새 폴더"
                                 >
                                     📁+
@@ -127,7 +127,7 @@ const FileNode = ({
                                         e.stopPropagation()
                                         onAddFile?.(item.id)
                                     }}
-                                    className="ml-1 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-[#e6edf3] leading-none"
+                                    className="ml-1 border-none bg-transparent text-text-muted cursor-pointer p-0 text-xs opacity-60 hover:opacity-100 hover:text-text-primary leading-none"
                                     title="새 파일"
                                 >
                                     📄+
@@ -143,7 +143,7 @@ const FileNode = ({
                                     onDelete?.(item.id)
                                 }
                             }}
-                            className="ml-4 border-none bg-transparent text-[#8b949e] cursor-pointer p-0 text-sm opacity-60 hover:opacity-100 hover:text-[#f78166]"
+                            className="ml-4 border-none bg-transparent text-text-muted cursor-pointer p-0 text-sm opacity-60 hover:opacity-100 hover:text-error"
                             title="삭제"
                         >
                             ✕
