@@ -27,7 +27,22 @@ const MonacoEditor = ({ file, onChange, onRun, onDebug, onSave }: MonacoEditorPr
     const idleTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const handleEditorDidMount = (editorInstance: MonacoEditorInstance.IStandaloneCodeEditor) => {
-        editorRef.current = editorInstance
+        editorRef.current = editorInstance;
+
+        // 에디터의 실제 HTML 요소를 가져옵니다.
+        const domNode = editorInstance.getDomNode();
+        if (domNode) {
+            // 모나코 에디터가 입력을 처리하기 위해 사용하는 textarea를 찾습니다.
+            const textarea = domNode.querySelector('textarea');
+            if (textarea) {
+                // 브라우저의 자동 대문자 변환 기능을 명시적으로 끕니다.
+                textarea.setAttribute('autocapitalize', 'off');
+                textarea.setAttribute('autocorrect', 'off');
+                textarea.setAttribute('spellcheck', 'false');
+                // 추가로 자동완성도 꺼주면 좋습니다.
+                textarea.setAttribute('autocomplete', 'off');
+            }
+        }
     }
 
     const getLanguage = (filename: string) => {
