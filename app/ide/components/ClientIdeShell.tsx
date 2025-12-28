@@ -39,11 +39,14 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
                 {/* 2. File Explorer Toggle */}
                 <button
-                  onClick={() => setActiveTab(activeTab === "filetree" ? null : "filetree")}
-                  className={`p-2 rounded-lg transition-all ${activeTab === "filetree"
-                    ? "bg-blue-500/10 text-blue-500"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
-                    }`}
+                  onClick={() =>
+                    setActiveTab(activeTab === "filetree" ? null : "filetree")
+                  }
+                  className={`p-2 rounded-lg transition-all ${
+                    activeTab === "filetree"
+                      ? "bg-blue-500/10 text-blue-500"
+                      : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
+                  }`}
                   title="Explorer"
                 >
                   <Folder size={22} />
@@ -51,11 +54,14 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
                 {/* 3. Chat Toggle */}
                 <button
-                  onClick={() => setActiveTab(activeTab === "chat" ? null : "chat")}
-                  className={`p-2 rounded-lg transition-all ${activeTab === "chat"
-                    ? "bg-blue-500/10 text-blue-500"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
-                    }`}
+                  onClick={() =>
+                    setActiveTab(activeTab === "chat" ? null : "chat")
+                  }
+                  className={`p-2 rounded-lg transition-all ${
+                    activeTab === "chat"
+                      ? "bg-blue-500/10 text-blue-500"
+                      : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
+                  }`}
                   title="Chat"
                 >
                   <MessageSquare size={22} />
@@ -63,11 +69,14 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
 
                 {/* 4. Invite Toggle */}
                 <button
-                  onClick={() => setActiveTab(activeTab === "invite" ? null : "invite")}
-                  className={`p-2 rounded-lg transition-all ${activeTab === "invite"
-                    ? "bg-blue-500/10 text-blue-500"
-                    : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
-                    }`}
+                  onClick={() =>
+                    setActiveTab(activeTab === "invite" ? null : "invite")
+                  }
+                  className={`p-2 rounded-lg transition-all ${
+                    activeTab === "invite"
+                      ? "bg-blue-500/10 text-blue-500"
+                      : "text-text-secondary hover:text-text-primary hover:bg-bg-raised/50"
+                  }`}
                   title="Invite"
                 >
                   <User size={22} />
@@ -85,7 +94,9 @@ export default function ClientIdeShell({ id }: ClientIdeShellProps) {
               <div className="w-[300px] border-r border-border-light bg-bg-raised">
                 {activeTab === "filetree" && <WebICEditor.LeftPanel />}
                 {activeTab === "chat" && <ChatPanel containerId={Number(id)} />}
-                {activeTab === "invite" && <InvitePanel containerId={Number(id)} />}
+                {activeTab === "invite" && (
+                  <InvitePanel containerId={Number(id)} />
+                )}
               </div>
             )}
           </aside>

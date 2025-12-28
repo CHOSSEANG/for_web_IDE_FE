@@ -3,7 +3,7 @@
 import { useChat } from "@/app/ide/hooks/useChat";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ChatPanelProps {
   containerId: string | number;
@@ -11,22 +11,59 @@ interface ChatPanelProps {
 
 export default function ChatPanel({ containerId }: ChatPanelProps) {
   const numericContainerId = Number(containerId);
-  const { messages, input, setInput, sendMessage } =
-    useChat(numericContainerId);
+
+  const {
+    messages,
+    searchResults,
+    input,
+    setInput,
+    sendMessage,
+    fetchInitialChats,
+    fetchOlderChats,
+    searchChats,
+  } = useChat(numericContainerId);
 
   const [searchKeyword, setSearchKeyword] = useState("");
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  /* ==========================
+     초기 채팅 조회 (container 변경 시)
+  ========================== */
+  useEffect(() => {
+    fetchInitialChats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numericContainerId]);
+
+  /* ==========================
+     검색 (debounce 300ms)
+  ========================== */
+  useEffect(() => {
+    const id = setTimeout(() => {
+      searchChats(searchKeyword);
+    }, 300);
+
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchKeyword]);
+
   const isSearching = searchKeyword.trim().length > 0;
+  const renderedMessages = isSearching ? searchResults : messages;
 
-  const filteredMessages = useMemo(() => {
-    if (!isSearching) return messages;
+  /* ==========================
+     스크롤 최상단 → 과거 채팅 로드
+  ========================== */
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-    return messages.filter((msg) =>
-      msg.message.toLowerCase().includes(searchKeyword.toLowerCase())
-    );
-  }, [messages, searchKeyword, isSearching]);
+    if (el.scrollTop === 0 && !isSearching) {
+      fetchOlderChats();
+    }
+  };
 
   return (
     <div className="h-full flex flex-col p-4">
+      {/* 검색 바 */}
       <div className="mb-2 flex items-center gap-3">
         <input
           type="text"
@@ -38,19 +75,27 @@ export default function ChatPanel({ containerId }: ChatPanelProps) {
 
         {isSearching && (
           <span className="text-sm text-text-muted">
-            {filteredMessages.length}건 검색됨
+            {renderedMessages.length}건 검색됨
           </span>
         )}
       </div>
 
-      {isSearching && filteredMessages.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-sm text-text-muted">
+      {/* 메시지 영역 (단일 스크롤 컨테이너) */}
+      {isSearching && renderedMessages.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
           검색 결과가 없습니다.
         </div>
       ) : (
-        <MessageList messages={filteredMessages} />
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto"
+          onScroll={handleScroll}
+        >
+          <MessageList messages={renderedMessages} />
+        </div>
       )}
 
+      {/* 입력창 */}
       <MessageInput
         value={input ?? ""}
         onChange={setInput}

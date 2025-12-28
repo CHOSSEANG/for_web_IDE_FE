@@ -1,9 +1,13 @@
 export interface ChatMessage {
-  id: number;
+  id?: number;
+  content?: string;
+  sender?: "me" | "other";
+
+  userId?: number;
   userName: string;
   userImgUrl: string;
   message: string;
-  content: string;
-  sender: "me" | "other";
   createdAt: string; // ISO DateTime
+
+  _clientId?: string;
 }
