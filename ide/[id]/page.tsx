@@ -10,9 +10,8 @@ type PageProps = {
   params: IdePageParamsPromise & IdePageParams;
 };
 
-export default async function IdePage({ params }: PageProps) {
-  const { id } = await params;
-  const containerId = Number(id);
+export default function IdePage({ params }: PageProps) {
+  const containerId = Number(params.id);
 
   if (Number.isNaN(containerId)) {
     throw new Error("Invalid IDE id");
