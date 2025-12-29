@@ -74,30 +74,31 @@ export function useChat(containerId: number) {
   };
 
   /* ==========================
-     메시지 병합 (중복 방지 핵심)
+     메시지 병합 (중복 방지 + 안전 처리)
   ========================== */
-  const appendMessages = (incoming: ChatMessage[]) => {
+  const appendMessages = (incoming: ChatMessage[] | null | undefined) => {
+    if (!Array.isArray(incoming) || incoming.length === 0) return;
+
     setMessages((prev) => {
       const map = new Map(prev.map((m) => [messageKey(m), m]));
       for (const m of incoming) {
         map.set(messageKey(m), m);
       }
       return Array.from(map.values()).sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
     });
   };
 
-  /* 검색 결과 정렬 (중복 방지) */
-  const normalizeAndSort = (data: ChatMessage[]) => {
+  /* 검색 결과 정렬 (중복 방지 + 안전 처리) */
+  const normalizeAndSort = (data: ChatMessage[] | null | undefined) => {
+    if (!Array.isArray(data)) return [];
+
     const map = new Map<string, ChatMessage>();
-    data.forEach((m) => {
-      map.set(messageKey(m), m);
-    });
+    data.forEach((m) => map.set(messageKey(m), m));
+
     return Array.from(map.values()).sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     );
   };
 
@@ -116,8 +117,8 @@ export function useChat(containerId: number) {
         `${API_BASE}/chat?containerId=${containerId}`,
         controller.signal
       );
-      const data = (await res.json()) as ChatMessage[];
-      appendMessages(data);
+      const data = (await res.json()) as ChatMessage[] | null;
+      appendMessages(Array.isArray(data) ? data : []);
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
         console.error("fetchInitialChats failed", e);
@@ -144,8 +145,8 @@ export function useChat(containerId: number) {
           oldest
         )}`
       );
-      const data = (await res.json()) as ChatMessage[];
-      appendMessages(data);
+      const data = (await res.json()) as ChatMessage[] | null;
+      appendMessages(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error("fetchOlderChats failed", e);
     } finally {
@@ -180,8 +181,8 @@ export function useChat(containerId: number) {
         )}`,
         controller.signal
       );
-      const data = (await res.json()) as ChatMessage[];
-      setSearchResults(normalizeAndSort(data));
+      const data = (await res.json()) as ChatMessage[] | null;
+      setSearchResults(normalizeAndSort(Array.isArray(data) ? data : []));
     } catch (e) {
       if ((e as Error).name !== "AbortError") {
         console.error("searchChats failed", e);
